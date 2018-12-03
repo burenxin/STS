@@ -1,0 +1,18 @@
+spring:
+  # ˝æ›ø‚≈‰÷√
+  datasource:
+    url: jdbc:mysql://10.2.65.118:3306/sts
+    username: sts
+    password: sts
+    driver-class-name: com.mysql.jdbc.Driver
+
+#∑√Œ ≈‰÷√
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: utf-8
+  servlet:
+    context-path: /STS
+
+#mybatis:
+  #type-aliases-package: cn.jzt56.singleticketsystem.entity
