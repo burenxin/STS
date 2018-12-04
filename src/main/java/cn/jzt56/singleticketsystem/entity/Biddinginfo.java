@@ -9,8 +9,6 @@ import java.util.Date;
  * @ Author     ：lzy
  * @ Date       ：Created in 15:43 2018/12/4
  * @ Description：竞价实体类
- * @ Modified By：
- * @Version: $version$
  */
 @Data
 public class Biddinginfo implements Serializable {
