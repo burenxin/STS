@@ -2,6 +2,7 @@ package cn.jzt56.singleticketsystem.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Date;
  * @Version: $version$
  */
 @Data
-public class Biddinginfo {
+public class Biddinginfo implements Serializable {
     private String detailId	;           //详情ID
     private String bidTaskId;	        //竞价任务ID
     private String carrierId;	        //承运商ID
