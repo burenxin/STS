@@ -17,27 +17,27 @@ import java.util.Date;
 public class Userinfo implements Serializable {
 
     /** 用户ID. */
-    private String UserId;
+    private String userId;
 
     /** 用户名. */
-    private String UserName;
+    private String userName;
 
     /** 密码. */
-    private String UserPassword;
+    private String userPassword;
 
     /** 用户类型(0委托方、1承运商、2管理方). */
-    private String Type;
+    private String type;
 
     /** 状态(0可用、1不可用). */
-    private String Status;
+    private String status;
 
     /** 创建时间. */
-    private Date CreatedTime;
+    private Date createdTime;
 
     /** 修改时间. */
-    private Date UpdatedTime;
+    private Date updatedTime;
 
     /** 联系电话. */
-    private String PhoneNum;
+    private String phoneNum;
 
 }

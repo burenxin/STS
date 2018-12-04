@@ -3,6 +3,7 @@ package cn.jzt56.singleticketsystem.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created with IDEA
@@ -16,57 +17,57 @@ import java.io.Serializable;
 public class Carrierinfo implements Serializable {
 
     /** 承运商ID. */
-    private String CarrierId;
+    private String carrierId;
 
     /** 姓名. */
-    private String CarrierName;
+    private String carrierName;
 
     /** 用户id. */
-    private String UserId;
+    private String userId;
 
     /** 联系方式(手机号). */
-    private String Phone;
+    private String phone;
 
     /** 注册地址. */
-    private String Address;
+    private String address;
 
     /** 运输类型(0.冷藏品、1.普通). */
-    private String TransportType;
+    private String transportType;
 
     /** 起始地. */
-    private String StartPlace;
+    private String startPlace;
 
     /** 目的地. */
-    private String EndPlace;
+    private String endPlace;
 
     /** 单位重量价格. */
-    private Double WeightPrice;
+    private Double weightPrice;
 
     /** 单位体积价格. */
-    private Double VolumePrice;
+    private Double volumePrice;
 
     /** 每公里收费. */
-    private Double CostPerKM;
+    private Double costPerKM;
 
     /** 最大运输体积. */
-    private String MaxTransportVolume;
+    private String maxTransportVolume;
 
     /** 最大运输数量. */
-    private String MaxTransportWeight;
+    private String maxTransportWeight;
 
     /** 时效(多长时间到达). */
-    private String Duration;
+    private String duration;
 
     /** 状态(0可用、1不可用). */
-    private String Status;
+    private String status;
 
     /** 注册时间. */
-    private String CreatedTime;
+    private Date createdTime;
 
     /** 修改时间. */
-    private String UpdateTime;
+    private Date updateTime;
 
     /** 说明. */
-    private String Description;
+    private String description;
 
 }
