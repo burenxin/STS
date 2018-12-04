@@ -12,7 +12,7 @@ import java.util.Date;
  * @Data实现toString与getter、setter
  */
 @Data
-public class TaskOfAuction implements Serializable {
+public class AuctionTask implements Serializable {
     private String	BidTaskId		;//任务单ID
     private String	OrderId		    ;//订单ID
     private String	CarrierId		;//承运商ID
