@@ -1,12 +1,10 @@
 spring:
-  #数据库配置
+#数据库配置
   datasource:
     url: jdbc:mysql://10.2.65.118:3306/sts
     username: sts
     password: sts
     driver-class-name: com.mysql.jdbc.Driver
-
-
 #访问配置
 server:
   port: 8080
@@ -16,4 +14,4 @@ server:
     context-path: /STS
 
 #mybatis:
-  #type-aliases-package: com.jzt.byn.entity
+  #type-aliases-package: cn.jzt56.singleticketsystem.entity

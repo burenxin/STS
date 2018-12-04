@@ -52,6 +52,7 @@
             <!-- 文件路径 -->
             <fileNamePattern>
                 D:\data\sts\log\error.%d.log
+              <!--logger\error.%d.log-->
             </fileNamePattern>
         </rollingPolicy>
     </appender>
