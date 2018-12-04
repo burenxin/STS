@@ -13,21 +13,21 @@ import java.util.Date;
  */
 @Data
 public class AuctionTask implements Serializable {
-    private String	BidTaskId		;//任务单ID
-    private String	OrderId		    ;//订单ID
-    private String	CarrierId		;//承运商ID
-    private Integer	TotalQuantity	;//总件数
-    private float	TotalVolume		;//总体积
-    private float	TotalWeight		;//总重量
-    private float	 ProposedPrice	;//合计金额
-    private String	PickArea		;//提货地区
-    private String	DeliverArea		;//送货地区
-    private Date ServiceTime		;//送达时间
-    private Date	ReleaseTime		;//竞拍发布时间
-    private Date	SealedDiskTime	;//竞拍封盘时间
-    private String	BidStatus		;//竞拍状态
-    private String	TransactionPrice;//竞拍成功价
-    private String	TaskType		;//任务类型
+    private String	bidTaskId		;//任务单ID
+    private String	orderId		    ;//订单ID
+    private String	carrierId		;//承运商ID
+    private String	totalQuantity	;//总件数
+    private String	totalVolume		;//总体积
+    private String	totalWeight		;//总重量
+    private String	proposedPrice	;//合计金额
+    private String	pickArea		;//提货地区
+    private String	deliverArea		;//送货地区
+    private String serviceTime		;//送达时间
+    private String	releaseTime		;//竞拍发布时间
+    private String	sealedDiskTime	;//竞拍封盘时间
+    private String	bidStatus		;//竞拍状态
+    private String	transactionPrice;//竞拍成功价
+    private String	taskType		;//任务类型
 
 
 }

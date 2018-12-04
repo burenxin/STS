@@ -16,7 +16,7 @@ public class Biddinginfo implements Serializable {
     private String bidTaskId;	        //竞价任务ID
     private String carrierId;	        //承运商ID
     private String quotedPrice	;       //报价
-    private Date participationTime;   //参与时间
+    private String participationTime;   //参与时间
     private String status;              //状态
 
 }
