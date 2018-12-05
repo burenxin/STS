@@ -28,6 +28,6 @@ public class Order implements Serializable{
     private String status;//状态
     private String createdTime;//创建时间
     private String updatedTime;//更新时间
-    private String remark;//订单
+    private String remark;//备注
 
 }
