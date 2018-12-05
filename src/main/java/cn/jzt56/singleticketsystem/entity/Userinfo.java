@@ -32,10 +32,10 @@ public class Userinfo implements Serializable {
     private String status;
 
     /** 创建时间. */
-    private Date createdTime;
+    private String createdTime;
 
     /** 修改时间. */
-    private Date updatedTime;
+    private String updatedTime;
 
     /** 联系电话. */
     private String phoneNum;

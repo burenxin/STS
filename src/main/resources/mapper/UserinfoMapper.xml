@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.IUserinfoMapper">
+    <resultMap id="BaseResultMap" type="cn.jzt56.singleticketsystem.entity.Userinfo" >
+        <id column="User_Id" property="userId" jdbcType="CHAR" />
+        <result column="User_Name" property="userName" jdbcType="VARCHAR" />
+        <result column="User_Password" property="userPassword" jdbcType="VARCHAR"/>
+        <result column="Type" property="type" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="Created_Time" property="createdTime" javaType="String"/>
+        <result column="Updated_Time" property="updatedTime" javaType="String"/>
+        <result column="PhoneNum" property="phoneNum" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insertUserinfo" parameterType="cn.jzt56.singleticketsystem.entity.Userinfo">
+        insert into
+           user_info(User_Id,User_Name,User_Password,Type,Status,Created_Time,PhoneNum)
+          value
+          (#{userId},#{userName},#{userPassword},#{type},#{status},now(),#{phoneNum})
+    </insert>
+
+    <delete id="removeUserinfoByUserId" parameterType="java.lang.String">
+        delete from
+          user_info
+          where
+          User_Id = #{UserId}
+    </delete>
+
+    <update id="updateUserinfoByUserId" parameterType="cn.jzt56.singleticketsystem.entity.Userinfo">
+        update user_info
+        set
+          User_Name = #{userName},User_Password = #{userPassword},Type = #{type},Status = #{status},Updated_Time = now(),PhoneNum = #{phoneNum}
+        where
+          User_Id = #{userId}
+    </update>
+
+    <select id="getUserinfoByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+          *
+        from
+          user_info
+        where
+          User_Id = #{userId}
+    </select>
+
+    <select id="getUserinfoByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+          *
+        from
+          user_info
+        where
+          User_Name = #{UserName}
+    </select>
+</mapper>

@@ -12,6 +12,11 @@ server:
     uri-encoding: utf-8
   servlet:
     context-path: /STS
+logging:
+  level:
+    cn.jzt56.singleticketsystem.mapper: debug
+mybatis:
+  mapper-locations: classpath:mapper/UserinfoMapper.xml
 
 #mybatis:
   #type-aliases-package: cn.jzt56.singleticketsystem.entity
