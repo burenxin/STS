@@ -11,10 +11,10 @@ import java.util.Date;
  * @ Description：竞价实体类
  */
 @Data
-public class Biddinginfo implements Serializable {
+public class BiddingDetail implements Serializable {
     private String detailId	;           //详情ID
     private String bidTaskId;	        //竞价任务ID
-    private String carrierId;	        //承运商ID
+    private String userId;	        //用户ID
     private String quotedPrice	;       //报价
     private String participationTime;   //参与时间
     private String status;              //状态

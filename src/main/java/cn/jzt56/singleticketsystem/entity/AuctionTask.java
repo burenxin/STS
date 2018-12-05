@@ -15,7 +15,7 @@ import java.util.Date;
 public class AuctionTask implements Serializable {
     private String	bidTaskId		;//任务单ID
     private String	orderId		    ;//订单ID
-    private String	carrierId		;//承运商ID
+    private String	userId		;//用户ID
     private String	totalQuantity	;//总件数
     private String	totalVolume		;//总体积
     private String	totalWeight		;//总重量
