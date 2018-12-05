@@ -24,9 +24,10 @@ public class Order implements Serializable{
     private String weight;//重量
     private String deliveryTime;//提货时间
     private String receivingTime;//预估收货时间
-    private BigDecimal ttansportPrices;//运输费用
+    private BigDecimal tansportPrices;//运输费用
     private String status;//状态
     private String createdTime;//创建时间
     private String updatedTime;//更新时间
+    private String remark;//订单
 
 }
