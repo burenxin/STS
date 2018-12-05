@@ -14,7 +14,7 @@ import java.util.Date;
  */
 
 @Data
-public class Userinfo implements Serializable {
+public class UserInfo implements Serializable {
 
     /** 用户ID. */
     private String userId;
