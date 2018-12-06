@@ -27,7 +27,7 @@
     <select id="findAllCurrentTask" resultMap="AuctionTaskResultMap">
         SELECT att.* FROM auction_task  att WHERE att.Bid_Task_Id
 	      NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1')
-          <if test="bidStatus != null">
+          <if test="bidStatus  != null">
               Bid_Status=#{bidStatus}
           </if>
           <if test="pickArea  != null">
