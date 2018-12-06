@@ -28,6 +28,7 @@ public class AuctionTask implements Serializable {
     private String	bidStatus		;//竞拍状态
     private String	transactionPrice;//竞拍成功价
     private String	taskType		;//任务类型
+    private String bidTaskNum;//任务单号
 
 
 }
