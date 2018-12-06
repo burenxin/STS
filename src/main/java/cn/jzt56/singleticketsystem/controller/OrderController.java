@@ -17,7 +17,9 @@ import java.util.List;
 public class OrderController {
     @Autowired
     private OrderService orderService;
-
+    /*
+     所有订单查询
+     */
     @RequestMapping("/findAll")
     public List<Order> findAll() {
         return orderService.findAll();
