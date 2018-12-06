@@ -14,6 +14,7 @@ public interface OrderMapper {
     Page<Order> findByPage(Order order);
 
     List<Order> findById(String id);
+    List<Order> findByUserId(String id);
 
     void create(Order order);
 
