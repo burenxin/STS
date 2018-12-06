@@ -1,4 +1,4 @@
-package cn.jzt56.singleticketsystem.entity;
+package cn.jzt56.singleticketsystem.tools;
 
 import java.io.Serializable;
 import java.util.List;

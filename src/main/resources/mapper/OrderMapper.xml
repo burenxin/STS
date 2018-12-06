@@ -5,60 +5,91 @@
 <mapper namespace="cn.jzt56.singleticketsystem.mapper.OrderMapper">
 
     <resultMap id="baseMap" type="cn.jzt56.singleticketsystem.entity.Order">
-        <id property="id" column="id" jdbcType="INTEGER"/>
-        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <id column="Order_Id" property="orderId" jdbcType="CHAR"/>
+        <result column="User_Id" property="userId" jdbcType="CHAR"/>
+        <result column="Consignor" property="consignor" jdbcType="VARCHAR"/>
+        <result column="PhoneNum_Consignor" property="phoneNumConsignor" jdbcType="VARCHAR"/>
+        <result column="Consignee" property="consignee" jdbcType="VARCHAR"/>
+        <result column="PhoneNum_Consignee" property="phoneNumConsignee" jdbcType="VARCHAR"/>
+        <result column="StartArea" property="startArea" jdbcType="VARCHAR"/>
+        <result column="StartArea_mx" property="startAreaMx" jdbcType="VARCHAR"/>
+        <result column="EndArea" property="endArea" jdbcType="VARCHAR"/>
+        <result column="EndArea_mx" property="endAreaMx" jdbcType="VARCHAR"/>
+        <result column="Goods_Type" property="goodsType" jdbcType="VARCHAR"/>
+        <result column="Goods_Count" property="goodsCount" jdbcType="VARCHAR"/>
+        <result column="Volume" property="volume" jdbcType="DECIMAL"/>
+        <result column="Weight" property="weight" jdbcType="DECIMAL"/>
+        <result column="Delivery_Time" property="deliveryTime" javaType="String"/>
+        <result column="Receiving_Time" property="receivingTime" javaType="String"/>
+        <result column="Transport_Prices" property="transportPrices" jdbcType="DECIMAL"/>
+        <result column="Status" property="status" jdbcType="VARCHAR"/>
+        <result column="Created_Time" property="createdTime" javaType="String"/>
+        <result column="Updated_Time" property="updatedTime" javaType="String"/>
+        <result column="Remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="Goods_Name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="Signature_Type" property="signatureType" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 查询所有 -->
-    <select id="findAll" resultType="cn.jzt56.singleticketsystem.entity.Order">
-        SELECT * FROM order
+    <select id="findAll" resultMap="baseMap">
+        SELECT * FROM `order`
     </select>
 
     <!-- 条件查询 -->
     <select id="findByPage" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
-        SELECT * FROM order WHERE 1=1
-        <if test="brand != null">
-            AND brand LIKE CONCAT('%', #{brand}, '%')
+        SELECT * FROM `order` WHERE Status!='-1'
+        <if test="consignee != null">
+            AND Consignee LIKE CONCAT('%', #{consignee}, '%')
         </if>
-        <if test="title != null">
-            AND title LIKE CONCAT('%', #{title}, '%')
+        <if test="endArea != null">
+            AND endArea   LIKE CONCAT('%', #{endArea}, '%')
         </if>
     </select>
 
     <!-- 根据id查询 -->
     <select id="findById" parameterType="String" resultMap="baseMap">
-        SELECT * FROM tb_goods WHERE id = #{id}
+        SELECT * FROM `order` WHERE Order_Id = #{orderId}
+    </select>
+    <select id="findByUserId" parameterType="String" resultMap="baseMap">
+        SELECT * FROM `order` WHERE User_Id = #{userId} and Status!='-1'
     </select>
 
     <!-- 添加数据 -->
     <insert id="create" parameterType="cn.jzt56.singleticketsystem.entity.Order">
-        INSERT INTO tb_goods(title, price, image, brand)
-        VALUES(#{title}, #{price}, #{image}, #{brand})
+        INSERT INTO `order`(User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Updated_Time,Remark,Goods_Name,Signature_Type)
+        VALUES(#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{updatedTime},#{remark},#{goodsName},#{signatureType})
     </insert>
 
     <!-- 更新数据 -->
     <update id="update" parameterType="cn.jzt56.singleticketsystem.entity.Order">
-        UPDATE tb_goods
+        UPDATE `order`
         <set>
-            <if test="title != null">
-                title = #{title},
-            </if>
-            <if test="price != null">
-                price = #{price},
-            </if>
-            <if test="image != null">
-                image = #{image},
-            </if>
-            <if test="brand != null">
-                brand = #{brand},
-            </if>
+            <if test="phoneNumConsignor != null and phoneNumConsignor!=''">  PhoneNum_Consignor =#{phoneNumConsignor},</if>
+            <if test="consignor != null and consignor!=''">          Consignor = #{consignor},</if>
+            <if test="phoneNum_Consignee != null and consignor!=''"> PhoneNum_Consignee = #{phoneNumConsignee},</if>
+            <if test="consignee != null and consignee!=''">          Consignee = #{consignee},</if>
+            <if test="startArea != null and startArea!=''">StartArea = #{startArea}, </if>
+            <if test="startAreaMx != null and startAreaMx!=''"> StartArea_mx = #{startAreaMx},  </if>
+            <if test="endArea != null and endArea!=''"> EndArea = #{endArea},  </if>
+            <if test="endAreaMx != null and endAreaMx!=''">EndArea_mx = #{endAreaMx}, </if>
+            <if test="goodsType != null and goodsType!=''">Goods_Type = #{goodsType}, </if>
+            <if test="goodsCount != null and goodsCount!=''">Goods_Count = #{goodsCount}, </if>
+            <if test="weight != null and weight!=''">Weight = #{weight}, </if>
+            <if test="volume != null and volume!=''">Volume = #{volume}, </if>
+            <if test="transportPrices != null and transportPrices!=''">Transport_Prices = #{transportPrices}, </if>
+            <if test="goodsName != null and goodsName!=''">Goods_Name = #{goodsName}, </if>
+            <if test="signatureType != null and signatureType!=''">Signature_Type = #{signatureType}, </if>
+            <if test="status != null and status!=''">Status = #{status}, </if>
+            <if test="remark != null and remark!=''">Remark = #{remark}, </if>
+            <if test="deliveryTime != null and deliveryTime!=''">Delivery_Time = #{deliveryTime}, </if>
+            <if test="receivingTime!= null and receivingTime!=''">Receiving_Time = #{receivingTime}, </if>
         </set>
-        WHERE id = #{id}
+        WHERE Order_Id = #{orderId}
     </update>
 
     <!-- 删除 -->
-    <delete id="delete" parameterType="String">
-        DELETE FROM order WHERE Order_Id = #{id}
-    </delete>
+    <update id="delete" parameterType="String">
+        update `order` set Status='-1' WHERE Order_Id = #{id}
+    </update>
 
 </mapper>
