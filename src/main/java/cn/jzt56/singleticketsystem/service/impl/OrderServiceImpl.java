@@ -1,7 +1,7 @@
 package cn.jzt56.singleticketsystem.service.impl;
 
 import cn.jzt56.singleticketsystem.entity.Order;
-import cn.jzt56.singleticketsystem.entity.PageBean;
+import cn.jzt56.singleticketsystem.tools.PageBean;
 import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.OrderService;
 import com.github.pagehelper.Page;
@@ -18,14 +18,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll() {
-        return null;
+        return orderMapper.findAll();
     }
 
     @Override
     public List<Order> findById(String id) {
         return orderMapper.findById(id);
     }
-
+    @Override
+    public List<Order> findByUserId(String id) {
+        return orderMapper.findByUserId(id);
+    }
     @Override
     public void create(Order order) {
         orderMapper.create(order);

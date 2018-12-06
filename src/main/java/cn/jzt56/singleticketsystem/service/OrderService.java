@@ -1,7 +1,9 @@
 package cn.jzt56.singleticketsystem.service;
 
 import cn.jzt56.singleticketsystem.entity.Order;
-import cn.jzt56.singleticketsystem.entity.PageBean;
+import cn.jzt56.singleticketsystem.tools.PageBean;
+
+import java.util.List;
 
 public interface OrderService extends BaseService<Order>{
     /**
@@ -12,4 +14,5 @@ public interface OrderService extends BaseService<Order>{
      * @return
      */
     PageBean findByPage(Order order, int pageCode, int pageSize);
+    List<Order> findByUserId(String id);
 }
