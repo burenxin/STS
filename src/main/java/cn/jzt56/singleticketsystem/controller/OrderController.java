@@ -67,7 +67,7 @@ public class OrderController {
     public Result update(@RequestBody Order order) {
         try {
             orderService.update(order);
-            return new Result(true, "更新数据成功");
+            return new Result(true, "修改成功");
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(false, "发生未知错误");
@@ -84,12 +84,13 @@ public class OrderController {
     public Result delete(@RequestBody String... ids) {
         try {
             orderService.delete(ids);
-            return new Result(true, "更新数据成功");
+            return new Result(true, "订单删除成功");
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(false, "发生未知错误");
         }
     }
+
 
     /**
      * 根据id查询
