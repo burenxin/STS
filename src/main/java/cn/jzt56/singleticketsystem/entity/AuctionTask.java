@@ -20,7 +20,7 @@ public class AuctionTask implements Serializable {
     private String	totalQuantity	;//总件数
     private String	totalVolume		;//总体积
     private String	totalWeight		;//总重量
-    private BigDecimal proposedPrice	;//合计金额
+    private BigDecimal proposedPrice;//合计金额
     private String	pickArea		;//提货地区
     private String	deliverArea		;//送货地区
     private String serviceTime		;//送达时间
