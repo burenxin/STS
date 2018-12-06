@@ -1,8 +1,8 @@
 package cn.jzt56.singleticketsystem.controller;
 
 import cn.jzt56.singleticketsystem.entity.Order;
-import cn.jzt56.singleticketsystem.entity.PageBean;
-import cn.jzt56.singleticketsystem.entity.Result;
+import cn.jzt56.singleticketsystem.tools.PageBean;
+import cn.jzt56.singleticketsystem.tools.Result;
 import cn.jzt56.singleticketsystem.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +17,11 @@ import java.util.List;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+    @RequestMapping("/findAll")
+    public List<Order> findAll() {
+        return orderService.findAll();
+    }
 
     /**
      * 分页查询
@@ -87,12 +92,15 @@ public class OrderController {
     /**
      * 根据id查询
      *
-     * @param id
+     * @param orderId
      * @return
      */
     @RequestMapping("/findById")
-    public List<Order> findById(@RequestParam(value = "id", required = false) String id) {
-        return orderService.findById(id);
+    public List<Order> findById(@RequestParam(value = "orderId", required = false) String orderId) {
+        return orderService.findById(orderId);
     }
-
+    @RequestMapping("/findByUserId")
+    public List<Order> findByUserId(@RequestParam(value = "userId", required = false) String userId) {
+        return orderService.findByUserId(userId);
+    }
 }
