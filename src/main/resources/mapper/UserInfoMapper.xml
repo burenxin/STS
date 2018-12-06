@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="cn.jzt56.singleticketsystem.mapper.IUserinfoMapper">
-    <resultMap id="BaseResultMap" type="cn.jzt56.singleticketsystem.entity.Userinfo" >
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.IUserInfoMapper">
+    <resultMap id="BaseResultMap" type="cn.jzt56.singleticketsystem.entity.UserInfo" >
         <id column="User_Id" property="userId" jdbcType="CHAR" />
         <result column="User_Name" property="userName" jdbcType="VARCHAR" />
         <result column="User_Password" property="userPassword" jdbcType="VARCHAR"/>
@@ -13,13 +13,15 @@
         <result column="PhoneNum" property="phoneNum" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <insert id="insertUserinfo" parameterType="cn.jzt56.singleticketsystem.entity.Userinfo">
+    <!-- 添加用户信息 -->
+    <insert id="insertUserinfo" parameterType="cn.jzt56.singleticketsystem.entity.UserInfo">
         insert into
            user_info(User_Id,User_Name,User_Password,Type,Status,Created_Time,PhoneNum)
           value
           (#{userId},#{userName},#{userPassword},#{type},#{status},now(),#{phoneNum})
     </insert>
 
+    <!-- 根据用户id删除用户信息 -->
     <delete id="removeUserinfoByUserId" parameterType="java.lang.String">
         delete from
           user_info
@@ -27,7 +29,8 @@
           User_Id = #{UserId}
     </delete>
 
-    <update id="updateUserinfoByUserId" parameterType="cn.jzt56.singleticketsystem.entity.Userinfo">
+    <!-- 根据用户id修改用户信息 -->
+    <update id="updateUserinfoByUserId" parameterType="cn.jzt56.singleticketsystem.entity.UserInfo">
         update user_info
         set
           User_Name = #{userName},User_Password = #{userPassword},Type = #{type},Status = #{status},Updated_Time = now(),PhoneNum = #{phoneNum}
@@ -35,6 +38,7 @@
           User_Id = #{userId}
     </update>
 
+    <!-- 根据用户id获取用户信息 -->
     <select id="getUserinfoByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
           *
@@ -44,6 +48,7 @@
           User_Id = #{userId}
     </select>
 
+    <!-- 根据用户名获取用户信息 -->
     <select id="getUserinfoByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
           *
