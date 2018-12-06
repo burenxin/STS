@@ -21,4 +21,13 @@ public interface OrderMapper {
     void update(Order order);
 
     void delete(String id);
+
+
+    /**
+     * @param bidTaskId
+     * @return
+     * @description ：根据任务单号查询任务单详情
+     * @author: CHENG QI
+     */
+    List<Order> getTaskDetailsByBidTaskId(String bidTaskId);
 }

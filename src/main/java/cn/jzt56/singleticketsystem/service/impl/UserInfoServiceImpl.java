@@ -1,8 +1,8 @@
 package cn.jzt56.singleticketsystem.service.impl;
 
-import cn.jzt56.singleticketsystem.entity.Userinfo;
-import cn.jzt56.singleticketsystem.mapper.IUserinfoMapper;
-import cn.jzt56.singleticketsystem.service.IUserinfoService;
+import cn.jzt56.singleticketsystem.entity.UserInfo;
+import cn.jzt56.singleticketsystem.mapper.IUserInfoMapper;
+import cn.jzt56.singleticketsystem.service.IUserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,10 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class UserinfoServiceImpl implements IUserinfoService {
+public class UserInfoServiceImpl implements IUserInfoService {
 
     @Autowired
-    private IUserinfoMapper service;
+    private IUserInfoMapper service;
 
     /**
      * 添加用户信息
@@ -30,7 +30,7 @@ public class UserinfoServiceImpl implements IUserinfoService {
      * @return Userinfo
      */
     @Override
-    public void insertUserinfo(Userinfo userinfo) {
+    public void insertUserinfo(UserInfo userinfo) {
         log.info("添加用户信息");
         service.insertUserinfo(userinfo);
     }
@@ -42,7 +42,7 @@ public class UserinfoServiceImpl implements IUserinfoService {
      * @return Userinfo
      */
     @Override
-    public void updateUserinfoByUserId(Userinfo userinfo) {
+    public void updateUserinfoByUserId(UserInfo userinfo) {
         log.info("根据用户id修改用户信息");
         service.updateUserinfoByUserId(userinfo);
     }
@@ -65,7 +65,7 @@ public class UserinfoServiceImpl implements IUserinfoService {
      * @return Userinfo
      */
     @Override
-    public Userinfo getUserinfoByUserId(String UserId) {
+    public UserInfo getUserinfoByUserId(String UserId) {
         log.info("根据用户id查找用户信息");
         return service.getUserinfoByUserId(UserId);
     }
@@ -76,7 +76,7 @@ public class UserinfoServiceImpl implements IUserinfoService {
      * @return List<Userinfo>
      */
     @Override
-    public List<Userinfo> listGetAllUserinfo() {
+    public List<UserInfo> listGetAllUserinfo() {
         log.info("获取所有的用户信息");
         return service.listGetAllUserinfo();
     }
@@ -88,9 +88,9 @@ public class UserinfoServiceImpl implements IUserinfoService {
      * @return Userinfo
      */
     @Override
-    public Userinfo getUserinfoByUserName(String UserName) {
+    public UserInfo getUserinfoByUserName(String UserName) {
         log.info("根据用户名查询用户信息");
-        Userinfo userinfo = service.getUserinfoByUserName(UserName);
+        UserInfo userinfo = service.getUserinfoByUserName(UserName);
             return userinfo;
     }
 }

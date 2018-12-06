@@ -1,15 +1,12 @@
 package cn.jzt56.singleticketsystem.controller;
 
-import cn.jzt56.singleticketsystem.entity.Userinfo;
-import cn.jzt56.singleticketsystem.service.impl.UserinfoServiceImpl;
+import cn.jzt56.singleticketsystem.entity.UserInfo;
+import cn.jzt56.singleticketsystem.service.impl.UserInfoServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * Created with IDEA
@@ -25,11 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 public class UserinfoController {
 
     @Autowired
-    private UserinfoServiceImpl userinfoService;
+    private UserInfoServiceImpl userinfoService;
 
     //   http://localhost:8080/STS/userinfo/insert
     @RequestMapping("insert")
-    public String insertUserinfo(Userinfo userinfo){
+    public String insertUserinfo(UserInfo userinfo){
         log.info("添加用户controller");
         userinfo.setUserId("1001");
         userinfo.setUserName("李四");
@@ -42,7 +39,7 @@ public class UserinfoController {
     }
     //   http://localhost:8080/STS/userinfo/update
     @RequestMapping("update")
-    public String updateUserinfo(Userinfo userinfo){
+    public String updateUserinfo(UserInfo userinfo){
         String id = "1001";
 
         userinfo = userinfoService.getUserinfoByUserId(id);
@@ -54,7 +51,7 @@ public class UserinfoController {
 
     //   http://localhost:8080/STS/userinfo/getUserinfoById
     @RequestMapping("getUserinfoById")
-    public Userinfo getUserinfoById(String UserId){
+    public UserInfo getUserinfoById(String UserId){
         UserId = "1001";
         return  userinfoService.getUserinfoByUserId(UserId);
     }
@@ -71,9 +68,9 @@ public class UserinfoController {
     //    ,produces={"application/json;charset=UTF-8"}
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public String login(@RequestBody Userinfo Userinfo, HttpServletRequest request){
+    public String login(@RequestBody UserInfo Userinfo, HttpServletRequest request){
         log.info(Userinfo.toString());
-        Userinfo userinfo = userinfoService.getUserinfoByUserName(Userinfo.getUserName());
+        UserInfo userinfo = userinfoService.getUserinfoByUserName(Userinfo.getUserName());
         if(Userinfo == null){
             log.info("用户不存在");
             return "用户名不存在";
@@ -81,8 +78,11 @@ public class UserinfoController {
             log.info("密码错误");
             return "密码错误";
         }
-        request.getSession().setAttribute("Userinfo",userinfo);
-        return userinfo.toString();
+        request.getSession().setAttribute("UserInfo",userinfo);
+        if(userinfo.getType() == "0"){
+
+        }
+        return "登录成功";
 
     }
 

@@ -1,6 +1,6 @@
 package cn.jzt56.singleticketsystem.service;
 
-import cn.jzt56.singleticketsystem.entity.Userinfo;
+import cn.jzt56.singleticketsystem.entity.UserInfo;
 
 import java.util.List;
 
@@ -11,19 +11,19 @@ import java.util.List;
  * @Date: 2018/12/4
  * Time: 15:07
  */
-public interface IUserinfoService {
+public interface IUserInfoService {
 
     /**
      * 添加用户信息
      * @param  userinfo
      */
-    void insertUserinfo(Userinfo userinfo);
+    void insertUserinfo(UserInfo userinfo);
 
     /**
      * 根据用户id修改用户信息
      * @param userinfo
      */
-    void updateUserinfoByUserId(Userinfo userinfo);
+    void updateUserinfoByUserId(UserInfo userinfo);
 
     /**
      * 根据用户id删除用户信息
@@ -34,20 +34,20 @@ public interface IUserinfoService {
     /**
      * 根据用户id查找用户信息
      * @param UserId
-     * @return Userinfo
+     * @return UserInfo
      */
-    Userinfo getUserinfoByUserId(String UserId);
+    UserInfo getUserinfoByUserId(String UserId);
 
     /**
      * 获取所有的用户信息
-     * @return List<Userinfo>
+     * @return List<UserInfo>
      */
-    List<Userinfo> listGetAllUserinfo();
+    List<UserInfo> listGetAllUserinfo();
 
     /**
      * 根据用户名查询用户信息
      * @param UserName
-     * @return Userinfo
+     * @return UserInfo
      */
-    Userinfo getUserinfoByUserName(String UserName);
+    UserInfo getUserinfoByUserName(String UserName);
 }

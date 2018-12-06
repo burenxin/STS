@@ -1,7 +1,9 @@
 package cn.jzt56.singleticketsystem.service.impl;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
+import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.mapper.AuctionTaskMapper;
+import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,36 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     @Autowired
     private AuctionTaskMapper auctionTaskMapper;
 
+    @Autowired
+    private OrderMapper orderMapper;
+
     @Override
     public List<AuctionTask> findAllCurrentTask(String userId) {
         return this.auctionTaskMapper.findAllCurrentTask( userId);
     }
+
+    /**
+     * @param bidTaskId
+     * @return
+     * @description ：根据任务单号查询任务单详情
+     * 此实现类调用的是OrderMapper中的Mapper接口。
+     * @author: CHENG QI
+     */
+    @Override
+    public List<Order> getTaskDetailsByBidTaskId(String bidTaskId) {
+        return orderMapper.getTaskDetailsByBidTaskId(bidTaskId);
+    }
+
+    /**
+     * @param userId
+     * @return List<AuctionTask>
+     * @description : 根据运输商id查询竞拍成功的任务单
+     * @author : CHENG QI
+     */
+    @Override
+    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId) {
+        return this.auctionTaskMapper.findAllSuccessCurrentTaskByUserId(userId);
+    }
+
+
 }

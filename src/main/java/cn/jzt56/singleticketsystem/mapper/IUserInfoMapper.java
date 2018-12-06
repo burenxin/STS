@@ -1,6 +1,6 @@
 package cn.jzt56.singleticketsystem.mapper;
 
-import cn.jzt56.singleticketsystem.entity.Userinfo;
+import cn.jzt56.singleticketsystem.entity.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -13,19 +13,19 @@ import java.util.List;
  * Time: 14:13
  */
 @Mapper
-public interface IUserinfoMapper {
+public interface IUserInfoMapper {
 
     /**
      * 添加用户信息
      * @param  userinfo
      */
-    void insertUserinfo(Userinfo userinfo);
+    void insertUserinfo(UserInfo userinfo);
 
     /**
      * 根据用户id修改用户信息
      * @param userinfo
      */
-    void updateUserinfoByUserId(Userinfo userinfo);
+    void updateUserinfoByUserId(UserInfo userinfo);
 
     /**
      * 根据用户id删除用户信息
@@ -38,18 +38,18 @@ public interface IUserinfoMapper {
      * @param UserId
      * @return Userinfo
      */
-    Userinfo getUserinfoByUserId(String UserId);
+    UserInfo getUserinfoByUserId(String UserId);
 
     /**
      * 获取所有的用户信息
      * @return List<Userinfo>
      */
-    List<Userinfo> listGetAllUserinfo();
+    List<UserInfo> listGetAllUserinfo();
 
     /**
      * 根据用户名查询用户信息
      * @param UserName
      * @return Userinfo
      */
-    Userinfo getUserinfoByUserName(String UserName);
+    UserInfo getUserinfoByUserName(String UserName);
 }

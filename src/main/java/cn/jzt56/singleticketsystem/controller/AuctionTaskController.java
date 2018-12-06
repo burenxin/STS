@@ -1,6 +1,7 @@
 package cn.jzt56.singleticketsystem.controller;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
+import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,5 +35,30 @@ public class AuctionTaskController {
 
         return this.auctionTaskService.findAllCurrentTask("ui001");
 
+    }
+
+
+
+    /**
+     *
+     * @param bidTaskId
+     * @return List<Order>
+     * @description ：根据任务单号查询任务单详情
+     * @author: CHENG QI
+     */
+    // http://localhost:8080/STS/auctionTask/getTaskDetail?bidTaskId='bt005'
+    @RequestMapping(value = "/getTaskDetail")
+    public Object getTaskDetailsByBidTaskId(String bidTaskId){
+        List<Order> list = auctionTaskService.getTaskDetailsByBidTaskId(bidTaskId);
+        if (list.size() == 0){
+            return "订单详情不存在，请检查订单是否出错";
+        }
+        return list;
+    }
+
+    // http://localhost:8080/STS/auctionTask/findSuccessCurrentTaskByUserId?userId='1001'
+    @RequestMapping(value = "/findSuccessCurrentTaskByUserId")
+    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId){
+        return auctionTaskService.findAllSuccessCurrentTaskByUserId(userId);
     }
 }
