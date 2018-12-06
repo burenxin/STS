@@ -3,6 +3,7 @@ package cn.jzt56.singleticketsystem.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -41,13 +42,13 @@ public class CarrierInfo implements Serializable {
     private String endPlace;
 
     /** 单位重量价格. */
-    private Double weightPrice;
+    private BigDecimal weightPrice;
 
     /** 单位体积价格. */
-    private Double volumePrice;
+    private BigDecimal volumePrice;
 
     /** 每公里收费. */
-    private Double costPerKM;
+    private BigDecimal costPerKM;
 
     /** 最大运输体积. */
     private String maxTransportVolume;
@@ -62,10 +63,10 @@ public class CarrierInfo implements Serializable {
     private String status;
 
     /** 注册时间. */
-    private Date createdTime;
+    private String createdTime;
 
     /** 修改时间. */
-    private Date updateTime;
+    private String updateTime;
 
     /** 说明. */
     private String description;

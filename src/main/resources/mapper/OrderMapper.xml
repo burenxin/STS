@@ -92,4 +92,32 @@
         update `order` set Status='-1' WHERE Order_Id = #{id}
     </update>
 
+    <!-- 根据任务单id获取任务单详情(订单列表) -->
+    <select id="getTaskDetailsByBidTaskId" parameterType="String" resultMap="baseMap">
+        SELECT *  FROM `order` o  WHERE o.Order_Id IN (
+         SELECT DISTINCT
+            (
+                substring_index(
+                substring_index(
+                p.Ord_Id,
+                ',',
+                b.help_topic_id + 1
+                ),
+                ',',
+                - 1
+                )
+             )
+         AS Oid
+        FROM
+          auction_task p
+        JOIN mysql.help_topic b ON b.help_topic_id &lt; (
+        LENGTH(p.Ord_Id) - LENGTH(
+        REPLACE (p.Ord_Id, ',', '')
+        ) + 1
+        )
+        where p.Bid_Task_Id = #{bid_Task_Id}
+        )
+    </select>
+
+
 </mapper>
