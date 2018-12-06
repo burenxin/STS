@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.AuctionTaskMapper">
+    <!--竞价任务数据库表与实体类字段对接-->
+    <resultMap id="AuctionTaskResultMap" type="cn.jzt56.singleticketsystem.entity.AuctionTask">
+        <id column="Bid_Task_Id" property="bidTaskId" jdbcType="VARCHAR"/>
+        <result column="Order_Id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="User_Id" property="userId" jdbcType="VARCHAR"/>
+        <result column="Total_Quantity" property="totalQuantity" jdbcType="VARCHAR"/>
+        <result column="Total_Volume" property="totalVolume" jdbcType="VARCHAR"/>
+        <result column="Total_Weight" property="totalWeight" jdbcType="VARCHAR"/>
+        <result column=" Proposed_Price" property="proposedPrice" jdbcType="VARCHAR"/>
+        <result column="Pick_Area" property="pickArea" jdbcType="VARCHAR"/>
+        <result column="Deliver__Area" property="deliverArea" jdbcType="VARCHAR"/>
+        <result column="Service_Time" property="serviceTime" jdbcType="VARCHAR"/>
+        <result column="Release_Time" property="releaseTime" jdbcType="VARCHAR"/>
+        <result column="SealedDisk_Time" property="sealedDiskTime" jdbcType="VARCHAR"/>
+        <result column="Bid_Status" property="bidStatus" jdbcType="VARCHAR"/>
+        <result column="Transaction_Price" property="transactionPrice" jdbcType="VARCHAR"/>
+        <result column="Task_Type" property="taskType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- 查询所有可竞价的任务单 -->
+    <select id="findAllCurrentTask" resultMap="AuctionTaskResultMap">
+        SELECT att.* FROM auction_task  att WHERE att.Bid_Task_Id
+	NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} )
+	AND att.Bid_Status='2'
+    </select>
+
+
+
+
+</mapper>

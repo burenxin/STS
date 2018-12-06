@@ -15,7 +15,7 @@ import java.util.Date;
  * Time: 13:51
  */
 @Data
-public class Carrierinfo implements Serializable {
+public class CarrierInfo implements Serializable {
 
     /** 承运商ID. */
     private String carrierId;

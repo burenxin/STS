@@ -5,6 +5,23 @@ spring:
     username: sts
     password: sts
     driver-class-name: com.mysql.jdbc.Driver
+
+    #配置初始化大小/最小/最大
+    initial-size: 1
+    min-idle: 1
+    max-active: 20
+    #获取连接等待超时时间
+    max-wait: 60000
+    #间隔多久进行一次检测，检测需要关闭的空闲连接
+    time-between-eviction-runs-millis: 60000
+
+#mybaatis分页插件pagehelper设置
+pagehelper:
+  pagehelperDialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  #params: count=countSql
+
 #访问配置
 server:
   port: 8080
@@ -15,8 +32,7 @@ server:
 logging:
   level:
     cn.jzt56.singleticketsystem.mapper: debug
-mybatis:
-  mapper-locations: classpath:mapper/UserinfoMapper.xml
 
-#mybatis:
-  #type-aliases-package: cn.jzt56.singleticketsystem.entity
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: cn.jzt56.singleticketsystem.entity
