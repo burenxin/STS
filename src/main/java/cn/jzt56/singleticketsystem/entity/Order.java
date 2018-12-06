@@ -29,5 +29,8 @@ public class Order implements Serializable{
     private String createdTime;//创建时间
     private String updatedTime;//更新时间
     private String remark;//备注
+    private String transportType;//运输类型
+    private String orderNum;//委托单号
+    private String signatureType;//签收单类型  0.无返单(默认) 1.传真返回 2.原件返回
 
 }
