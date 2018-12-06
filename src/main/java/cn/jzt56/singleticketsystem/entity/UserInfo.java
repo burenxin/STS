@@ -14,7 +14,7 @@ import java.util.Date;
  */
 
 @Data
-public class Userinfo implements Serializable {
+public class UserInfo implements Serializable {
 
     /** 用户ID. */
     private String userId;
@@ -25,7 +25,7 @@ public class Userinfo implements Serializable {
     /** 密码. */
     private String userPassword;
 
-    /** 用户类型(0委托方、1承运商、2管理方). */
+    /** 用户类型(0委托方、1内部承运商、2外部承运商、3管理员). */
     private String type;
 
     /** 状态(0可用、1不可用). */
