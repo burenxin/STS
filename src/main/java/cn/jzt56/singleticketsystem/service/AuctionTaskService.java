@@ -17,7 +17,14 @@ public interface AuctionTaskService {
      * @description ：查询所有可竞价任务
      * @author:lzy
      */
-    List<AuctionTask> findAllCurrentTask(String userId);
+    List<AuctionTask> findAllCurrentTask(AuctionTask auctionTask);
+
+    /**
+     * @method
+     * @description :查询当前用户已竞价任务
+     * @author:lzy
+     */
+    List<AuctionTask> findBidded(String userId);
 
     /**
      * @param bidTaskId
