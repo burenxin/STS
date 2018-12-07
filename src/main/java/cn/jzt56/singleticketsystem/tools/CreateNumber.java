@@ -18,7 +18,7 @@ public class CreateNumber {
             String number = sdf.toString().replace("-","").substring(3);
             return Type+number;
         }else{
-            //参数值传递有误
+            //参数值传递异常
             throw new Exception("单据类型错误，只能使用'RW'或'DD'作为参数传递");
         }
     }
