@@ -5,6 +5,7 @@ import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.service.BiddingDetailService;
+import cn.jzt56.singleticketsystem.tools.PageBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,15 +37,17 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/currentTask")
-    public List<AuctionTask> findAllCurrentTask(HttpServletRequest request){
+    public PageBean findAllCurrentTask(HttpServletRequest request,
+                                       AuctionTask auctionTask,
+                                       @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
+                                       @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize){
 
         //String userId=(String)request.getSession().getAttribute("userId");
-        AuctionTask auctionTask=new AuctionTask();
-        auctionTask.setPickArea("湖南");
+        auctionTask.setPickArea("湖北");
         auctionTask.setUserId("ui001");
-        List<AuctionTask> list=this.auctionTaskService.findAllCurrentTask(auctionTask);
-        log.info(list.toString());
-        return list;
+        PageBean pageBean=this.auctionTaskService.findAllCurrentTask(auctionTask,pageCode,pageSize);
+        log.info(pageBean.toString());
+        return pageBean;
     }
     /**
      * @method
@@ -83,7 +86,7 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/findBidded")
-    public List<AuctionTask> finDBidded(){
+    public List<AuctionTask> findBidded(){
         return this.auctionTaskService.findBidded("ui001");
     }
 

@@ -13,7 +13,7 @@
         <result column="Total_Weight" property="totalWeight" jdbcType="VARCHAR"/>
         <result column="Proposed_Price" property="proposedPrice" jdbcType="DECIMAL"/>
         <result column="Pick_Area" property="pickArea" jdbcType="VARCHAR"/>
-        <result column="Deliver__Area" property="deliverArea" jdbcType="VARCHAR"/>
+        <result column="Deliver_Area" property="deliverArea" jdbcType="VARCHAR"/>
         <result column="Service_Time" property="serviceTime" jdbcType="VARCHAR"/>
         <result column="Release_Time" property="releaseTime" jdbcType="VARCHAR"/>
         <result column="SealedDisk_Time" property="sealedDiskTime" jdbcType="VARCHAR"/>
@@ -25,21 +25,78 @@
 
 
     <!-- 查询所有可竞价的任务单 -->
-    <select id="findAllCurrentTask" resultMap="AuctionTaskResultMap">
+    <select id="findAllCurrentTask" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
         SELECT att.* FROM auction_task  att WHERE att.Bid_Task_Id
-        NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1') AND Bid_Status='1'
+        NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1')
+        AND Bid_Status='1' AND SealedDisk_Time>NOW()
+        <!-- 可竞价的任务单id -->
+        <if test="bidTaskId !=null">
+           AND Bid_Task_Id=#{bidTaskId}
+        </if>
+        <!-- 取货地址 -->
         <if test="pickArea  != null">
-            AND Pick_Area LIKE CONCAT(CONCAT('%', #{pickArea }),'%') OR Deliver_Area LIKE CONCAT(CONCAT('%', #{pickArea }),'%')
+            AND Pick_Area LIKE CONCAT('%', #{pickArea},'%')
         </if>
+        <!--配送地址 -->
         <if test="deliverArea  != null">
-            AND Pick_Area LIKE CONCAT(CONCAT('%', #{deliverArea }),'%') OR Deliver_Area LIKE CONCAT(CONCAT('%', #{deliverArea }),'%')
+            AND  Deliver_Area LIKE CONCAT(CONCAT('%', #{deliverArea}),'%')
         </if>
-        <if test="serviceTime !=null">
-            AND Service_Time &lt; #{serviceTime}
+        <!--件数 -->
+        <if test="totalQuantity !=null">
+            AND Total_Quantity=#{totalQuantity}
         </if>
-        <if test="taskType != null">
+        <!-- 类型 -->
+        <if test="taskType !=null">
             AND Task_Type=#{taskType}
         </if>
+        <!-- 时效 -->
+        <choose>
+            <when test="serviceTime==0">
+                AND Service_Time-72 &lt; NOW()
+            </when>
+            <when test="serviceTime==1">
+                AND 72 &lt;=Service_Time- NOW() &lt;=120
+            </when>
+            <when test="serviceTime==2">
+                AND 120 &lt;Service_Time- NOW()
+            </when>
+        </choose>
+        <!-- 体积 -->
+        <choose>
+            <when test="totalVolume==0">
+                AND Total_Volume &lt;10
+            </when>
+            <when test="totalVolume==1">
+                AND 10 &lt;=Total_Volume &lt;=100
+            </when>
+            <when test="totalVolume==2">
+                AND 100 &lt;Total_Volume
+            </when>
+        </choose>
+        <!-- 重量 -->
+        <choose>
+            <when test="totalWeight==0">
+                AND Total_Weight &lt;10
+            </when>
+            <when test="totalWeight==1">
+                AND 10 &lt;=Total_Weight &lt;=100
+            </when>
+            <when test="totalWeight==2">
+                AND 100 &lt;Total_Weight
+            </when>
+        </choose>
+        <!--参考价 -->
+        <choose>
+            <when test="proposedPrice==0">
+                AND Proposed_Price &lt;50
+            </when>
+            <when test="proposedPrice==1">
+                AND 50 &lt;=Proposed_Price &lt;=100
+            </when>
+            <when test="proposedPrice==2">
+                AND 100 &gt;Proposed_Price
+            </when>
+        </choose>
     </select>
     <!-- 查询正在竞价的任务单 -->
     <select id="findBidded" parameterType="String" resultMap="AuctionTaskResultMap">

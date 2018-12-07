@@ -2,6 +2,7 @@ package cn.jzt56.singleticketsystem.service;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.tools.PageBean;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface AuctionTaskService {
      * @description ：查询所有可竞价任务
      * @author:lzy
      */
-    List<AuctionTask> findAllCurrentTask(AuctionTask auctionTask);
+    PageBean findAllCurrentTask(AuctionTask auctionTask, int pageCode, int pageSize);
 
     /**
      * @method
