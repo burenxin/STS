@@ -24,9 +24,26 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     @Autowired
     private OrderMapper orderMapper;
 
+
+    /**
+     * @method
+     * @description :查询竞价任务
+     * @author:lzy
+     */
     @Override
-    public List<AuctionTask> findAllCurrentTask(String userId) {
-        return this.auctionTaskMapper.findAllCurrentTask( userId);
+    public List<AuctionTask> findAllCurrentTask(AuctionTask auctionTask) {
+        return this.auctionTaskMapper.findAllCurrentTask( auctionTask);
+    }
+    /**
+     * @method
+     * @description :查询当前用户的已竞价任务
+     * @author:lzy
+     */
+
+    @Override
+    public List <AuctionTask> findBidded(String userId) {
+
+        return this.auctionTaskMapper.findBidded(userId);
     }
 
     /**

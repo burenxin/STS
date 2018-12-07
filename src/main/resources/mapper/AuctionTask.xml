@@ -27,18 +27,26 @@
     <!-- 查询所有可竞价的任务单 -->
     <select id="findAllCurrentTask" resultMap="AuctionTaskResultMap">
         SELECT att.* FROM auction_task  att WHERE att.Bid_Task_Id
-	      NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1')
-          <if test="bidStatus  != null">
-              Bid_Status=#{bidStatus}
-          </if>
-          <if test="pickArea  != null">
-              AND Pick_Area LIKE CONCAT(CONCAT('%', #{pickArea }),'%')
-          </if>
-          <if test="deliverArea  != null">
-              AND Deliver_Area LIKE CONCAT(CONCAT('%', #{deliverArea }),'%')
-          </if>
-
+        NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1') AND Bid_Status='1'
+        <if test="pickArea  != null">
+            AND Pick_Area LIKE CONCAT(CONCAT('%', #{pickArea }),'%') OR Deliver_Area LIKE CONCAT(CONCAT('%', #{pickArea }),'%')
+        </if>
+        <if test="deliverArea  != null">
+            AND Pick_Area LIKE CONCAT(CONCAT('%', #{deliverArea }),'%') OR Deliver_Area LIKE CONCAT(CONCAT('%', #{deliverArea }),'%')
+        </if>
+        <if test="serviceTime !=null">
+            AND Service_Time &lt; #{serviceTime}
+        </if>
+        <if test="taskType != null">
+            AND Task_Type=#{taskType}
+        </if>
     </select>
+    <!-- 查询正在竞价的任务单 -->
+    <select id="findBidded" parameterType="String" resultMap="AuctionTaskResultMap">
+        SELECT att.* FROM auction_task att RIGHT  JOIN bidding_detail bd
+          ON att.Bid_Task_Id=bd.Bid_Task_Id WHERE  bd.User_Id =#{arg0} AND att.User_Id in ('',null)  AND bd.Status='1'
+    </select>
+
 
     <!-- 根据运输商id查询竞拍成功的订单 -->
     <select id="findAllSuccessCurrentTaskByUserId" parameterType="String" resultMap="AuctionTaskResultMap">

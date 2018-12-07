@@ -1,10 +1,14 @@
 package cn.jzt56.singleticketsystem.controller;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
+import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
+import cn.jzt56.singleticketsystem.service.BiddingDetailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,23 +22,69 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/auctionTask")
+@Slf4j
 public class AuctionTaskController {
 
     @Autowired
     private AuctionTaskService auctionTaskService;
+
+    @Autowired
+    private BiddingDetailService biddingDetailService;
     /**
      * @method
      * @description:获取所有可以竞价而未竞价任务
      * @author:lzy
      */
-
     @RequestMapping(value = "/currentTask")
     public List<AuctionTask> findAllCurrentTask(HttpServletRequest request){
 
         //String userId=(String)request.getSession().getAttribute("userId");
+        AuctionTask auctionTask=new AuctionTask();
+        auctionTask.setPickArea("湖南");
+        auctionTask.setUserId("ui001");
+        List<AuctionTask> list=this.auctionTaskService.findAllCurrentTask(auctionTask);
+        log.info(list.toString());
+        return list;
+    }
+    /**
+     * @method
+     * @description:竞价
+     * @author:lzy
+     */
+    @RequestMapping(value = "/auctionPrice")
+    public void  auctionPrice(@RequestParam String quotedPrice, @RequestParam String bidTaskId){
+        BiddingDetail biddingDetail=new BiddingDetail();
+        biddingDetail.setDetailId("di011");
+        biddingDetail.setUserId("ui001");
+        biddingDetail.setQuotedPrice(quotedPrice);
+        biddingDetail.setBidTaskId(bidTaskId);
+        log.info(quotedPrice+bidTaskId);
+        Boolean flage= this.biddingDetailService.addBidding(biddingDetail);
+        if(flage)
+            log.info(flage+"1");
 
-        return this.auctionTaskService.findAllCurrentTask("ui001");
-
+    }
+    /**
+     * @method
+     * @description:取消报价
+     * @author:lzy
+     */
+    @RequestMapping(value = "/cancelBidding")
+    public void  cancelBidding( @RequestParam String bidTaskId){
+        BiddingDetail biddingDetail=new BiddingDetail();
+        biddingDetail.setUserId("ui005");
+        biddingDetail.setBidTaskId(bidTaskId);
+        log.info(bidTaskId);
+        Boolean flage= this.biddingDetailService.cancelBidding(biddingDetail);
+    }
+    /**
+     * @method
+     * @description :获取当前已竞价任务
+     * @author:lzy
+     */
+    @RequestMapping(value = "/findBidded")
+    public List<AuctionTask> finDBidded(){
+        return this.auctionTaskService.findBidded("ui001");
     }
 
 

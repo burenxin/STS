@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.BiddingDetailMapper">
+    <!-- 当前用户不存在竞价就插入 -->
+    <insert id="addBiddingDetail" parameterType="cn.jzt56.singleticketsystem.entity.BiddingDetail">
+        INSERT INTO bidding_detail
+        (Detail_Id,Bid_Task_Id, User_Id, Quoted_Price,Participation_Time,STATUS)
+        SELECT #{detailId}, #{bidTaskId}, #{userId} ,#{quotedPrice},NOW(),'1'
+        FROM dual
+        WHERE NOT exists (select * from bidding_detail bd
+        where bd.Bid_Task_Id = #{bidTaskId} AND bd.User_Id=#{userId} AND Status='1' );
+    </insert>
+    <!--修改报价-->
+    <update id="updateQuotedPrice">
+        UPDATE  bidding_detail SET Quoted_Price=#{quotedPrice} WHERE Bid_Task_Id=#{bidTaskId} AND User_Id=#{userId} AND Status='1'
+    </update>
+    <!--取消报价-->
+    <update id="cancelBidding">
+        UPDATE  bidding_detail SET Status='0' WHERE Bid_Task_Id=#{bidTaskId} AND User_Id=#{userId} AND Status='1'
+    </update>
+</mapper>
