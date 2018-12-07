@@ -26,8 +26,9 @@
         <result column="Created_Time" property="createdTime" javaType="String"/>
         <result column="Updated_Time" property="updatedTime" javaType="String"/>
         <result column="Remark" property="remark" jdbcType="VARCHAR"/>
-        <result column="Goods_Name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="Goods_Type" property="goodsType" jdbcType="VARCHAR"/>
         <result column="Signature_Type" property="signatureType" jdbcType="VARCHAR"/>
+        <result column="order_Num" property="orderNum" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 查询所有 -->
@@ -44,11 +45,14 @@
         <if test="endArea != null">
             AND endArea   LIKE CONCAT('%', #{endArea}, '%')
         </if>
+        <if test="orderNum != null">
+            AND Order_Num   LIKE CONCAT('%', #{orderNum}, '%')
+        </if>
     </select>
 
     <!-- 根据id查询 -->
     <select id="findById" parameterType="String" resultMap="baseMap">
-        SELECT * FROM `order` WHERE Order_Id = #{orderId}
+        SELECT * FROM `order` WHERE Order_Num = #{orderNum}
     </select>
     <select id="findByUserId" parameterType="String" resultMap="baseMap">
         SELECT * FROM `order` WHERE User_Id = #{userId} and Status!='-1'
@@ -56,8 +60,8 @@
 
     <!-- 添加数据 -->
     <insert id="create" parameterType="cn.jzt56.singleticketsystem.entity.Order">
-        INSERT INTO `order`(User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Updated_Time,Remark,Goods_Name,Signature_Type)
-        VALUES(#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{updatedTime},#{remark},#{goodsName},#{signatureType})
+        INSERT INTO `order`(Order_Id,User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Updated_Time,Remark,Goods_Type,Signature_Type,Order_Num)
+        VALUES(#{orderId},#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{updatedTime},#{remark},#{goodsType},#{signatureType},#{orderNum})
     </insert>
 
     <!-- 更新数据 -->
@@ -77,12 +81,13 @@
             <if test="weight != null and weight!=''">Weight = #{weight}, </if>
             <if test="volume != null and volume!=''">Volume = #{volume}, </if>
             <if test="transportPrices != null and transportPrices!=''">Transport_Prices = #{transportPrices}, </if>
-            <if test="goodsName != null and goodsName!=''">Goods_Name = #{goodsName}, </if>
+            <if test="goodsType != null and goodsType!=''">Goods_Type = #{goodsType}, </if>
             <if test="signatureType != null and signatureType!=''">Signature_Type = #{signatureType}, </if>
             <if test="status != null and status!=''">Status = #{status}, </if>
             <if test="remark != null and remark!=''">Remark = #{remark}, </if>
             <if test="deliveryTime != null and deliveryTime!=''">Delivery_Time = #{deliveryTime}, </if>
             <if test="receivingTime!= null and receivingTime!=''">Receiving_Time = #{receivingTime}, </if>
+            <if test="orderNum!= null and orderNum!=''">order_Num = #{orderNum}, </if>
         </set>
         WHERE Order_Id = #{orderId}
     </update>

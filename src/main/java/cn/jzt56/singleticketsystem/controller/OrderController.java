@@ -95,12 +95,12 @@ public class OrderController {
     /**
      * 根据id查询
      *
-     * @param orderId
+     * @param orderNum
      * @return
      */
     @RequestMapping("/findById")
-    public List<Order> findById(@RequestParam(value = "orderId", required = false) String orderId) {
-        return orderService.findById(orderId);
+    public List<Order> findById(@RequestParam(value = "orderNum", required = false) String orderNum) {
+        return orderService.findById(orderNum);
     }
     @RequestMapping("/findByUserId")
     public List<Order> findByUserId(@RequestParam(value = "userId", required = false) String userId) {
