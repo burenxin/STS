@@ -1,4 +1,4 @@
-package cn.jzt56.singleticketsystem.log;
+package cn.jzt56.singleticketsystem.tools;
 
 
 import org.aspectj.lang.JoinPoint;
