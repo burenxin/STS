@@ -14,5 +14,6 @@ public interface OrderService extends BaseService<Order>{
      * @return
      */
     PageBean findByPage(Order order, int pageCode, int pageSize);
-    List<Order> findByUserId(String id);
+    PageBean findByUserId(Order order, int pageCode, int pageSize);
+    void deleteOrder(Order order);
 }

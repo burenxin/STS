@@ -26,7 +26,7 @@
         <result column="Created_Time" property="createdTime" javaType="String"/>
         <result column="Updated_Time" property="updatedTime" javaType="String"/>
         <result column="Remark" property="remark" jdbcType="VARCHAR"/>
-        <result column="Goods_Type" property="goodsType" jdbcType="VARCHAR"/>
+        <result column="Transport_Type" property="transportType" jdbcType="VARCHAR"/>
         <result column="Signature_Type" property="signatureType" jdbcType="VARCHAR"/>
         <result column="order_Num" property="orderNum" jdbcType="VARCHAR"/>
     </resultMap>
@@ -39,29 +39,33 @@
     <!-- 条件查询 -->
     <select id="findByPage" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
         SELECT * FROM `order` WHERE Status!='-1'
-        <if test="consignee != null">
+        <if test="consignee != null and consignee!=''">
             AND Consignee LIKE CONCAT('%', #{consignee}, '%')
         </if>
-        <if test="endArea != null">
+        <if test="endArea != null and endArea!=''">
             AND endArea   LIKE CONCAT('%', #{endArea}, '%')
         </if>
-        <if test="orderNum != null">
+        <if test="orderNum != null and orderNum!=''">
             AND Order_Num   LIKE CONCAT('%', #{orderNum}, '%')
         </if>
+        <if test="userId != null and userId!=''">
+            AND User_Id = #{userId}
+        </if>
+        ORDER BY Updated_Time
     </select>
 
     <!-- 根据id查询 -->
     <select id="findById" parameterType="String" resultMap="baseMap">
         SELECT * FROM `order` WHERE Order_Num = #{orderNum}
     </select>
-    <select id="findByUserId" parameterType="String" resultMap="baseMap">
+    <select id="findByUserId" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
         SELECT * FROM `order` WHERE User_Id = #{userId} and Status!='-1'
     </select>
 
     <!-- 添加数据 -->
     <insert id="create" parameterType="cn.jzt56.singleticketsystem.entity.Order">
-        INSERT INTO `order`(Order_Id,User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Updated_Time,Remark,Goods_Type,Signature_Type,Order_Num)
-        VALUES(#{orderId},#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{updatedTime},#{remark},#{goodsType},#{signatureType},#{orderNum})
+        INSERT INTO `order`(Order_Id,User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Remark,Transport_Type,Signature_Type,Order_Num,Updated_Time)
+        VALUES(#{orderId},#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{remark},#{transportType},#{signatureType},#{orderNum},#{updatedTime})
     </insert>
 
     <!-- 更新数据 -->
@@ -70,7 +74,7 @@
         <set>
             <if test="phoneNumConsignor != null and phoneNumConsignor!=''">  PhoneNum_Consignor =#{phoneNumConsignor},</if>
             <if test="consignor != null and consignor!=''">          Consignor = #{consignor},</if>
-            <if test="phoneNum_Consignee != null and consignor!=''"> PhoneNum_Consignee = #{phoneNumConsignee},</if>
+            <if test="phoneNumConsignee != null and phoneNumConsignee!=''"> PhoneNum_Consignee = #{phoneNumConsignee},</if>
             <if test="consignee != null and consignee!=''">          Consignee = #{consignee},</if>
             <if test="startArea != null and startArea!=''">StartArea = #{startArea}, </if>
             <if test="startAreaMx != null and startAreaMx!=''"> StartArea_mx = #{startAreaMx},  </if>
@@ -84,10 +88,11 @@
             <if test="goodsType != null and goodsType!=''">Goods_Type = #{goodsType}, </if>
             <if test="signatureType != null and signatureType!=''">Signature_Type = #{signatureType}, </if>
             <if test="status != null and status!=''">Status = #{status}, </if>
+            <if test="updatedTime != null and updatedTime!=''">Updated_Time = #{updatedTime}, </if>
             <if test="remark != null and remark!=''">Remark = #{remark}, </if>
             <if test="deliveryTime != null and deliveryTime!=''">Delivery_Time = #{deliveryTime}, </if>
             <if test="receivingTime!= null and receivingTime!=''">Receiving_Time = #{receivingTime}, </if>
-            <if test="orderNum!= null and orderNum!=''">order_Num = #{orderNum}, </if>
+            <if test="transportType != null and transportType!=''">Transport_Type = #{transportType}, </if>
         </set>
         WHERE Order_Id = #{orderId}
     </update>
@@ -96,7 +101,9 @@
     <update id="delete" parameterType="String">
         update `order` set Status='-1' WHERE Order_Id = #{id}
     </update>
-
+    <delete id="deleteOrder" parameterType="cn.jzt56.singleticketsystem.entity.Order">
+        delete FROM `order` WHERE Order_Id=#{orderId}
+    </delete>
     <!-- 根据任务单id获取任务单详情(订单列表) -->
     <select id="getTaskDetailsByBidTaskId" parameterType="String" resultMap="baseMap">
         SELECT *  FROM `order` o  WHERE o.Order_Id IN (

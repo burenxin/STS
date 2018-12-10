@@ -14,13 +14,15 @@ public interface OrderMapper {
     Page<Order> findByPage(Order order);
 
     List<Order> findById(String id);
-    List<Order> findByUserId(String id);
+    Page<Order> findByUserId(Order order);
 
     void create(Order order);
 
     void update(Order order);
 
     void delete(String id);
+
+    void deleteOrder(Order order);
 
 
     /**

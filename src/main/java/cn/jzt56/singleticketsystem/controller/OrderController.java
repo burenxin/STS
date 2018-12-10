@@ -34,7 +34,7 @@ public class OrderController {
      * @return
      */
     @RequestMapping("/findByConPage")
-    public PageBean findByConPage(Order order,
+    public PageBean findByConPage(@RequestBody Order order,
                                   @RequestParam(value = "pageCode", required = false) int pageCode,
                                   @RequestParam(value = "pageSize", required = false) int pageSize) {
         return orderService.findByPage(order, pageCode, pageSize);
@@ -75,7 +75,7 @@ public class OrderController {
     }
 
     /**
-     * 批量删除数据
+     * 批量删除数据(修改订单状态)
      *
      * @param ids
      * @return
@@ -90,7 +90,19 @@ public class OrderController {
             return new Result(false, "发生未知错误");
         }
     }
-
+    /**
+    删除订单
+     */
+    @RequestMapping("deleteOrder")
+    public Result deleteOrder(@RequestBody Order order) {
+        try {
+            orderService.deleteOrder(order);
+            return new Result(true, "订单删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "发生未知错误");
+        }
+    }
 
     /**
      * 根据id查询
@@ -103,7 +115,12 @@ public class OrderController {
         return orderService.findById(orderNum);
     }
     @RequestMapping("/findByUserId")
-    public List<Order> findByUserId(@RequestParam(value = "userId", required = false) String userId) {
-        return orderService.findByUserId(userId);
+//    public List<Order> findByUserId(@RequestParam(value = "userId", required = false) String userId) {
+//        return orderService.findByUserId(userId);
+//    }
+    public PageBean findByUserId(Order order,
+                                  @RequestParam(value = "pageCode", required = false) int pageCode,
+                                  @RequestParam(value = "pageSize", required = false) int pageSize) {
+        return orderService.findByUserId(order, pageCode, pageSize);
     }
 }

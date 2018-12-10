@@ -14,9 +14,8 @@ public class CreateNumber {
         //RW代表任务单，DD代表订单
         if(Type.equals("RW") || Type.equals("DD")){
             Date date = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
-            String number = sdf.format(date).replace("-","").substring(2);
-            return Type+number;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            return Type+sdf.format(date);
         }else{
             //参数值传递异常
             throw new Exception("单据类型错误，只能使用'RW'或'DD'作为参数传递");

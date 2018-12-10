@@ -1,6 +1,7 @@
 package cn.jzt56.singleticketsystem.service.impl;
 
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.tools.CreateUUID;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.OrderService;
@@ -9,6 +10,8 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,17 +28,29 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findById(String id) {
         return orderMapper.findById(id);
     }
-    @Override
-    public List<Order> findByUserId(String id) {
-        return orderMapper.findByUserId(id);
+
+    public PageBean findByUserId(Order order, int pageCode, int pageSize) {
+        PageHelper.startPage(pageCode, pageSize);
+        Page<Order> page = orderMapper.findByUserId(order);
+        return new PageBean(page.getTotal(), page.getResult());
     }
     @Override
     public void create(Order order) {
+        order.setOrderId(CreateUUID.getUUID32());
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        SimpleDateFormat sdg = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        order.setCreatedTime(sdg.format(date));
+        order.setUpdatedTime(sdg.format(date));
+        order.setOrderNum("DD"+sdf.format(date));
         orderMapper.create(order);
     }
 
     @Override
     public void update(Order order) {
+        Date date = new Date();
+        SimpleDateFormat sdg = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        order.setUpdatedTime(sdg.format(date));
         orderMapper.update(order);
     }
 
@@ -46,6 +61,9 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    public void deleteOrder(Order order) {
+        orderMapper.deleteOrder(order);
+    }
     /**
      * 分页查询-条件查询方法
      *
