@@ -5,11 +5,13 @@ import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.mapper.AuctionTaskMapper;
 import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
+import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@Component
 public class AuctionTaskServiceImpl implements AuctionTaskService {
 
     @Autowired
@@ -42,7 +45,7 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
 
         Page<AuctionTask> page=auctionTaskMapper.findAllCurrentTask(auctionTask);
 
-        log.info(page.getResult().toString()+pageCode+pageSize);
+        //log.info(page.getResult().toString()+pageCode+pageSize);
 
         return new PageBean(page.getTotal(),page.getResult());
     }
@@ -53,9 +56,13 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
      */
 
     @Override
-    public List <AuctionTask> findBidded(String userId) {
+    public PageBean findBidded(AuctionTaskView auctionTaskView,int pageCode, int pageSize) {
 
-        return this.auctionTaskMapper.findBidded(userId);
+        PageHelper.startPage(pageCode,pageSize);
+        auctionTaskView.setUserId("ui001");
+        Page<AuctionTaskView> page= this.auctionTaskMapper.findBidded(auctionTaskView);
+
+        return new PageBean(page.getTotal(),page.getResult());
     }
 
     /**
@@ -80,6 +87,7 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId) {
         return this.auctionTaskMapper.findAllSuccessCurrentTaskByUserId(userId);
     }
+
 
 
 }

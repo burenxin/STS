@@ -2,6 +2,7 @@ package cn.jzt56.singleticketsystem.mapper;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,7 +29,7 @@ public interface AuctionTaskMapper {
      * @description : 查询当前用户已竞价任务
      * @author:lzy
      */
-    List<AuctionTask> findBidded(String userId);
+    Page findBidded(AuctionTaskView auctionTaskView);
 
 
 //    /**
