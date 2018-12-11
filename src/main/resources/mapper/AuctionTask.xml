@@ -44,6 +44,8 @@
     </resultMap>
     <!-- 条件查询 -->
     <sql id="selectCondition">
+        <!-- 竞拍未截止的 -->
+        AND Release_Time &gt; NOW()-INTERVAL 2 HOUR AND Release_Time &lt; NOW()
         <!-- 可竞价的任务单id -->
         <if test="bidTaskId !=null">
             AND Bid_Task_Id=#{bidTaskId}
