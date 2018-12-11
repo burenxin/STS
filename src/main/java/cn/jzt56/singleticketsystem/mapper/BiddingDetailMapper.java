@@ -1,7 +1,10 @@
 package cn.jzt56.singleticketsystem.mapper;
 
 import cn.jzt56.singleticketsystem.entity.BiddingDetail;
+import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @ Author     ：lzy
@@ -30,4 +33,11 @@ public interface BiddingDetailMapper {
      * @author:lzy
      */
     int cancelBidding(BiddingDetail biddingDetail);
+
+    /**
+     * @method
+     * @description：竞价截止任务单号
+     */
+    List<AuctionTaskView> findBiddingEnd();
+
 }

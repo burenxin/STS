@@ -20,4 +20,11 @@
     <update id="cancelBidding">
         UPDATE  bidding_detail SET Status='0' WHERE Bid_Task_Id=#{bidTaskId} AND User_Id=#{userId} AND Status='1'
     </update>
+    <!--查询竞价任务-->
+    <select id="findBiddingEnd">
+        SELECT t1.Bid_Task_Id,t1.User_Id,t1.Quoted_Price FROM(
+            SELECT * FROM bidding_detail WHERE `Status`='1' AND Participation_Time + INTERVAL 2 HOUR>NOW()
+            ORDER BY Bid_Task_Id,Quoted_Price,Participation_Time
+         )t1  GROUP BY t1.Bid_Task_Id
+    </select>
 </mapper>

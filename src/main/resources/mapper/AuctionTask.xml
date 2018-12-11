@@ -70,10 +70,11 @@
                 AND Service_Time-INTERVAL 72 HOUR &lt; NOW()
             </when>
             <when test="serviceTime==1">
-                AND INTERVAL 72 HOUR &lt;=Service_Time- NOW() AND Service_Time- NOW() &lt;= INTERVAL 120 HOUR
+                AND
+                NOW()&lt;=Service_Time-INTERVAL 72 HOUR AND Service_Time-INTERVAL 120 HOUR &lt;= NOW()
             </when>
             <when test="serviceTime==2">
-                AND INTERVAL 120 HOUR &lt;Service_Time- NOW()
+                AND  NOW() &lt;Service_Time -INTERVAL 120 HOUR
             </when>
         </choose>
         <!-- 体积 -->
@@ -118,7 +119,7 @@
     <select id="findAllCurrentTask" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="auctionTaskResultMap">
         SELECT att.* FROM auction_task  att WHERE att.Bid_Task_Id
         NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1')
-        AND Bid_Status='1' AND SealedDisk_Time>NOW()
+        AND Bid_Status='1'
         <include refid="selectCondition"/>
     </select>
 
@@ -150,4 +151,15 @@
         AND
           User_Id = #{userId}
     </select>
+
+
+    <!-- 竞拍成功 -->
+    <update id="biddedSuccess" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">
+        UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status='2',User_Id=#{UserId} WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in ('',null) AND Bid_Status='1'
+    </update>
+    <!--流拍 -->
+    <update id="biddedFail" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">
+        UPDATE auction_task a1,auction_task a2 SET a1.Transaction_Price=a2.Proposed_Price,a1.Bid_Status='2',a1.User_Id=#{UserId} WHERE a1.Bid_Task_Id=a2.Bid_Task_Id
+        AND  a1.Bid_Task_Id=#{bidTaskId} AND a1.Proposed_Price &gt; #{quotedPrice} AND a1.User_Id in ('',null) AND a1.Bid_Status='1'
+    </update>
 </mapper>

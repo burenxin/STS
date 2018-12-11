@@ -41,10 +41,10 @@ public class AuctionTaskController {
     public PageBean findAllCurrentTask(HttpServletRequest request,
                                        AuctionTask auctionTask,
                                        @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
-                                       @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize){
+                                       @RequestParam(value = "pageSize",required = false,defaultValue = "1") int pageSize){
 
         //String userId=(String)request.getSession().getAttribute("userId");
-        auctionTask.setPickArea("湖北");
+        //auctionTask.setPickArea("湖北");
         auctionTask.setUserId("ui001");
         PageBean pageBean=this.auctionTaskService.findAllCurrentTask(auctionTask,pageCode,pageSize);
         log.info(pageBean.toString());

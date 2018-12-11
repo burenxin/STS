@@ -49,6 +49,17 @@ public interface AuctionTaskMapper {
      */
     List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId);
 
-
+    /**
+     * @method
+     * @description :竞拍成功
+     * @author:lzy
+     */
+    int biddedSuccess(AuctionTaskView auctionTaskView);
+    /**
+     * @method
+     * @description ：竞价失败
+     * @author:lzy
+     */
+    int biddedFail(AuctionTaskView auctionTaskView);
 
 }
