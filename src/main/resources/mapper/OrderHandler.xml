@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="gb2312" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.OrderHandlerMapper">
+
+    <resultMap id="OrderResultsByCondition" type="cn.jzt56.singleticketsystem.entity.Order">
+        <id property="orderId" column="Order_Id"></id>
+        <result property="consignor" column="Consignor"></result>
+        <result property="goodsCount" column="Goods_Count"></result>
+        <result property="goodsType" column="Goods_Type"></result>
+        <result property="startArea" column="StartArea"></result>
+        <result property="endArea" column="EndArea"></result>
+        <result property="volume" column="Volume"></result>
+        <result property="weight" column="Weight"></result>
+        <result property="receivingTime" column="Receiving_Time"></result>
+        <result property="remark" column="Remark"></result>
+        <result property="transportType" column="Transport_Type"></result>
+        <result property="orderNum" column="Order_Num"></result>
+        <result property="signatureType" column="Signature_Type"></result>
+    </resultMap>
+
+    <resultMap id="OrderResultsById" type="cn.jzt56.singleticketsystem.entity.Order">
+        <id property="orderId" column="Order_Id"></id>
+
+        <result property="goodsCount" column="Goods_Count"></result>
+
+        <result property="startArea" column="StartArea"></result>
+        <result property="endArea" column="EndArea"></result>
+        <result property="volume" column="Volume"></result>
+        <result property="weight" column="Weight"></result>
+        <result property="receivingTime" column="Receiving_Time"></result>
+        <result property="transportPrices" column="Transport_Prices"></result>
+        <result property="transportType" column="Transport_Type"></result>
+        <result property="signatureType" column="Signature_Type"></result>
+    </resultMap>
+
+    <!--查询可用委托方ID-->
+    <!--
+    <select id="findUserIdByUserName" resultType="String" parameterType="String">
+        SELECT User_Id From user_info WHERE TYPE = '0' AND STATUS = '0' AND User_Name = #{userName};
+    </select>
+    -->
+
+    <!--按时间段或运输类型查询未打包订单-->
+    <select id="findOrderByCondition" resultMap="OrderResultsByCondition" parameterType="String">
+        SELECT * FROM `order`
+        WHERE `Status` = '0'
+        <if test="startTime != null">
+            AND Created_Time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND #{endTime} >= Created_Time
+        </if>
+        <if test="transportType != null">
+            AND Transport_Type = #{transportType}
+        </if>
+    </select>
+
+    <!--按id查询准备合单的订单信息-->
+    <select id="findOrdersById" parameterType="String" resultMap="OrderResultsById">
+        SELECT * FROM `order` WHERE Order_Id = #{orderId};
+    </select>
+
+    <!--按id将订单的状态设为1（已合单）-->
+    <update id="modifyStatus" parameterType="String">
+        UPDATE `order` SET `Status` = '1' WHERE Order_Id = #{orderId};
+    </update>
+
+    <!---->
+
+    <!--订单打包生成任务单-->
+    <insert id="buildTask" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" >
+        INSERT INTO auction_task
+        (Bid_Task_Id,Ord_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,Service_Time,Bid_Status,Task_Type,Bid_Task_Num)
+        VALUES
+        (#{bidTaskId},#{orderId},#{totalQuantity},#{totalVolume},#{totalWeight},#{proposedPrice},#{pickArea},#{deliverArea},#{serviceTime},#{bidStatus},#{taskType},#{bidTaskNum});
+    </insert>
+
+</mapper>
