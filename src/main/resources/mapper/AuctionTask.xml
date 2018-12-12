@@ -176,4 +176,8 @@
                 LENGTH(p.Ord_Id) - LENGTH(  REPLACE (p.Ord_Id, ',', '')  ) + 1 )
         where p.Bid_Task_Id = #{bid_Task_Id} )
     </update>
+
+    <select id="id">
+        select * from User_Info
+    </select>
 </mapper>
