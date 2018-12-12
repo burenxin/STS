@@ -154,8 +154,7 @@
           User_Id = #{userId}
     </select>
 
-
-    <!-- 竞拍成功 -->
+    <!-- 竞拍成功001 -->
     <update id="biddedSuccess" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">
         UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status='2',User_Id=#{UserId} WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in ('',null) AND Bid_Status='1'
     </update>
