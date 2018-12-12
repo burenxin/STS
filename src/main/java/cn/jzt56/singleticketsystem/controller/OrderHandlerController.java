@@ -29,7 +29,7 @@ public class OrderHandlerController {
 
     /**
      * 查询订单列表
-     * @param jsonStr  json字符串
+     * @param jsonStr  json字符串参数
      * @return 订单列表
      */
     @RequestMapping(value = "/findOrders",method= RequestMethod.POST)
@@ -39,14 +39,16 @@ public class OrderHandlerController {
 //        mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
 //        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 //        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        //序列化字符串
         JsonNode rootNode = mapper.readTree(jsonStr);
 
+        //去掉jackson转换字符串时加的双引号
         String startTime = mapper.writeValueAsString(rootNode.path("startTime")).replace("\"","");
         String endTime = mapper.writeValueAsString(rootNode.path("endTime")).replace("\"","");
         String transportType = mapper.writeValueAsString(rootNode.path("transportType")).replace("\"","");
         String pageCodeStr = mapper.writeValueAsString(rootNode.path("pageCode"));
         String pageSizeStr = mapper.writeValueAsString(rootNode.path("pageSize"));
-
+        //字符串转换成整型
         int pageCode = Integer.parseInt(pageCodeStr);
         int pageSize = Integer.parseInt(pageSizeStr);
 

@@ -6,6 +6,11 @@
     <resultMap id="OrderResultsByCondition" type="cn.jzt56.singleticketsystem.entity.Order">
         <id property="orderId" column="Order_Id"></id>
         <result property="consignor" column="Consignor"></result>
+        <result property="consignee" column="Consignee"></result>
+        <result property="phoneNumConsignor" column="PhoneNum_Consignor"></result>
+        <result property="phoneNumConsignee" column="PhoneNum_Consignee"></result>
+        <result property="deliveryTime" column="Delivery_Time"></result>
+        <result property="transportPrices" column="Transport_Prices"></result>
         <result property="goodsCount" column="Goods_Count"></result>
         <result property="goodsType" column="Goods_Type"></result>
         <result property="startArea" column="StartArea"></result>
@@ -45,13 +50,13 @@
     <select id="findOrderByCondition" resultMap="OrderResultsByCondition" parameterType="String">
         SELECT * FROM `order`
         WHERE `Status` = '0'
-        <if test="startTime != null">
+        <if test="startTime != 'null' and startTime != ''">
             AND Created_Time >= #{startTime}
         </if>
-        <if test="endTime != null">
+        <if test="endTime != 'null' and endTime != ''">
             AND #{endTime} >= Created_Time
         </if>
-        <if test="transportType != null">
+        <if test="transportType != 'null' and transportType != ''">
             AND Transport_Type = #{transportType}
         </if>
     </select>

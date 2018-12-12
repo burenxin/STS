@@ -30,7 +30,9 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
     @Override
     public PageBean findOrderByCondition(String startTime, String endTime, String transportType,int pageCode,int pageSize) {
         //扩大检索范围为最后一天24:00截至
-        endTime += " 23:59:59";
+        if(endTime != null && !endTime.equals("")) {
+            endTime += " 23:59:59";
+        }
         //启用PageHelper
         PageHelper.startPage(pageCode,pageSize);
         Page<Order> orderList  = orderHandlerMapper.findOrderByCondition(startTime, endTime, transportType);
