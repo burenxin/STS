@@ -32,4 +32,5 @@ public class AuctionTask implements Serializable {
     private String bidTaskNum;//任务单号
 
 
+
 }

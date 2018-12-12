@@ -32,4 +32,8 @@ public interface OrderMapper {
      * @author: CHENG QI
      */
     List<Order> getTaskDetailsByBidTaskId(String bidTaskId);
+
+    List<Order> getTaskDetailsByBidTaskIdjjy(String bidTaskId);
+
+    List<Order> getTaskDetailsByBidTaskIdjjjg(String bidTaskId);
 }

@@ -2,8 +2,6 @@ package cn.jzt56.singleticketsystem.mapper;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
-import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
-import cn.jzt56.singleticketsystem.tools.PageBean;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -22,14 +20,14 @@ public interface AuctionTaskMapper {
      * @description ：查询竞价任务
      * @author:lzy
      */
-    Page<AuctionTask> findAllCurrentTask(AuctionTask auctionTask);
+    List<AuctionTask> findAllCurrentTask(AuctionTask auctionTask);
 
     /**
      * @method
      * @description : 查询当前用户已竞价任务
      * @author:lzy
      */
-    Page findBidded(AuctionTaskView auctionTaskView);
+    List<AuctionTask> findBidded(String userId);
 
 
 //    /**
@@ -49,17 +47,33 @@ public interface AuctionTaskMapper {
      */
     List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId);
 
-    /**
-     * @method
-     * @description :竞拍成功
-     * @author:lzy
-     */
-    int biddedSuccess(AuctionTaskView auctionTaskView);
-    /**
-     * @method
-     * @description ：竞价失败
-     * @author:lzy
-     */
-    int biddedFail(AuctionTaskView auctionTaskView);
 
+    /**
+     * 分页实现模糊查询竞拍成功的任务单
+     * @author CHENG QI
+     */
+    Page<AuctionTask> findSuccessByPage(AuctionTask auctionTask);
+
+    /**
+     * @description : 根据运输商id查询所属任务单
+     * @param userId
+     * @return
+     * @author : CHENG QI
+     */
+    List<AuctionTask> findAllCurrentTaskByUserId(String userId);
+
+    /**
+     * @description 分页实现历史任务单模糊查询
+     * @param auctionTask
+     * @return
+     * @author : CHENG QI
+     */
+    Page<AuctionTask> findHistoryByPage(AuctionTask auctionTask);
+
+    /**
+     * @description 修改任务单状态，同时修改任务单包含的订单的订单状态
+     * @param bidTaskId
+     * @author ：CHENG QI
+     */
+     int updateTaskStatusByTaskId(String bidTaskId);
 }

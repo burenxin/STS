@@ -64,26 +64,22 @@ public class UserinfoController {
         return "删除成功 UserId = "+UserId;
     }
 
-    //    http://10.2.65.53:8080/STS/userinfo/login?UserName=李四&UserPassword=123
-    //    ,produces={"application/json;charset=UTF-8"}
-
+    //    http://10.2.65.67:8080/STS/userinfo/login
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public String login(@RequestBody UserInfo Userinfo, HttpServletRequest request){
+    public UserInfo login(@RequestBody UserInfo Userinfo, HttpServletRequest request){
         log.info(Userinfo.toString());
         UserInfo userinfo = userinfoService.getUserinfoByUserName(Userinfo.getUserName());
         if(Userinfo == null){
             log.info("用户不存在");
-            return "用户名不存在";
+            return Userinfo;
         }else if(!userinfo.getUserPassword().equals(Userinfo.getUserPassword())){
             log.info("密码错误");
-            return "密码错误";
+            return Userinfo;
         }
         request.getSession().setAttribute("UserInfo",userinfo);
         if(userinfo.getType() == "0"){
-
         }
-        return "登录成功";
-
+        return userinfo;
     }
 
 }

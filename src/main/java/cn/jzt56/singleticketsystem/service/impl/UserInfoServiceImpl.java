@@ -53,9 +53,10 @@ public class UserInfoServiceImpl implements IUserInfoService {
      * @param UserId
      */
     @Override
-    public void removeUserinfoByUserId(String UserId) {
+    public int removeUserinfoByUserId(String UserId) {
         log.info("根据用户id删除用户信息");
-        service.removeUserinfoByUserId(UserId);
+        int i = service.removeUserinfoByUserId(UserId);
+        return i;
     }
 
     /**

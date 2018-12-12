@@ -5,7 +5,6 @@ import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.service.BiddingDetailService;
-import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +37,15 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/currentTask")
-    public PageBean findAllCurrentTask(HttpServletRequest request,
-                                       AuctionTask auctionTask,
-                                       @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
-                                       @RequestParam(value = "pageSize",required = false,defaultValue = "1") int pageSize){
+    public List<AuctionTask> findAllCurrentTask(HttpServletRequest request){
 
         //String userId=(String)request.getSession().getAttribute("userId");
-        //auctionTask.setPickArea("湖北");
+        AuctionTask auctionTask=new AuctionTask();
+        auctionTask.setPickArea("湖南");
         auctionTask.setUserId("ui001");
-        PageBean pageBean=this.auctionTaskService.findAllCurrentTask(auctionTask,pageCode,pageSize);
-        log.info(pageBean.toString());
-        return pageBean;
+        List<AuctionTask> list=this.auctionTaskService.findAllCurrentTask(auctionTask);
+        log.info(list.toString());
+        return list;
     }
     /**
      * @method
@@ -87,10 +84,8 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/findBidded")
-    public PageBean findBidded(AuctionTaskView auctionTaskView,
-                               @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
-                               @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize){
-        return this.auctionTaskService.findBidded(auctionTaskView,pageCode,pageSize);
+    public List<AuctionTask> finDBidded(){
+        return this.auctionTaskService.findBidded("ui001");
     }
 
 
@@ -102,19 +97,99 @@ public class AuctionTaskController {
      * @description ：根据任务单号查询任务单详情
      * @author: CHENG QI
      */
-    // http://localhost:8080/STS/auctionTask/getTaskDetail?bidTaskId='bt005'
+    // http://localhost:8080/STS/auctionTask/getTaskDetail?bidTaskId=bt005
     @RequestMapping(value = "/getTaskDetail")
-    public Object getTaskDetailsByBidTaskId(String bidTaskId){
+    public Object getTaskDetailsByBidTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
         List<Order> list = auctionTaskService.getTaskDetailsByBidTaskId(bidTaskId);
         if (list.size() == 0){
             return "订单详情不存在，请检查订单是否出错";
         }
         return list;
     }
+    //竞价页面-根据任务单号查询任务单详情
+    @RequestMapping(value = "/getTaskDetailjjy")
+    public Object getTaskDetailsByBidTaskIdjjy(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
+        List<Order> list = auctionTaskService.getTaskDetailsByBidTaskIdjjy(bidTaskId);
+        if (list.size() == 0){
+            return "订单详情不存在，请检查订单是否出错";
+        }
+        return list;
+    }
 
-    // http://localhost:8080/STS/auctionTask/findSuccessCurrentTaskByUserId?userId='1001'
+    @RequestMapping(value = "/getTaskDetailjjjg")
+    public Object getTaskDetailsByBidTaskIdjjjg(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
+        List<Order> list = auctionTaskService.getTaskDetailsByBidTaskIdjjjg(bidTaskId);
+        if (list.size() == 0){
+            return "订单详情不存在，请检查订单是否出错";
+        }
+        return list;
+    }
+
+
+
+    /**
+     *
+     * @param userId
+     * @return List<AuctionTask>
+     * @description ：根据运输商id查询竞拍成功的任务单
+     * @author: CHENG QI
+     */
+    // http://localhost:8080/STS/auctionTask/findSuccessCurrentTaskByUserId?userId=1001
     @RequestMapping(value = "/findSuccessCurrentTaskByUserId")
-    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId){
+    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(@RequestParam(value = "userId", required = false) String userId){
         return auctionTaskService.findAllSuccessCurrentTaskByUserId(userId);
+    }
+
+    /**
+     * 分页实现任务单模糊查询
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("/findSuccessByPage")
+    public PageBean findSuccessByPage(AuctionTask auctionTask,
+                                  @RequestParam(value = "pageCode", required = false,defaultValue = "1") int pageCode,
+                                  @RequestParam(value = "pageSize", required = false,defaultValue = "1") int pageSize) {
+        return auctionTaskService.findSuccessByPage(auctionTask, pageCode, pageSize);
+    }
+
+    /**
+     * @param userId
+     * @return List<AuctionTask>
+     * @description : 根据运输商id查询所属任务单
+     * @author: CHENG QI
+     */
+    // http://localhost:8080/STS/auctionTask/findAllCurrentTaskByUserId?userId=1001
+    @RequestMapping(value = "findAllCurrentTaskByUserId")
+    public List<AuctionTask> findAllCurrentTaskByUserId(@RequestParam(value = "userId", required = false) String userId){
+        return auctionTaskService.findAllCurrentTaskByUserId(userId);
+    }
+
+    /**
+     * @description 分页实现历史任务单模糊查询
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @return
+     * @author : CHENG QI
+     */
+    // http://localhost:8080/STS/auctionTask/findHistoryByPage?userId=1001
+    @RequestMapping("/findHistoryByPage")
+    public PageBean findHistoryByPage(AuctionTask auctionTask,
+                                      @RequestParam(value = "pageCode", required = false,defaultValue = "1") int pageCode,
+                                      @RequestParam(value = "pageSize", required = false,defaultValue = "2") int pageSize) {
+        auctionTask.setTaskType("1");
+        return auctionTaskService.findHistoryByPage(auctionTask, pageCode, pageSize);
+    }
+
+    @RequestMapping("/updateTaskStatusByTaskId")
+    public String updateTaskStatusByTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
+        int i = auctionTaskService.updateTaskStatusByTaskId(bidTaskId);
+        if (i>0) {
+            return "success";
+        }else {
+            return "false";
+        }
     }
 }

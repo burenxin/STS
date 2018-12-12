@@ -2,8 +2,8 @@ package cn.jzt56.singleticketsystem.service;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
-import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
+import com.github.pagehelper.Page;
 
 import java.util.List;
 
@@ -19,14 +19,14 @@ public interface AuctionTaskService {
      * @description ：查询所有可竞价任务
      * @author:lzy
      */
-    PageBean findAllCurrentTask(AuctionTask auctionTask, int pageCode, int pageSize);
+    List<AuctionTask> findAllCurrentTask(AuctionTask auctionTask);
 
     /**
      * @method
      * @description :查询当前用户已竞价任务
      * @author:lzy
      */
-   PageBean findBidded(AuctionTaskView auctionTaskView, int pageCode, int pageSize);
+    List<AuctionTask> findBidded(String userId);
 
     /**
      * @param bidTaskId
@@ -36,6 +36,9 @@ public interface AuctionTaskService {
      */
     List<Order> getTaskDetailsByBidTaskId(String bidTaskId);
 
+    List<Order> getTaskDetailsByBidTaskIdjjy(String bidTaskId);
+
+    List<Order> getTaskDetailsByBidTaskIdjjjg(String bidTaskId);
     /**
      * @param userId
      * @return List<AuctionTask>
@@ -43,4 +46,41 @@ public interface AuctionTaskService {
      * @author : CHENG QI
      */
     List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId);
+
+
+    /**
+     *
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @description :分页实现任务单模糊查询
+     * @author CHENG QI
+     * @return
+     */
+    PageBean findSuccessByPage(AuctionTask auctionTask, int pageCode, int pageSize);
+
+    /**
+     * @description : 根据运输商id查询所属任务单
+     * @param userId
+     * @return
+     * @author : CHENG QI
+     */
+    List<AuctionTask> findAllCurrentTaskByUserId(String userId);
+
+    /**
+     * @description 分页实现历史任务单模糊查询
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @return
+     * @author : CHENG QI
+     */
+    PageBean findHistoryByPage(AuctionTask auctionTask, int pageCode, int pageSize);
+
+    /**
+     * @description 修改任务单状态，同时修改任务单包含的订单的订单状态
+     * @param bidTaskId
+     * @author ：CHENG QI
+     */
+    int updateTaskStatusByTaskId(String bidTaskId);
 }
