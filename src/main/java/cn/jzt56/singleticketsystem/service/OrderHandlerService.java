@@ -17,4 +17,10 @@ public interface OrderHandlerService {
 
     //订单打包生成任务单
     public Integer buildTask(String[] orderIds);
+
+    //发布任务单
+    public Integer taskIssue(String[] taskIds);
+
+    //关联查询任务单和订单
+    public PageBean findTaskByCondition(AuctionTask auctionTask,int pageCode,int pageSize);
 }

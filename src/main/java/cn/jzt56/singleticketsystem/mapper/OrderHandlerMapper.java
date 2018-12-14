@@ -3,6 +3,7 @@ package cn.jzt56.singleticketsystem.mapper;
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,14 +20,31 @@ public interface OrderHandlerMapper {
     //按时间段或运输类型查询订单
     public Page<Order> findOrderByCondition(@Param("startTime") String startTime,
                                             @Param("endTime") String endTime,
-                                            @Param("transportType") String transportType);
+                                            @Param("transportType") String transportType,
+                                            @Param("status") String status);
 
     //按订单id查询订单
     public Order findOrdersById(String orderId);
 
-    //按id修改订单状态为已合单
-    public Integer modifyStatus(String orderId);
+//    //按id修改订单状态为已合单
+//    public Integer modifyStatus(String orderId);
 
     //生成任务单
     public Integer buildTask(AuctionTask auctionTask);
+
+
+
+//    //按任务单id查询任务单中的ord_Id
+//    public String findOrdId(String taskId);
+
+    //订单修改task_Id字段
+    public Integer modifyOrder(@Param(value = "status") String status,
+                               @Param(value = "taskId") String taskId,
+                               @Param(value = "orderId") String orderId);
+
+    //发布任务单
+    public Integer taskIssue(AuctionTask auctionTask);
+
+    //关联查询任务单和订单
+    public Page<AuctionTask> findTaskByCondition(AuctionTask auctionTask);
 }

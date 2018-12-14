@@ -1,6 +1,7 @@
 package cn.jzt56.singleticketsystem.controller;
 
 
+import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.service.OrderHandlerService;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import cn.jzt56.singleticketsystem.tools.Result;
@@ -29,7 +30,7 @@ public class OrderHandlerController {
 
     /**
      * 查询订单列表
-     * @param jsonStr  json字符串
+     * @param jsonStr  json字符串参数
      * @return 订单列表
      */
     @RequestMapping(value = "/findOrders",method= RequestMethod.POST)
@@ -39,14 +40,16 @@ public class OrderHandlerController {
 //        mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
 //        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 //        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        //序列化字符串
         JsonNode rootNode = mapper.readTree(jsonStr);
 
+        //去掉jackson转换字符串时加的双引号
         String startTime = mapper.writeValueAsString(rootNode.path("startTime")).replace("\"","");
         String endTime = mapper.writeValueAsString(rootNode.path("endTime")).replace("\"","");
         String transportType = mapper.writeValueAsString(rootNode.path("transportType")).replace("\"","");
         String pageCodeStr = mapper.writeValueAsString(rootNode.path("pageCode"));
         String pageSizeStr = mapper.writeValueAsString(rootNode.path("pageSize"));
-
+        //字符串转换成整型
         int pageCode = Integer.parseInt(pageCodeStr);
         int pageSize = Integer.parseInt(pageSizeStr);
 
@@ -75,5 +78,46 @@ public class OrderHandlerController {
             result.setMessage("打包失败，未知异常");
         }
         return result;
+    }
+    /**
+     * 任务单发布
+     * @param taskIds 需要打包的订单Id
+     * @return 订单列表
+     */
+    @RequestMapping(value = "/taskIssue")
+    @ResponseBody
+    public Result taskIssue(@RequestBody String[] taskIds){
+        Result result = new Result();
+        Integer count =  orderHandlerService.taskIssue(taskIds);
+        if (count == 1){
+            result.setSuccess(true);
+            result.setMessage("发布成功");
+        }else{
+            result.setSuccess(false);
+            result.setMessage("发布失败");
+        }
+        return result;
+    }
+
+    /**
+     * 任务单查询
+     * @param jsonStr 查询条件以及分页
+     * @return 任务单列表
+     */
+    @RequestMapping(value = "/findTask")
+    @ResponseBody
+    public PageBean findTask(@RequestBody String jsonStr) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        //序列化字符串
+        JsonNode rootNode = mapper.readTree(jsonStr);
+        String pageCodeStr = mapper.writeValueAsString(rootNode.path("pageCode"));
+        String pageSizeStr = mapper.writeValueAsString(rootNode.path("pageSize"));
+        //字符串转换成整型
+        int pageCode = Integer.parseInt(pageCodeStr);
+        int pageSize = Integer.parseInt(pageSizeStr);
+        //去掉jackson带的双引号
+        String auctionTaskJson = mapper.writeValueAsString(rootNode.path("auctionTask")).replace("\"","");
+        AuctionTask auctionTask = mapper.readValue(auctionTaskJson, AuctionTask.class);
+        return orderHandlerService.findTaskByCondition(auctionTask,pageCode,pageSize);
     }
 }

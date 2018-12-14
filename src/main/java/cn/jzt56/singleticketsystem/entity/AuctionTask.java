@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ Author     ：lzy
@@ -30,7 +31,7 @@ public class AuctionTask implements Serializable {
     private BigDecimal	transactionPrice;//竞拍成功价
     private String	taskType		;//任务类型
     private String bidTaskNum;//任务单号
-
+    private List<Order> orderList;//多个订单对象
 
 
 }
