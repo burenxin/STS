@@ -39,6 +39,53 @@
         <result property="signatureType" column="Signature_Type"></result>
     </resultMap>
 
+    <resultMap id="TaskResultsByCondition" type="cn.jzt56.singleticketsystem.entity.AuctionTask">
+        <id property="bidTaskId" column="Bid_Task_Id"></id>
+        <result property="orderId" column="Ord_Id"></result>
+        <result property="userId" column="auc_User_Id"></result>
+        <result property="totalQuantity" column="Total_Quantity"></result>
+        <result property="totalVolume" column="Total_Volume"></result>
+        <result property="totalWeight" column="Total_Weight"></result>
+        <result property="proposedPrice" column="Proposed_Price"></result>
+        <result property="pickArea" column="Pick_Area"></result>
+        <result property="deliverArea" column="Deliver_Area"></result>
+        <result property="serviceTime" column="Service_Time"></result>
+        <result property="releaseTime" column="Release_Time"></result>
+        <result property="sealedDiskTime" column="SealedDisk_Time"></result>
+        <result property="bidStatus" column="Bid_Status"></result>
+        <result property="transactionPrice" column="Transaction_Price"></result>
+        <result property="taskType" column="Task_Type"></result>
+        <result property="bidTaskNum" column="Bid_Task_Num"></result>
+        <collection property="orderList" column="task_Id" javaType="ArrayList" ofType="cn.jzt56.singleticketsystem.entity.Order">
+            <id property="orderId" column="Order_Id"></id>
+            <result property="userId" column="ord_User_Id"></result>
+            <result property="phoneNumConsignor" column="PhoneNum_Consignor"></result>
+            <result property="consignor" column="Consignor"></result>
+            <result property="phoneNumConsignee" column="PhoneNum_Consignee"></result>
+            <result property="consignee" column="Consignee"></result>
+            <result property="startArea" column="StartArea"></result>
+            <result property="startAreaMx" column="StartArea_mx"></result>
+            <result property="endArea" column="EndArea"></result>
+            <result property="endAreaMx" column="EndArea_mx"></result>
+            <result property="transportType" column="Transport_Type"></result>
+            <result property="goodsCount" column="Goods_Count"></result>
+            <result property="volume" column="Volume"></result>
+            <result property="weight" column="Weight"></result>
+            <result property="deliveryTime" column="Delivery_Time"></result>
+            <result property="receivingTime" column="Receiving_Time"></result>
+            <result property="transportPrices" column="Transport_Prices"></result>
+            <result property="status" column="Status"></result>
+            <result property="createdTime" column="Created_Time"></result>
+            <result property="updatedTime" column="Updated_Time"></result>
+            <result property="remark" column="Remark"></result>
+            <result property="goodsType" column="Goods_Type"></result>
+            <result property="signatureType" column="Signature_Type"></result>
+            <result property="orderNum" column="Order_Num"></result>
+        </collection>
+    </resultMap>
+
+
+
     <!--查询可用委托方ID-->
     <!--
     <select id="findUserIdByUserName" resultType="String" parameterType="String">
@@ -49,7 +96,7 @@
     <!--按时间段或运输类型查询未打包订单-->
     <select id="findOrderByCondition" resultMap="OrderResultsByCondition" parameterType="String">
         SELECT * FROM `order`
-        WHERE `Status` = '0'
+        WHERE `Status` = #{status}
         <if test="startTime != 'null' and startTime != ''">
             AND Created_Time >= #{startTime}
         </if>
@@ -66,19 +113,61 @@
         SELECT * FROM `order` WHERE Order_Id = #{orderId};
     </select>
 
-    <!--按id将订单的状态设为1（已合单）-->
-    <update id="modifyStatus" parameterType="String">
-        UPDATE `order` SET `Status` = '1' WHERE Order_Id = #{orderId};
-    </update>
-
-    <!---->
 
     <!--订单打包生成任务单-->
-    <insert id="buildTask" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" >
+    <insert  id="buildTask" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" >
+        <!--
+            插入数据之前
+            在mysql中生成uuid后封装到auctionTask对象的bidTaskId中
+        -->
+        <selectKey  order="BEFORE" resultType="String" keyProperty="bidTaskId">
+            SELECT REPLACE(uuid(), '-', '');
+        </selectKey>
+
         INSERT INTO auction_task
         (Bid_Task_Id,Ord_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,Service_Time,Bid_Status,Task_Type,Bid_Task_Num)
         VALUES
         (#{bidTaskId},#{orderId},#{totalQuantity},#{totalVolume},#{totalWeight},#{proposedPrice},#{pickArea},#{deliverArea},#{serviceTime},#{bidStatus},#{taskType},#{bidTaskNum});
     </insert>
 
+
+    <!--按任务单id查询任务单中的ord_Id-->
+    <!--
+    <select id="findOrdId" resultType="String" parameterType="String">
+        SELECT ord_Id FROM auction_task WHERE Bid_Task_Id = #{taskId}
+    </select>
+    -->
+
+    <!--订单修改task_Id和status字段-->
+    <update id="modifyOrder" parameterType="String">
+        UPDATE `order` SET `Status` = #{status},task_Id = #{taskId} WHERE Order_Id = #{orderId}
+    </update>
+
+    <!--查询符合条件的任务单-->
+    <select id="findTaskByCondition" resultMap="TaskResultsByCondition">
+        SELECT * FROM task_ords
+        WHERE
+        Bid_Status = #{bidStatus}
+        <if test="pickArea != 'null' and pickArea !='' and pickArea != null">
+            AND Pick_Area = #{pickArea}
+        </if>
+        <if test="deliverArea != 'null' and deliverArea !='' and deliverArea != null">
+            AND Deliver_Area = #{deliverArea}
+        </if>
+        <if test="serviceTime != 'null' and serviceTime !='' and serviceTime != null">
+            AND Service_Time = #{serviceTime}
+        </if>
+        <if test="taskType != 'null' and taskType !='' and taskType != null">
+            AND Task_Type = #{taskType}
+        </if>
+        <if test="bidTaskNum != 'null' and bidTaskNum !='' and bidTaskNum != null">
+            AND Bid_Task_Num = #{bidTaskNum}
+        </if>
+    </select>
+
+
+    <!--任务单发布-->
+    <update id="taskIssue" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask">
+        UPDATE auction_task SET Release_Time = #{releaseTime},SealedDisk_Time = #{sealedDiskTime},Bid_Status = #{bidStatus} WHERE Bid_Task_Id = #{bidTaskId};
+    </update>
 </mapper>

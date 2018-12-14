@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 /**
  * @ Author     ：孙帅
@@ -33,9 +36,11 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         if(endTime != null && !endTime.equals("")) {
             endTime += " 23:59:59";
         }
+        //搜索状态是刚生成的订单
+        String status = "0";
         //启用PageHelper
         PageHelper.startPage(pageCode,pageSize);
-        Page<Order> orderList  = orderHandlerMapper.findOrderByCondition(startTime, endTime, transportType);
+        Page<Order> orderList  = orderHandlerMapper.findOrderByCondition(startTime, endTime, transportType,status);
         return new PageBean(orderList.getTotal(),orderList.getResult());
     }
 
@@ -43,9 +48,9 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
     @Override
     public Integer buildTask(String[] orderIds) {
         //是否冷藏
-        String taskType = "0";//默认冷藏
+        String taskType = null;//默认冷藏
         int TypeChangeTime = 0;// transportTypeFlag的变化次数
-
+        List<Order> orderList = new ArrayList<>();
         String orderIdsInTask = "";//订单id
         int totalQuantity = 0;//总件数
         BigDecimal totalVolume = new BigDecimal("0.00");//总体积
@@ -55,7 +60,7 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         String deliverArea = null;//送货地区
         String serviceTime = null;//送达时间
         String bidStatus = "3";//竞拍状态(未发布)
-        String bidTaskId = CreateUUID.getUUID32();//生成订单id
+//        String bidTaskId = CreateUUID.getUUID32();//生成订单id
         String bidTaskNum = null;
         try {
             bidTaskNum = CreateNumber.GetNumber("RW");//生成订单号
@@ -66,20 +71,21 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
 
         for (int i = 0;i < orderIds.length;i++){
             order = orderHandlerMapper.findOrdersById(orderIds[i]);
-            /**
-             * 确定任务类型（冷藏或非冷藏）
-             * 如果order对象中的TransportType与transportTypeFlag不同
-             * TypeChangeTime+1
-             * 如果TypeChangeTime的值大于1
-             * 则认为所选订单中有不同的TransportType
-             */
-            if(!order.getTransportType().equals(taskType)){
-                taskType = order.getTransportType();
-                TypeChangeTime++;
-                if(TypeChangeTime > 1){
-                    return -1;//运输类型不同
-                }
-            }
+            orderList.add(order);
+//            /**
+//             * 确定任务类型（冷藏或非冷藏）
+//             * 如果order对象中的TransportType与transportTypeFlag不同
+//             * TypeChangeTime+1
+//             * 如果TypeChangeTime的值大于1
+//             * 则认为所选订单中有不同的TransportType
+//             */
+//            if(!order.getTransportType().equals(taskType)){
+//                taskType = order.getTransportType();
+//                TypeChangeTime++;
+//                if(TypeChangeTime > 1){
+//                    return -1;//运输类型不同
+//                }
+//            }
             //计算商品件数
             if(order.getGoodsCount()!=null && !order.getGoodsCount().equals("")){
                 totalQuantity += Integer.parseInt(order.getGoodsCount());
@@ -94,15 +100,19 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
             }
             //计算商品总金额
             proposedPrice = proposedPrice.add(order.getTransportPrices());
-            //确定提货、收货地点和收货时间
+            //确定提货、收货地点和收货时间、运输类型
             if(i==0){
                 pickArea = order.getStartArea();
                 deliverArea = order.getEndArea();
                 serviceTime = order.getReceivingTime();
+                taskType = order.getTransportType();
             }
             //取订单中最小的收货时间
             if(serviceTime.compareTo(order.getReceivingTime())>0){
                 serviceTime = order.getReceivingTime();
+            }
+            if(!order.getTransportType().equals(taskType)){
+                return -1;//运输类型不同
             }
             //将订单id拼接，以逗号隔开
             orderIdsInTask += order.getOrderId()+",";
@@ -111,6 +121,7 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         orderIdsInTask = orderIdsInTask.substring(0,orderIdsInTask.lastIndexOf(","));//去掉订单字段最后一个逗号
 //        serviceTime = serviceTime.split(" ")[0];//只保留年月日
         AuctionTask auctionTask = new AuctionTask();
+        auctionTask.setOrderList(orderList);
         auctionTask.setOrderId(orderIdsInTask);
         auctionTask.setTotalQuantity(String.valueOf(totalQuantity));
         auctionTask.setTotalVolume(String.valueOf(totalVolume));
@@ -121,21 +132,77 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         auctionTask.setServiceTime(serviceTime);
         auctionTask.setBidStatus(bidStatus);
         auctionTask.setTaskType(taskType);
-        auctionTask.setBidTaskId(bidTaskId);
+//        auctionTask.setBidTaskId(bidTaskId);
         auctionTask.setBidTaskNum(bidTaskNum);
-
-        //isSuccess == 1表示插入任务单成功
+        //插入任务单
         Integer isSuccess = orderHandlerMapper.buildTask(auctionTask);
-        //将订单表的状态设为已合单状态
+
         if(isSuccess == 1){
-            String orderIdsForModity[] = orderIdsInTask.split(",");
+            String orderIdsForHandle[] = orderIdsInTask.split(",");
+            String status = "1";//订单状态（已合单）
             int i = 0;
-            while (isSuccess ==1 && i < orderIdsForModity.length){
-                isSuccess = orderHandlerMapper.modifyStatus(orderIdsForModity[i]);
+            while (isSuccess ==1 && i < orderIdsForHandle.length){
+                //将订单表的状态设为已合单状态并填入任务单Id
+                isSuccess = orderHandlerMapper.modifyOrder(status,auctionTask.getBidTaskId(),orderIdsForHandle[i]);
                 i++;
             }
             return  isSuccess;
         }
         return 0;
+    }
+
+    @Override
+    //发布任务单
+    public Integer taskIssue(String[] taskIds) {
+        //此对象用来传参
+        AuctionTask auctionTask = new AuctionTask();
+//        String auctionTaskId = "";
+//        //将字符串数组拼接成一个字符串，用逗号隔开
+//        for (int i =0;i<taskIds.length;i++){
+//            auctionTaskId +=taskIds[i]+",";
+//        }
+//        //去掉最后一个逗号
+//        auctionTaskId = auctionTaskId.substring(0,auctionTaskId.lastIndexOf(","));
+//        //拼上"()"用于sql操作 例：auctionTaskId=(111,222)
+//        auctionTaskId = "(" + auctionTaskId + ")";
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Long time = System.currentTimeMillis();//获得系统当前时间的毫秒数
+        //获取发布时间
+        String releaseTime = sdf.format(time);//转换成标准年月日的形式
+        time += 120*1000*60;//在当前系统时间的基础上往后加2小时
+        //获取封盘时间
+        String sealedDiskTime = sdf.format(time);
+//        auctionTask.setBidTaskId(auctionTaskId);
+        auctionTask.setReleaseTime(releaseTime);
+        auctionTask.setSealedDiskTime(sealedDiskTime);
+        auctionTask.setBidStatus("1");//设置状态为竞拍中
+        Integer result = 0;
+        for(int i =0;i<taskIds.length;i++){
+            auctionTask.setBidTaskId(taskIds[i]);
+            result = orderHandlerMapper.taskIssue(auctionTask);
+            if (result != 1){
+                return result;
+            }
+        }
+//        if(result == taskIds.length){
+//            return 1;//发布成功
+//        }
+        return result;//发布失败
+    }
+
+    //关联查询任务单和订单
+    @Override
+    public PageBean findTaskByCondition(AuctionTask auctionTask,int pageCode,int pageSize) {
+        //启用pageHelper
+        PageHelper.startPage(pageCode,pageSize);
+        //处理auctionTask为null的情况
+        if(auctionTask == null){
+            auctionTask = new AuctionTask();
+            auctionTask.setBidStatus("3");
+        }
+        Page<AuctionTask> auctionTaskList  = orderHandlerMapper.findTaskByCondition(auctionTask);
+        return new PageBean(auctionTaskList.getTotal(),auctionTaskList.getResult());
     }
 }
