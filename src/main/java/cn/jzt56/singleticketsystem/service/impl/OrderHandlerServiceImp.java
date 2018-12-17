@@ -77,7 +77,7 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         int pageSize = Integer.parseInt(pageSizeStr);
 
         //扩大检索范围为最后一天24:00截至
-        if(endTime != null && !endTime.equals("")) {
+        if(endTime != null && !endTime.equals("") && !endTime.equals("null")) {
             endTime += " 23:59:59";
         }
 
