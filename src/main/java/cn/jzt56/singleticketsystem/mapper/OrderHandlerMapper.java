@@ -20,8 +20,7 @@ public interface OrderHandlerMapper {
     //按时间段或运输类型查询订单
     public Page<Order> findOrderByCondition(@Param("startTime") String startTime,
                                             @Param("endTime") String endTime,
-                                            @Param("transportType") String transportType,
-                                            @Param("status") String status);
+                                            @Param("order") Order order);
 
     //按订单id查询订单
     public Order findOrdersById(String orderId);
@@ -46,5 +45,5 @@ public interface OrderHandlerMapper {
     public Integer taskIssue(AuctionTask auctionTask);
 
     //关联查询任务单和订单
-    public Page<AuctionTask> findTaskByCondition(AuctionTask auctionTask);
+    public Page<AuctionTask> findTaskByCondition(@Param("auctionTask") AuctionTask auctionTask);
 }

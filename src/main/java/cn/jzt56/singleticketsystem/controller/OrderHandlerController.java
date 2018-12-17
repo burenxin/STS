@@ -35,25 +35,10 @@ public class OrderHandlerController {
      */
     @RequestMapping(value = "/findOrders",method= RequestMethod.POST)
     @ResponseBody
-    public PageBean findOrdersByCondition(@RequestBody String jsonStr) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-//        mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
-//        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-//        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-        //序列化字符串
-        JsonNode rootNode = mapper.readTree(jsonStr);
+    public PageBean findOrdersByCondition(@RequestBody String jsonStr) {
 
-        //去掉jackson转换字符串时加的双引号
-        String startTime = mapper.writeValueAsString(rootNode.path("startTime")).replace("\"","");
-        String endTime = mapper.writeValueAsString(rootNode.path("endTime")).replace("\"","");
-        String transportType = mapper.writeValueAsString(rootNode.path("transportType")).replace("\"","");
-        String pageCodeStr = mapper.writeValueAsString(rootNode.path("pageCode"));
-        String pageSizeStr = mapper.writeValueAsString(rootNode.path("pageSize"));
-        //字符串转换成整型
-        int pageCode = Integer.parseInt(pageCodeStr);
-        int pageSize = Integer.parseInt(pageSizeStr);
 
-        return orderHandlerService.findOrderByCondition(startTime,endTime,transportType,pageCode,pageSize);
+        return orderHandlerService.findOrderByCondition(jsonStr);
     }
     /**
      * 手动打包
@@ -107,17 +92,7 @@ public class OrderHandlerController {
     @RequestMapping(value = "/findTask")
     @ResponseBody
     public PageBean findTask(@RequestBody String jsonStr) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        //序列化字符串
-        JsonNode rootNode = mapper.readTree(jsonStr);
-        String pageCodeStr = mapper.writeValueAsString(rootNode.path("pageCode"));
-        String pageSizeStr = mapper.writeValueAsString(rootNode.path("pageSize"));
-        //字符串转换成整型
-        int pageCode = Integer.parseInt(pageCodeStr);
-        int pageSize = Integer.parseInt(pageSizeStr);
-        //去掉jackson带的双引号
-        String auctionTaskJson = mapper.writeValueAsString(rootNode.path("auctionTask")).replace("\"","");
-        AuctionTask auctionTask = mapper.readValue(auctionTaskJson, AuctionTask.class);
-        return orderHandlerService.findTaskByCondition(auctionTask,pageCode,pageSize);
+
+        return orderHandlerService.findTaskByCondition(jsonStr);
     }
 }

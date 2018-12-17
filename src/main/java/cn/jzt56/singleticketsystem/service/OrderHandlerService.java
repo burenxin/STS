@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface OrderHandlerService {
     //按时间段或运输类型查询订单
-    public PageBean findOrderByCondition(String startTime, String endTime, String transprotTypeint,int pageCode, int pageSize);
+    public PageBean findOrderByCondition(String jsonStr);
 
     //订单打包生成任务单
     public Integer buildTask(String[] orderIds);
@@ -22,5 +22,5 @@ public interface OrderHandlerService {
     public Integer taskIssue(String[] taskIds);
 
     //关联查询任务单和订单
-    public PageBean findTaskByCondition(AuctionTask auctionTask,int pageCode,int pageSize);
+    public PageBean findTaskByCondition(String jsonStr);
 }

@@ -7,11 +7,14 @@ import cn.jzt56.singleticketsystem.service.OrderHandlerService;
 import cn.jzt56.singleticketsystem.tools.CreateNumber;
 import cn.jzt56.singleticketsystem.tools.CreateUUID;
 import cn.jzt56.singleticketsystem.tools.PageBean;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,16 +34,56 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
 
     //根据起始时间或运输类型查出相应的订单
     @Override
-    public PageBean findOrderByCondition(String startTime, String endTime, String transportType,int pageCode,int pageSize) {
+    public PageBean findOrderByCondition(String jsonStr){
+        String startTime= null;
+        String endTime= null;
+
+        String pageCodeStr= null;
+        String pageSizeStr= null;
+//        Order order = new Order();
+        Order jsonOrder = null;
+        //搜索状态是刚生成的订单
+        String status = "0";
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            //序列化字符串
+            JsonNode rootNode  = mapper.readTree(jsonStr);
+            //去掉jackson转换字符串时加的双引号
+            startTime = mapper.writeValueAsString(rootNode.path("startTime")).replace("\"","");
+            endTime = mapper.writeValueAsString(rootNode.path("endTime")).replace("\"","");
+
+//            String orderStr = mapper.writeValueAsString(rootNode.path("order")).replace("\"","");
+            String orderStr = mapper.writeValueAsString(rootNode.path("order"));
+            jsonOrder = mapper.readValue(orderStr,Order.class);
+            if(jsonOrder == null){
+                jsonOrder = new Order();
+            }
+            jsonOrder.setStatus(status);
+
+
+            pageCodeStr = mapper.writeValueAsString(rootNode.path("pageCode"));
+            pageSizeStr = mapper.writeValueAsString(rootNode.path("pageSize"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        order.setTransportType(jsonOrder.getTransportType());
+//        order.setStartArea(jsonOrder.getStartArea());
+//        order.setEndArea(jsonOrder.getEndArea());
+//        order.setStatus(status);
+
+        //字符串转换成整型
+        int pageCode = Integer.parseInt(pageCodeStr);
+        int pageSize = Integer.parseInt(pageSizeStr);
+
         //扩大检索范围为最后一天24:00截至
         if(endTime != null && !endTime.equals("")) {
             endTime += " 23:59:59";
         }
-        //搜索状态是刚生成的订单
-        String status = "0";
+
         //启用PageHelper
         PageHelper.startPage(pageCode,pageSize);
-        Page<Order> orderList  = orderHandlerMapper.findOrderByCondition(startTime, endTime, transportType,status);
+        Page<Order> orderList  = orderHandlerMapper.findOrderByCondition(startTime, endTime, jsonOrder);
         return new PageBean(orderList.getTotal(),orderList.getResult());
     }
 
@@ -194,14 +237,37 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
 
     //关联查询任务单和订单
     @Override
-    public PageBean findTaskByCondition(AuctionTask auctionTask,int pageCode,int pageSize) {
+    public PageBean findTaskByCondition(String jsonStr) {
+        String pageCodeStr = null;
+        String pageSizeStr = null;
+        String bidStatus = "3";//任务单未发布
+        AuctionTask auctionTask = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(jsonStr);
+            //序列化字符串
+            pageCodeStr = mapper.writeValueAsString(rootNode.path("pageCode"));
+            pageSizeStr = mapper.writeValueAsString(rootNode.path("pageSize"));
+
+//            String auctionTaskJson = mapper.writeValueAsString(rootNode.path("auctionTask")).replace("\"","");
+            String auctionTaskJson = mapper.writeValueAsString(rootNode.path("auctionTask"));
+
+            auctionTask = mapper.readValue(auctionTaskJson, AuctionTask.class);
+            if(auctionTask == null){
+                auctionTask = new AuctionTask();
+            }
+            auctionTask.setBidStatus(bidStatus);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //字符串转换成整型
+        int pageCode = Integer.parseInt(pageCodeStr);
+        int pageSize = Integer.parseInt(pageSizeStr);
+
         //启用pageHelper
         PageHelper.startPage(pageCode,pageSize);
         //处理auctionTask为null的情况
-        if(auctionTask == null){
-            auctionTask = new AuctionTask();
-            auctionTask.setBidStatus("3");
-        }
+
         Page<AuctionTask> auctionTaskList  = orderHandlerMapper.findTaskByCondition(auctionTask);
         return new PageBean(auctionTaskList.getTotal(),auctionTaskList.getResult());
     }

@@ -93,18 +93,25 @@
     </select>
     -->
 
+    <!--条件加 order.-->
     <!--按时间段或运输类型查询未打包订单-->
     <select id="findOrderByCondition" resultMap="OrderResultsByCondition" parameterType="String">
         SELECT * FROM `order`
-        WHERE `Status` = #{status}
-        <if test="startTime != 'null' and startTime != ''">
+        WHERE `Status` = #{order.status}
+        <if test="startTime != null and startTime != 'null' and startTime != ''">
             AND Created_Time >= #{startTime}
         </if>
-        <if test="endTime != 'null' and endTime != ''">
+        <if test="endTime != null and endTime != 'null' and endTime != ''">
             AND #{endTime} >= Created_Time
         </if>
-        <if test="transportType != 'null' and transportType != ''">
-            AND Transport_Type = #{transportType}
+        <if test="order.transportType != null and order.transportType != 'null' and order.transportType != ''">
+            AND Transport_Type = #{order.transportType}
+        </if>
+        <if test="order.startArea != null and order.startArea != 'null' and order.startArea != ''">
+            AND StartArea = #{order.startArea}
+        </if>
+        <if test="order.endArea != null and order.endArea != 'null' and order.endArea != ''">
+            AND EndArea = #{order.endArea}
         </if>
     </select>
 
@@ -143,26 +150,36 @@
         UPDATE `order` SET `Status` = #{status},task_Id = #{taskId} WHERE Order_Id = #{orderId}
     </update>
 
+
+    <!--条件加 auctionTask.-->
     <!--查询符合条件的任务单-->
     <select id="findTaskByCondition" resultMap="TaskResultsByCondition">
         SELECT * FROM task_ords
         WHERE
-        Bid_Status = #{bidStatus}
-        <if test="pickArea != 'null' and pickArea !='' and pickArea != null">
-            AND Pick_Area = #{pickArea}
+        Bid_Status = #{auctionTask.bidStatus}
+        <if test="auctionTask.pickArea != 'null' and auctionTask.pickArea !='' and auctionTask.pickArea != null">
+            AND Pick_Area = #{auctionTask.pickArea}
         </if>
-        <if test="deliverArea != 'null' and deliverArea !='' and deliverArea != null">
-            AND Deliver_Area = #{deliverArea}
+        <if test="auctionTask.deliverArea != 'null' and auctionTask.deliverArea !='' and auctionTask.deliverArea != null">
+            AND Deliver_Area = #{auctionTask.deliverArea}
         </if>
-        <if test="serviceTime != 'null' and serviceTime !='' and serviceTime != null">
-            AND Service_Time = #{serviceTime}
+        <if test="auctionTask.serviceTime != 'null' and auctionTask.serviceTime !='' and auctionTask.serviceTime != null">
+            AND Service_Time = #{auctionTask.serviceTime}
         </if>
-        <if test="taskType != 'null' and taskType !='' and taskType != null">
-            AND Task_Type = #{taskType}
+        <if test="auctionTask.taskType != 'null' and auctionTask.taskType !='' and auctionTask.taskType != null">
+            AND Task_Type = #{auctionTask.taskType}
         </if>
-        <if test="bidTaskNum != 'null' and bidTaskNum !='' and bidTaskNum != null">
-            AND Bid_Task_Num = #{bidTaskNum}
+        <if test="auctionTask.bidTaskNum != 'null' and auctionTask.bidTaskNum !='' and auctionTask.bidTaskNum != null">
+            AND Bid_Task_Num = #{auctionTask.bidTaskNum}
         </if>
+        <!--
+        <if test="startTime != 'null' and startTime !='' and startTime != null">
+            AND Service_Time >= #{startTime}
+        </if>
+        <if test="endTime != 'null' and endTime !='' and endTime != null">
+            AND #{endTime} >= Service_Time
+        </if>
+        -->
     </select>
 
 
