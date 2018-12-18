@@ -43,4 +43,25 @@ public interface AuctionTaskService {
      * @author : CHENG QI
      */
     List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId);
+
+    /**
+     * @method
+     * @description :报价任务截单
+     * @author:lzy
+     */
+    void auctionTaskClose();
+
+    /**
+     * @method
+     * @description :biddeTask 所有已发布任务(与条件筛选)
+     * @author:lzy
+     */
+    PageBean biddeTask(AuctionTask auctionTask,int pageCode,int pageSie);
+
+    /**
+     * @method
+     * @description :指派承运商
+     * @author:lzy
+     */
+    Boolean assignCarrier(String userId,String bidTaskId);
 }

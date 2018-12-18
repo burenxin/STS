@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.CarrierInfoMapper">
+    <!--竞价详情-->
+    <resultMap id="carrierInfoMap" type="cn.jzt56.singleticketsystem.entity.CarrierInfo">
+        <id column="Carrier_Id" property="carrierId" jdbcType="VARCHAR"/>
+        <result column="User_Id" property="userId" jdbcType="VARCHAR"/>
+        <result column="Carrier_Name" property="carrierName" javaType="STRING"/>
+        <result column="Phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="Address" property="address" jdbcType="VARCHAR"/>
+        <result column="TransportType" property="transportType" jdbcType="VARCHAR"/>
+        <result column="StartPlace" property="startPlace" jdbcType="VARCHAR"/>
+        <result column="EndPlace" property="endPlace" javaType="STRING"/>
+        <result column="WeightPrice" property="weightPrice" jdbcType="VARCHAR"/>
+        <result column="VolumePrice" property="volumePrice" jdbcType="VARCHAR"/>
+        <result column="CostPerKM" property="costPerKM" jdbcType="VARCHAR"/>
+        <result column="MaxTransportVolume" property="maxTransportVolume" javaType="STRING"/>
+        <result column="MaxTransportWeight" property="maxTransportWeight" jdbcType="VARCHAR"/>
+        <result column="Duration" property="duration" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="Description" property="description" jdbcType="VARCHAR"/>
+        <result column="Created_Time" property="createdTime" jdbcType="VARCHAR"/>
+        <result column="Updated_Time" property="updateTime" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="carrierColumn">
+        Carrier_Id,User_Id,Carrier_Name,Phone,Address,TransportType,StartPlace,EndPlace,VolumePrice,
+        CostPerKM,MaxTransportVolume, MaxTransportWeight,Duration,STATUS,Description,Created_Time,Created_Time,Updated_Time,
+    </sql>
+    <!--查询运输信息-->
+    <select id="findManyCarrierInfo" resultMap="carrierInfoMap">
+        SELECT <include refid="carrierColumn"/>
+        GREATEST(WeightPrice*#{totalWeight},VolumePrice*#{totalVolume})AS WeightPrice FROM carrier_info WHERE `STATUS`='0'
+        <choose>
+            <when test="bidStatus=='0'">
+                AND TransportType=#{bidStatus}
+            </when>
+            <when test="bidStatus=='1'">
+                AND TransportType=#{bidStatus}
+            </when>
+        </choose>
+        ORDER BY  GREATEST(WeightPrice*#{totalWeight},VolumePrice*#{totalVolume}) ASC
+    </select>
+    <!--查询运输最低价-->
+    <select id="findMinCarrierInfo" resultMap="carrierInfoMap">
+        SELECT <include refid="carrierColumn"/>
+        GREATEST(WeightPrice*#{totalWeight},VolumePrice*#{totalVolume})AS WeightPrice
+        FROM carrier_info ORDER BY  GREATEST(WeightPrice*#{totalWeight},VolumePrice*#{totalVolume}) ASC LIMIT 1
+    </select>
+</mapper>

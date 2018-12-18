@@ -1,8 +1,12 @@
 package cn.jzt56.singleticketsystem.service.impl;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
+import cn.jzt56.singleticketsystem.entity.BiddingDetail;
+import cn.jzt56.singleticketsystem.entity.CarrierInfo;
 import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.mapper.AuctionTaskMapper;
+import cn.jzt56.singleticketsystem.mapper.BiddingDetailMapper;
+import cn.jzt56.singleticketsystem.mapper.CarrierInfoMapper;
 import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
@@ -31,6 +35,12 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private CarrierInfoMapper carrierInfoMapper;
+
+    @Autowired
+    private BiddingDetailMapper biddingDetailMapper;
 
 
     /**
@@ -86,6 +96,85 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     @Override
     public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId) {
         return this.auctionTaskMapper.findAllSuccessCurrentTaskByUserId(userId);
+    }
+    /**
+     * @method
+     * @description :报价任务截单
+     * @author:lzy
+     */
+    @Override
+    public void auctionTaskClose(){
+        log.info("输出AuctionTaskServiceImpl");
+        List<AuctionTask> list=this.auctionTaskMapper.findAllBiddingTask();//查询所有未完成竞价任务
+        BiddingDetail biddingDetail;
+        for (AuctionTask auctionTask:list
+        ) {
+            CarrierInfo carrierInfo = this.carrierInfoMapper.findMinCarrierInfo(auctionTask);
+            if (this.biddingDetailMapper.findBiddingDetailNum(auctionTask.getBidTaskId()) > 0 ? true : false) {
+                biddingDetail = this.biddingDetailMapper.findMinDetailByTaskId(auctionTask.getBidTaskId());
+
+            } else {
+                biddingDetail = new BiddingDetail();
+
+
+            }
+            biddingDetail.setStatus("2");
+            if ((biddingDetail.getQuotedPrice() == null)||(carrierInfo.getWeightPrice().compareTo(biddingDetail.getQuotedPrice()) == -1 && (biddingDetail.getQuotedPrice() != null)) ) {//流拍时将价格与Id替换为系统配送的
+                biddingDetail.setBidTaskId(auctionTask.getBidTaskId());
+                biddingDetail.setQuotedPrice(carrierInfo.getWeightPrice());//
+                biddingDetail.setUserId(carrierInfo.getUserId());
+                biddingDetail.setStatus("0");
+            }
+            log.info(biddingDetail.toString());
+            //截单
+            //this.auctionTaskMapper.biddingEnd(biddingDetail);
+        }
+
+
+
+
+//        }
+
+
+//        List<AuctionTaskView> list=this.biddingDetailMapper.findBiddingEnd(true);
+//        for (AuctionTaskView auctionTaskView:list
+//        ) {
+//            CarrierInfo carrierInfo=this.carrierInfoMapper.findMinCarrierInfo(auctionTaskView);//查询最低竞价
+//
+//            if(carrierInfo.getWeightPrice().compareTo(auctionTaskView.getQuotedPrice())==-1) {//流派
+//                auctionTaskView.setQuotedPrice(carrierInfo.getWeightPrice());//
+//                auctionTaskView.setUserId(carrierInfo.getUserId());
+//
+//            }
+//            this.auctionTaskMapper.biddedFailOne(auctionTaskView);//流拍和竞拍成功（存在竞拍明细的）
+//
+//
+////            if(this.auctionTaskMapper.biddedSuccess(auctionTaskView)>=1?false:true)
+////                this.auctionTaskMapper.biddedFailOne(auctionTaskView);
+//        }
+//        this.auctionTaskMapper.biddedFailTwo();
+    }
+
+    /**
+     * @method
+     * @description :biddeTask 所有已发布任务(与条件筛选)
+     * @author:lzy
+     */
+    @Override
+    public PageBean biddeTask(AuctionTask auctionTask,int pageCode,int pageSize) {
+
+        PageHelper.startPage(pageCode,pageSize);
+        Page<AuctionTask> page= this.auctionTaskMapper.biddeTask(auctionTask);
+        return  new PageBean(page.getTotal(),page.getResult());
+    }
+    /**
+     * @method
+     * @description :指派承运商
+     * @author:lzy
+     */
+    @Override
+    public Boolean assignCarrier(String userId,String bidTaskId){
+        return  this.auctionTaskMapper.assignCarrier(userId,bidTaskId)==1?true:false;
     }
 
 

@@ -3,6 +3,35 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.jzt56.singleticketsystem.mapper.BiddingDetailMapper">
+    <!--竞价详情-->
+    <resultMap id="biddingDetailMap" type="cn.jzt56.singleticketsystem.entity.BiddingDetail">
+        <id column="Detail_Id" property="detailId" jdbcType="VARCHAR"/>
+        <result column="Bid_Task_Id" property="bidTaskId" jdbcType="VARCHAR"/>
+        <result column="User_Id" property="userId" javaType="STRING"/>
+        <result column="Quoted_Price" property="quotedPrice" jdbcType="VARCHAR"/>
+        <result column="Participation_Time" property="participationTime" jdbcType="VARCHAR"/>
+        <result column="Status" property="status" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--竞价后数据接收-->
+    <resultMap id="auctionTaskViewMapper" type="cn.jzt56.singleticketsystem.tools.AuctionTaskView">
+        <id column="Bid_Task_Id" property="bidTaskId" jdbcType="VARCHAR"/>
+        <result column="Ord_Id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="User_Id" property="userId" javaType="STRING"/>
+        <result column="Total_Quantity" property="totalQuantity" jdbcType="VARCHAR"/>
+        <result column="Total_Volume" property="totalVolume" jdbcType="VARCHAR"/>
+        <result column="Total_Weight" property="totalWeight" jdbcType="VARCHAR"/>
+        <result column="Proposed_Price" property="proposedPrice" jdbcType="DECIMAL"/>
+        <result column="Pick_Area" property="pickArea" jdbcType="VARCHAR"/>
+        <result column="Deliver_Area" property="deliverArea" jdbcType="VARCHAR"/>
+        <result column="Service_Time" property="serviceTime" jdbcType="VARCHAR"/>
+        <result column="Release_Time" property="releaseTime" jdbcType="VARCHAR"/>
+        <result column="SealedDisk_Time" property="sealedDiskTime" jdbcType="VARCHAR"/>
+        <result column="Bid_Status" property="bidStatus" jdbcType="VARCHAR"/>
+        <result column="Transaction_Price" property="transactionPrice" jdbcType="DECIMAL"/>
+        <result column="Task_Type" property="taskType" jdbcType="VARCHAR"/>
+        <result column="Bid_Task_Num" property="bidTaskNum" jdbcType="VARCHAR"/>
+        <result column="Quoted_Price" property="quotedPrice" jdbcType="VARCHAR"/>
+    </resultMap>
     <!-- 当前用户不存在竞价就插入 -->
     <insert id="addBiddingDetail" parameterType="cn.jzt56.singleticketsystem.entity.BiddingDetail">
         INSERT INTO bidding_detail
@@ -21,10 +50,25 @@
         UPDATE  bidding_detail SET Status='0' WHERE Bid_Task_Id=#{bidTaskId} AND User_Id=#{userId} AND Status='1'
     </update>
     <!--查询竞价任务-->
-    <select id="findBiddingEnd">
-        SELECT t1.Bid_Task_Id,t1.User_Id,t1.Quoted_Price FROM(
-            SELECT * FROM bidding_detail WHERE `Status`='1' AND Participation_Time + INTERVAL 2 HOUR>NOW()
-            ORDER BY Bid_Task_Id,Quoted_Price,Participation_Time
-         )t1  GROUP BY t1.Bid_Task_Id
+    <!--<select id="findBiddingEnd" resultMap="auctionTaskViewMapper" parameterType="Boolean">-->
+        <!--SELECT t1.Bid_Task_Id,t1.User_Id,t1.Quoted_Price,att.* FROM(-->
+            <!--SELECT * FROM bidding_detail WHERE `Status`='1'-->
+            <!--AND Participation_Time + INTERVAL 4 HOUR >=NOW()-->
+            <!--ORDER BY Bid_Task_Id,Quoted_Price,Participation_Time-->
+        <!--)t1,auction_task att WHERE afindBiddingDetailNumtt.Bid_Task_id=t1.Bid_Task_Id  GROUP BY t1.Bid_Task_Id-->
+    <!--</select>-->
+    <!--查询当前任务的最低价-->
+    <select id="findMinDetailByTaskId" parameterType="String" resultMap="biddingDetailMap">
+        SELECT Detail_id,Bid_task_id,User_Id,Quoted_Price ,ParticiPation_Time,`Status` FROM bidding_detail
+        WHERE Bid_Task_id=#{bidTaskId} AND `Status`='1' ORDER BY Quoted_Price,ParticiPation_Time ASC LIMIT 1
+    </select>
+    <!--竞价管理竞价详情-->
+    <select id="findBiddingDetail" parameterType="String" resultMap="biddingDetailMap">
+        SELECT uit.User_Name AS User_Id,bdt.* from bidding_detail bdt,user_info uit
+        WHERE bdt.User_Id=uit.User_Id  AND  Bid_Task_Id=#{findBiddingDetail} AND Status='1'
+    </select>
+    <!--判断是否存在竞价12.17 20:30-->
+    <select id="findBiddingDetailNum" parameterType="String" resultType="int">
+        SELECT count(*) from bidding_detail WHERE Bid_Task_Id=#{findBiddingDetail} AND Status='1'
     </select>
 </mapper>

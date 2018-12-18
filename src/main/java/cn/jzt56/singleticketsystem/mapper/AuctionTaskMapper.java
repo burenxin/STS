@@ -1,7 +1,9 @@
 package cn.jzt56.singleticketsystem.mapper;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
+import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import com.github.pagehelper.Page;
@@ -49,17 +51,66 @@ public interface AuctionTaskMapper {
      */
     List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId);
 
+//    /**
+//     * @method
+//     * @description :竞拍成功
+//     * @author:lzy
+//     */
+//    int biddedSuccess(AuctionTaskView auctionTaskView);
+//    /**
+//     * @method
+//     * @description ：竞价失败
+//     * @author:lzy
+//     */
+//    int biddedFail(AuctionTaskView auctionTaskView);
+//
+//    int biddedFailOne(AuctionTaskView auctionTaskView);
+//
+//    /**
+//     * @method
+//     * @description ：无人竞价
+//     * @author:lzy
+//     */
+//    int biddedFailTwo();
+    /**
+     * @Date  12.17 16:47
+     * @description :查询所有竞价未完成任务
+     * @author :lzy
+    */
+    List<AuctionTask> findAllBiddingTask();
+
     /**
      * @method
-     * @description :竞拍成功
+     * @description :biddeTask 所有已发布任务(与条件筛选)
      * @author:lzy
      */
-    int biddedSuccess(AuctionTaskView auctionTaskView);
+    Page<AuctionTask> biddeTask(AuctionTask auctionTask);
     /**
      * @method
-     * @description ：竞价失败
+     * @description :指派承运商
      * @author:lzy
      */
-    int biddedFail(AuctionTaskView auctionTaskView);
+    int assignCarrier(String userId,String bidTaskId);
+    
+    /**
+     * @description :查询详情运输详情（竞价成功的信息）
+     * @author :lzy
+    */
+    BiddingDetailView findBiddingDetailView(String bidTaskId);
+
+    /**
+     * @description :判断是否为空
+     * @author :lzy
+    */
+    int findBiddingDetailViewNumber(String bidTaskId);
+
+
+
+    /**
+     * @Date12.17 20：31
+     * @description :截单biddingEnd
+     * @author :lzy
+    */
+    int biddingEnd(BiddingDetail biddingDetail);
 
 }

@@ -3,18 +3,22 @@ package cn.jzt56.singleticketsystem.controller;
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.service.BiddingDetailService;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static cn.jzt56.singleticketsystem.tools.CreateUUID.getUUID32;
 
 /**
  * @ Author     ：lzy
@@ -41,11 +45,14 @@ public class AuctionTaskController {
     public PageBean findAllCurrentTask(HttpServletRequest request,
                                        AuctionTask auctionTask,
                                        @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
-                                       @RequestParam(value = "pageSize",required = false,defaultValue = "1") int pageSize){
+                                       @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize){
+
 
         //String userId=(String)request.getSession().getAttribute("userId");
         //auctionTask.setPickArea("湖北");
-        auctionTask.setUserId("ui001");
+        log.info("----------------------"+pageCode+""+pageSize+auctionTask.getUserId()+auctionTask.getBidTaskId());
+        //auctionTask.setUserId("ui001");
+
         PageBean pageBean=this.auctionTaskService.findAllCurrentTask(auctionTask,pageCode,pageSize);
         log.info(pageBean.toString());
         return pageBean;
@@ -56,13 +63,9 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/auctionPrice")
-    public void  auctionPrice(@RequestParam String quotedPrice, @RequestParam String bidTaskId){
-        BiddingDetail biddingDetail=new BiddingDetail();
-        biddingDetail.setDetailId("di011");
-        biddingDetail.setUserId("ui001");
-        biddingDetail.setQuotedPrice(quotedPrice);
-        biddingDetail.setBidTaskId(bidTaskId);
-        log.info(quotedPrice+bidTaskId);
+    public void  auctionPrice(BiddingDetail biddingDetail){
+        biddingDetail.setDetailId(getUUID32());
+        log.info(biddingDetail.getBidTaskId()+biddingDetail.getQuotedPrice());
         Boolean flage= this.biddingDetailService.addBidding(biddingDetail);
         if(flage)
             log.info(flage+"1");
@@ -74,11 +77,11 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/cancelBidding")
-    public void  cancelBidding( @RequestParam String bidTaskId){
-        BiddingDetail biddingDetail=new BiddingDetail();
-        biddingDetail.setUserId("ui005");
-        biddingDetail.setBidTaskId(bidTaskId);
-        log.info(bidTaskId);
+    public void  cancelBidding( BiddingDetail biddingDetail){
+        //BiddingDetail biddingDetail=new BiddingDetail();
+        //biddingDetail.setUserId("ui005");
+       // biddingDetail.setBidTaskId(bidTaskId);
+        log.info(biddingDetail.getBidTaskId());
         Boolean flage= this.biddingDetailService.cancelBidding(biddingDetail);
     }
     /**
@@ -91,6 +94,7 @@ public class AuctionTaskController {
                                @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
                                @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize){
         return this.auctionTaskService.findBidded(auctionTaskView,pageCode,pageSize);
+
     }
 
 
@@ -117,4 +121,41 @@ public class AuctionTaskController {
     public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId){
         return auctionTaskService.findAllSuccessCurrentTaskByUserId(userId);
     }
+    /**
+     * @method
+     * @description :biddeTask 所有已发布任务(与条件筛选)
+     * @author:lzy
+     */
+    @RequestMapping(value = "/biddeTask")
+    public PageBean biddeTask(AuctionTask auctionTask,
+                              @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
+                              @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize) {
+        log.info(auctionTask.getTotalVolume()+auctionTask.getSealedDiskTime());
+        return  this.auctionTaskService.biddeTask(auctionTask,pageCode,pageSize);
+    }
+
+    /**
+     * @method
+     * @description :findBiddingDetail 竞价明细
+     * @author:lzy
+     */
+    @RequestMapping(value = "/findBiddingDetail")
+    public BiddingDetailView findBiddingDetail(String bidTaskId) {
+        return this.biddingDetailService.findBiddingDetail(bidTaskId);
+    }
+
+    /**
+     * @method
+     * @description 指派承运商
+     * @author:lzy
+     */
+    @RequestMapping(value = "/assignCarrier")
+    public Boolean assignCarrier(@RequestParam String bidTaskId,
+                                 @RequestParam String userId){
+
+        return this.auctionTaskService.assignCarrier(userId,bidTaskId);
+
+    }
+
+
 }
