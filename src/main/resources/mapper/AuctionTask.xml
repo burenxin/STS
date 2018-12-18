@@ -42,30 +42,38 @@
         <result column="Bid_Task_Num" property="bidTaskNum" jdbcType="VARCHAR"/>
         <result column="Quoted_Price" property="quotedPrice" jdbcType="VARCHAR"/>
     </resultMap>
+    <!--竞价管理的竞价完成的用户信息-->
+    <resultMap id="biddingDetailViewMap" type="cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView">
+        <result column="User_Id" property="userId" jdbcType="VARCHAR"/>
+        <result column="User_Name" property="userName" jdbcType="VARCHAR"/>
+        <result column="Transaction_Price" property="transactionPrice" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 返回字段 -->
+    <sql id="selColumn">
+        att.Bid_Task_Id,Ord_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,
+        TIMESTAMPDIFF(HOUR,NOW(),Service_Time)AS Service_Time,Release_Time, SealedDisk_Time,Bid_Status,Transaction_Price,Task_Type,Bid_Task_Num
+    </sql>
     <!-- 条件查询 -->
     <sql id="selectCondition">
         <!-- 竞拍未截止的 -->
         AND Release_Time &gt; NOW()-INTERVAL 2 HOUR AND Release_Time &lt; NOW()
-        <!-- 可竞价的任务单id -->
-        <if test="bidTaskId !=null">
-            AND Bid_Task_Id=#{bidTaskId}
-        </if>
         <!-- 取货地址 -->
-        <if test="pickArea  != null">
+        <if test="pickArea  != null and pickArea !=''">
             AND Pick_Area LIKE CONCAT('%', #{pickArea},'%')
         </if>
         <!--配送地址 -->
-        <if test="deliverArea  != null">
+        <if test="deliverArea  != null and deliverArea !=''">
             AND  Deliver_Area LIKE CONCAT(CONCAT('%', #{deliverArea}),'%')
         </if>
         <!--件数 -->
-        <if test="totalQuantity !=null">
+        <if test="totalQuantity !=null and totalQuantity !=''">
             AND Total_Quantity=#{totalQuantity}
         </if>
-        <!-- 类型 -->
-        <if test="taskType !=null">
-            AND Task_Type=#{taskType}
+        <!--任务单号查询 -->
+        <if test="bidTaskNum!=null and bidTaskNum!=''">
+            AND Bid_Task_Num=#{bidTaskNum}
         </if>
+
         <!-- 时效 -->
         <choose>
             <when test="serviceTime==0">
@@ -81,7 +89,7 @@
         </choose>
         <!-- 体积 -->
         <choose>
-            <when test="totalVolume==0">
+            <when test="totalVolume==0 and totalVolume !=''">
                 AND Total_Volume &lt;10
             </when>
             <when test="totalVolume==1">
@@ -93,7 +101,7 @@
         </choose>
         <!-- 重量 -->
         <choose>
-            <when test="totalWeight==0">
+            <when test="totalWeight==0 and totalWeight !=''">
                 AND Total_Weight &lt;10
             </when>
             <when test="totalWeight==1">
@@ -105,7 +113,7 @@
         </choose>
         <!--参考价 -->
         <choose>
-            <when test="proposedPrice==0">
+            <when test="proposedPrice==0 and proposedPrice !=''"  >
                 AND Proposed_Price &lt;50
             </when>
             <when test="proposedPrice==1">
@@ -115,11 +123,23 @@
                 AND 100 &lt;Proposed_Price
             </when>
         </choose>
+        <include refid="selCondition"/>
+    </sql>
+    <!--竞价管理查询条件-->
+    <sql id="selCondition">
+        <!-- 可竞价的任务单id -->
+        <if test="bidTaskId !=null and bidTaskId !=''">
+            AND Bid_Task_Id=#{bidTaskId}
+        </if>
+        <!-- 类型 -->
+        <if test="taskType !=null and taskType !=''">
+            AND Task_Type=#{taskType}
+        </if>
     </sql>
 
     <!-- 查询所有可竞价的任务单 -->
     <select id="findAllCurrentTask" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="auctionTaskResultMap">
-        SELECT att.* FROM auction_task  att WHERE att.Bid_Task_Id
+        SELECT <include refid="selColumn"/> FROM auction_task  att WHERE att.Bid_Task_Id
         NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1')
         AND Bid_Status='1'
         <include refid="selectCondition"/>
@@ -127,11 +147,11 @@
 
     <!-- 查询正在竞价的任务单 -->
     <select id="findBidded" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView" resultMap="auctionTaskViewMapper">
-        SELECT att.*,bd.Quoted_Price FROM auction_task att RIGHT  JOIN bidding_detail bd
-          ON att.Bid_Task_Id=bd.Bid_Task_Id WHERE  bd.User_Id =#{userId} AND att.User_Id in ('',null)  AND bd.Status='1'
+        SELECT <include refid="selColumn"/>,bd.Quoted_Price FROM auction_task att RIGHT  JOIN bidding_detail bd
+        ON att.Bid_Task_Id=bd.Bid_Task_Id WHERE  bd.User_Id =#{userId} AND att.User_Id in ('',null)  AND bd.Status='1'
         <!--竞价 -->
         <choose>
-            <when test="quotedPrice==0">
+            <when test="quotedPrice==0 and quotedPrice !=''">
                 AND Quoted_Price &lt;50
             </when>
             <when test="quotedPrice==1">
@@ -145,13 +165,73 @@
     </select>
 
 
-    <!-- 竞拍成功001 -->
-    <update id="biddedSuccess" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">
-        UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status='2',User_Id=#{UserId} WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in ('',null) AND Bid_Status='1'
+    <!-- 根据运输商id查询竞拍成功的订单 -->
+    <select id="findAllSuccessCurrentTaskByUserId" parameterType="String" resultMap="auctionTaskResultMap">
+        SELECT *  FROM	auction_task
+        WHERE
+	      Bid_Status = '2'
+        AND
+          User_Id = #{userId}
+    </select>
+
+    <!--&lt;!&ndash; 竞拍成功 &ndash;&gt;-->
+    <!--<update id="biddedSuccess" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">-->
+        <!--UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status='2',User_Id=#{userId}-->
+        <!--WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in ('',null) AND Bid_Status='1'-->
+          <!--AND  Release_Time &lt;= NOW()-INTERVAL 2 HOUR-->
+    <!--</update>-->
+    <!--&lt;!&ndash;流拍 001&ndash;&gt;-->
+    <!--<update id="biddedFailOne" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">-->
+        <!--UPDATE auction_task a1,auction_task a2 SET a1.Transaction_Price=a2.Proposed_Price,a1.Bid_Status='0',a1.User_Id='system001' WHERE a1.Bid_Task_Id=a2.Bid_Task_Id-->
+        <!--AND  a1.Bid_Task_Id=#{bidTaskId} AND a1.Proposed_Price &gt; #{quotedPrice} AND a1.User_Id in ('',null) AND a1.Bid_Status='1' AND  a1.Release_Time &lt;= NOW()-INTERVAL 2 HOUR-->
+    <!--</update>-->
+    <!--&lt;!&ndash;四个小时还没有写入userId肯定为流拍&ndash;&gt;-->
+    <!--<update id="biddedFailTwo">-->
+        <!--UPDATE auction_task a1,auction_task a2 SET a1.Transaction_Price=a2.Proposed_Price,a1.Bid_Status='0',a1.User_Id='system001'-->
+        <!--WHERE a1.Bid_Task_Id=a2.Bid_Task_Id AND  a1.User_Id in ('',null)-->
+            <!--AND a1.Bid_Status='1' AND  a1.Release_Time &gt;NOW()-INTERVAL 4 HOUR-->
+    <!--</update>-->
+    <!--查询所有可截单任务-->
+    <select id="findAllBiddingTask" resultMap="auctionTaskResultMap">
+        SELECT * FROM auction_task att WHERE att.Bid_Status='1' AND Release_Time &lt;= NOW()-INTERVAL 2 HOUR
+    </select>
+    <!--任务截单之截单-->
+    <update id="biddingEnd">
+        UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status=#{status},User_Id=#{userId}
+        WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in ('',null) AND Bid_Status='1'
+        AND  Release_Time &lt;= NOW()-INTERVAL 2 HOUR
     </update>
-    <!--流拍 -->
-    <update id="biddedFail" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">
-        UPDATE auction_task a1,auction_task a2 SET a1.Transaction_Price=a2.Proposed_Price,a1.Bid_Status='2',a1.User_Id=#{UserId} WHERE a1.Bid_Task_Id=a2.Bid_Task_Id
-        AND  a1.Bid_Task_Id=#{bidTaskId} AND a1.Proposed_Price &gt; #{quotedPrice} AND a1.User_Id in ('',null) AND a1.Bid_Status='1'
+
+    <!--竞拍管理,查询所有竞拍任务-->
+    <select id="biddeTask" resultMap="auctionTaskResultMap">
+        SELECT <include refid="selColumn"/>,ui.User_Name AS User_Id
+        FROM auction_task att LEFT JOIN  user_info ui ON att.User_Id=ui.User_Id
+        WHERE Bid_Status &lt;&gt;'3'
+        <include refid="selCondition"/>
+        <!--任务单状态-->
+        <if test="bidStatus!=null and bidStatus!=''">
+            AND  Bid_Status=#{bidStatus}
+        </if>
+        <if test="releaseTime!=null and releaseTime!=''">
+            AND Release_Time &gt;=#{releaseTime}
+        </if>
+        <if test="sealedDiskTime!=null and sealedDiskTime!=''">
+            AND Release_Time &lt;=#{sealedDiskTime}
+        </if>
+    </select>
+    <!--指派-->
+    <update id="assignCarrier" parameterType="String">
+        UPDATE auction_task SET User_Id=#{arg0},Bid_Status='2' WHERE Bid_Task_Id=#{arg1} AND Bid_Status='0'
     </update>
+
+    <!--竞价管理竞价详情-->
+    <select id="findBiddingDetailView" parameterType="String" resultMap="biddingDetailViewMap">
+        SELECT att.Bid_Task_Id,att.Transaction_Price,uit.User_Name,uit.User_Id FROM auction_task att,user_info uit
+        WHERE att.User_Id=uit.User_Id AND att.Bid_Task_Id=#{bidTaskId}
+    </select>
+    <!--用于判断数据是否为空-->
+    <select id="findBiddingDetailViewNumber" parameterType="String" resultType="int">
+        SELECT count(*) FROM auction_task att,user_info uit
+        WHERE att.User_Id=uit.User_Id AND att.Bid_Task_Id=#{bidTaskId}
+    </select>
 </mapper>

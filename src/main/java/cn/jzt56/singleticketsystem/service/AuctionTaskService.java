@@ -2,8 +2,8 @@ package cn.jzt56.singleticketsystem.service;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
-import com.github.pagehelper.Page;
 
 import java.util.List;
 
@@ -19,14 +19,38 @@ public interface AuctionTaskService {
      * @description ：查询所有可竞价任务
      * @author:lzy
      */
-    List<AuctionTask> findAllCurrentTask(AuctionTask auctionTask);
+    PageBean findAllCurrentTask(AuctionTask auctionTask, int pageCode, int pageSize);
 
     /**
      * @method
      * @description :查询当前用户已竞价任务
      * @author:lzy
      */
-    List<AuctionTask> findBidded(String userId);
+   PageBean findBidded(AuctionTaskView auctionTaskView, int pageCode, int pageSize);
+
+
+    /**
+     * @method
+     * @description :报价任务截单
+     * @author:lzy
+     */
+    void auctionTaskClose();
+
+    /**
+     * @method
+     * @description :biddeTask 所有已发布任务(与条件筛选)
+     * @author:lzy
+     */
+    PageBean biddeTask(AuctionTask auctionTask,int pageCode,int pageSie);
+
+    /**
+     * @method
+     * @description :指派承运商
+     * @author:lzy
+     */
+    Boolean assignCarrier(String userId,String bidTaskId);
+
+
 
     /**
      * @param bidTaskId
@@ -82,4 +106,5 @@ public interface AuctionTaskService {
      * @author ：CHENG QI
      */
     int updateTaskStatusByTaskId(String bidTaskId,String bidStatus);
+
 }

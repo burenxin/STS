@@ -1,6 +1,9 @@
 package cn.jzt56.singleticketsystem.service;
 
 import cn.jzt56.singleticketsystem.entity.BiddingDetail;
+import cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView;
+
+import java.util.List;
 
 /**
  * @ Author     ：lzy
@@ -22,4 +25,11 @@ public interface BiddingDetailService {
      * @author:lzy
      */
     Boolean cancelBidding(BiddingDetail biddingDetail);
+
+    /**
+     * @method
+     * @description :findBiddingDetail 竞价明细
+     * @author:lzy
+     */
+    BiddingDetailView findBiddingDetail(String bidTaskId);
 }

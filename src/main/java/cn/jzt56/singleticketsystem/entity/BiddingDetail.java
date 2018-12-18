@@ -3,6 +3,7 @@ package cn.jzt56.singleticketsystem.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -15,7 +16,7 @@ public class BiddingDetail implements Serializable {
     private String detailId	;           //详情ID
     private String bidTaskId;	        //竞价任务ID
     private String userId;	        //用户ID
-    private String quotedPrice	;       //报价
+    private BigDecimal quotedPrice	;       //报价
     private String participationTime;   //参与时间
     private String status;              //状态
 

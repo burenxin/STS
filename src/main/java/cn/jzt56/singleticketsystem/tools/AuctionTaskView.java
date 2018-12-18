@@ -14,5 +14,5 @@ import java.math.BigDecimal;
 public class AuctionTaskView  extends AuctionTask{
 
 
-    private String quotedPrice;
+    private BigDecimal quotedPrice;
 }
