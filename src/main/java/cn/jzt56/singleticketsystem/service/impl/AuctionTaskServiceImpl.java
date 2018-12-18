@@ -161,7 +161,7 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     public PageBean findBidded(AuctionTaskView auctionTaskView,int pageCode, int pageSize) {
 
         PageHelper.startPage(pageCode,pageSize);
-        auctionTaskView.setUserId("ui001");
+        //auctionTaskView.setUserId("ui001");
         Page<AuctionTaskView> page= this.auctionTaskMapper.findBidded(auctionTaskView);
 
         return new PageBean(page.getTotal(),page.getResult());
@@ -244,8 +244,8 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
      * @author:lzy
      */
     @Override
-    public Boolean assignCarrier(String userId,String bidTaskId){
-        return  this.auctionTaskMapper.assignCarrier(userId,bidTaskId)==1?true:false;
+    public Boolean assignCarrier(String userId,String bidTaskId,String transactionPrice){
+        return  this.auctionTaskMapper.assignCarrier(userId,bidTaskId,transactionPrice)==1?true:false;
     }
 
 }

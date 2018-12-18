@@ -76,7 +76,7 @@ public interface AuctionTaskMapper {
      * @description :指派承运商
      * @author:lzy
      */
-    int assignCarrier(String userId,String bidTaskId);
+    int assignCarrier(String userId,String bidTaskId,String transactionPrice);
 
     /**
      * @description :查询详情运输详情（竞价成功的信息）

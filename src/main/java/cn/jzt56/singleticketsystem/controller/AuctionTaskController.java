@@ -130,9 +130,10 @@ public class AuctionTaskController {
      */
     @RequestMapping(value = "/assignCarrier")
     public Boolean assignCarrier(@RequestParam String bidTaskId,
-                                 @RequestParam String userId){
+                                 @RequestParam String userId,
+                                 @RequestParam String transactionPrice){
 
-        return this.auctionTaskService.assignCarrier(userId,bidTaskId);
+        return this.auctionTaskService.assignCarrier(userId,bidTaskId,transactionPrice);
 
     }
 

@@ -48,7 +48,7 @@ public interface AuctionTaskService {
      * @description :指派承运商
      * @author:lzy
      */
-    Boolean assignCarrier(String userId,String bidTaskId);
+    Boolean assignCarrier(String userId,String bidTaskId,String transactionPrice);
 
 
 

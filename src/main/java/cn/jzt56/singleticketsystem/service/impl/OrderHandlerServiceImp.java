@@ -270,48 +270,41 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         //启用pageHelper
         PageHelper.startPage(pageCode,pageSize);
         //处理auctionTask为null的情况
-
-        Page<AuctionTask> auctionTaskList  = orderHandlerMapper.findTaskByCondition(auctionTask);
-        return new PageBean(auctionTaskList.getTotal(),auctionTaskList.getResult());
+        Page<String> TaskIdList  = orderHandlerMapper.findTaskIdByCondition(auctionTask);
+        Page<AuctionTask> AuctionTaskList = orderHandlerMapper.findTaskByIds(TaskIdList);
+        return new PageBean(TaskIdList.getTotal(),AuctionTaskList.getResult());
     }
     //拆单、拆包、删除拆包后空的包
     @Override
     public Result demolitionOrder(String jsonStr) {
-        log.info(jsonStr);
          Result result  =new Result();
-        String bidTaskId=null;
-        String orderId=null;
-        String removeOrderIds=null;
-        String operationStatus=null;
         try {
             //取值
             ObjectMapper mapper =new ObjectMapper();
             JsonNode rootNode  = mapper.readTree(jsonStr);
-            bidTaskId=mapper.writeValueAsString(rootNode.path("bidTaskId")).replace("\"","");
-            removeOrderIds=mapper.writeValueAsString(rootNode.path("removeOrderIds")).replace("\"","");
-            operationStatus=mapper.writeValueAsString(rootNode.path("operationStatus")).replace("\"","");
+            String bidTaskId=mapper.writeValueAsString(rootNode.path("bidTaskId")).replace("\"","");
+            String removeOrderIds=mapper.writeValueAsString(rootNode.path("removeOrderIds")).replace("\"","");
+            //String operationStatus=mapper.writeValueAsString(rootNode.path("operationStatus")).replace("\"","");
 
+            //修改订单的状态、去掉绑定的任务单号
+            orderHandlerMapper.demolitionOrder(bidTaskId,removeOrderIds) ;
+                //查询此包是否为空
+                int count =orderHandlerMapper.findTaskIsExist(bidTaskId);
+                   if (count>0){//拆单
+                       //获取保存的id字符串,修改任务表中的订单ID
+//                       List listOrders=new ArrayList();
+//                       listOrders=orderHandlerMapper.listOrderId(bidTaskId);
+//                       String orderId=String.join(",",listOrders);
+//                       orderHandlerMapper.upadteOrderId(orderId,bidTaskId);
 
-            //拆单
-            if(operationStatus.equals("1")){
-                orderHandlerMapper.demolitionOrder(bidTaskId,removeOrderIds) ;
+                       result.setSuccess(true);
+                       result.setMessage("拆单成功");
+                   }else{   //拆包//删除空的包
+                       orderHandlerMapper.deleteTask(bidTaskId);
+                       result.setSuccess(true);
+                       result.setMessage("拆包成功");
+                   }
 
-                //获取保存的id字符串；
-                List listOrders=new ArrayList();
-                listOrders=orderHandlerMapper.listOrderId(bidTaskId);
-                log.info(listOrders.toString());
-                orderId=String.join(",",listOrders);
-                orderHandlerMapper.upadteOrderId(orderId,bidTaskId);
-                result.setSuccess(true);
-                result.setMessage("拆单成功");
-            }
-            //拆包//删除空的包
-            if (operationStatus.equals("0")){
-                orderHandlerMapper.demolitionOrder(bidTaskId,removeOrderIds) ;
-                orderHandlerMapper.deleteTask(bidTaskId);
-                result.setSuccess(true);
-                result.setMessage("拆包成功");
-            }
         }catch (Exception e){
             e.printStackTrace();
             result.setSuccess(false);

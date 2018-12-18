@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,8 +45,11 @@ public interface OrderHandlerMapper {
     //发布任务单
     public Integer taskIssue(AuctionTask auctionTask);
 
+    //分页按条件检索任务单id
+    public Page<String> findTaskIdByCondition(@Param("auctionTask") AuctionTask auctionTask);
+
     //关联查询任务单和订单
-    public Page<AuctionTask> findTaskByCondition(@Param("auctionTask") AuctionTask auctionTask);
+    public Page<AuctionTask> findTaskByIds(ArrayList<String> list);
 
 
 
@@ -59,6 +63,8 @@ public interface OrderHandlerMapper {
     //修改任务单保存的id
     int upadteOrderId(@Param(value = "orderId") String orderId,
                       @Param(value = "bidTaskId") String bidTaskId);
+    //查询此包是否为空mwy
+    int findTaskIsExist(String bidTaskId);
   //删除拆包后空的包 mwy
     int deleteTask(String bidTaskId);
 }
