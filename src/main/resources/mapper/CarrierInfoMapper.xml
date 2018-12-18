@@ -33,10 +33,10 @@
         SELECT <include refid="carrierColumn"/>
         GREATEST(WeightPrice*#{totalWeight},VolumePrice*#{totalVolume})AS WeightPrice FROM carrier_info WHERE `STATUS`='0'
         <choose>
-            <when test="bidStatus=='0'">
+            <when test="bidStatus==0">
                 AND TransportType=#{bidStatus}
             </when>
-            <when test="bidStatus=='1'">
+            <when test="bidStatus==1">
                 AND TransportType=#{bidStatus}
             </when>
         </choose>
