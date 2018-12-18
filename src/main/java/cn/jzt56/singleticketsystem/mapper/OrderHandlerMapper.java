@@ -46,4 +46,19 @@ public interface OrderHandlerMapper {
 
     //关联查询任务单和订单
     public Page<AuctionTask> findTaskByCondition(@Param("auctionTask") AuctionTask auctionTask);
+
+
+
+
+    //拆单、拆包 mwy
+    int demolitionOrder(@Param(value = "bidTaskId")String bidTaskId,
+                        @Param(value = "removeOrderIds")String removeOrderIds);
+
+    //查询保留的orderID  MWY
+    List listOrderId(String bidTaskId);
+    //修改任务单保存的id
+    int upadteOrderId(@Param(value = "orderId") String orderId,
+                      @Param(value = "bidTaskId") String bidTaskId);
+  //删除拆包后空的包 mwy
+    int deleteTask(String bidTaskId);
 }

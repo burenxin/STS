@@ -7,10 +7,12 @@ import cn.jzt56.singleticketsystem.service.OrderHandlerService;
 import cn.jzt56.singleticketsystem.tools.CreateNumber;
 import cn.jzt56.singleticketsystem.tools.CreateUUID;
 import cn.jzt56.singleticketsystem.tools.PageBean;
+import cn.jzt56.singleticketsystem.tools.Result;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import java.util.List;
  */
 
 @Service
+@Slf4j
 public class OrderHandlerServiceImp implements OrderHandlerService {
 
     @Autowired(required = false)
@@ -271,4 +274,52 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         Page<AuctionTask> auctionTaskList  = orderHandlerMapper.findTaskByCondition(auctionTask);
         return new PageBean(auctionTaskList.getTotal(),auctionTaskList.getResult());
     }
+    //拆单、拆包、删除拆包后空的包
+    @Override
+    public Result demolitionOrder(String jsonStr) {
+        log.info(jsonStr);
+         Result result  =new Result();
+        String bidTaskId=null;
+        String orderId=null;
+        String removeOrderIds=null;
+        String operationStatus=null;
+        try {
+            //取值
+            ObjectMapper mapper =new ObjectMapper();
+            JsonNode rootNode  = mapper.readTree(jsonStr);
+            bidTaskId=mapper.writeValueAsString(rootNode.path("bidTaskId")).replace("\"","");
+            removeOrderIds=mapper.writeValueAsString(rootNode.path("removeOrderIds")).replace("\"","");
+            operationStatus=mapper.writeValueAsString(rootNode.path("operationStatus")).replace("\"","");
+
+
+            //拆单
+            if(operationStatus.equals("1")){
+                orderHandlerMapper.demolitionOrder(bidTaskId,removeOrderIds) ;
+
+                //获取保存的id字符串；
+                List listOrders=new ArrayList();
+                listOrders=orderHandlerMapper.listOrderId(bidTaskId);
+                log.info(listOrders.toString());
+                orderId=String.join(",",listOrders);
+                orderHandlerMapper.upadteOrderId(orderId,bidTaskId);
+                result.setSuccess(true);
+                result.setMessage("拆单成功");
+            }
+            //拆包//删除空的包
+            if (operationStatus.equals("0")){
+                orderHandlerMapper.demolitionOrder(bidTaskId,removeOrderIds) ;
+                orderHandlerMapper.deleteTask(bidTaskId);
+                result.setSuccess(true);
+                result.setMessage("拆包成功");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            result.setSuccess(false);
+            result.setMessage("拆单/拆包失败"+e.getMessage());
+        }
+
+        return result;
+    }
+
+
 }

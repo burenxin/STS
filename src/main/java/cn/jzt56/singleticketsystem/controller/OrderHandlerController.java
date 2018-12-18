@@ -95,4 +95,18 @@ public class OrderHandlerController {
 
         return orderHandlerService.findTaskByCondition(jsonStr);
     }
+
+    /**
+     * 拆单、拆包、删除拆包后空的包
+     * @param jsonStr
+     * @return
+     */
+    @RequestMapping(value = "/demolitionOrder",method= RequestMethod.POST)
+    @ResponseBody
+    public Result demolitionOrder(@RequestBody String jsonStr){
+
+        return  orderHandlerService.demolitionOrder(jsonStr);
+
+    }
+
 }
