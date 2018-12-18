@@ -3,6 +3,7 @@ package cn.jzt56.singleticketsystem.controller;
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.service.BiddingDetailService;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static cn.jzt56.singleticketsystem.tools.CreateUUID.getUUID32;
 
 /**
  * @ Author     ：lzy

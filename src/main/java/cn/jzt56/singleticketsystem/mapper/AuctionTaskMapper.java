@@ -1,11 +1,14 @@
 package cn.jzt56.singleticketsystem.mapper;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
+import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -143,5 +146,5 @@ public interface AuctionTaskMapper {
      * @param bidStatus
      * @author ：CHENG QI
      */
-     int updateTaskStatusByTaskId(@Param(value = "bidTaskId") String bidTaskId,@Param(value = "bidStatus") String bidStatus);
+     int updateTaskStatusByTaskId(@Param(value = "bidTaskId") String bidTaskId, @Param(value = "bidStatus") String bidStatus);
 }
