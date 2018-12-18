@@ -10,7 +10,7 @@ import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -99,28 +99,7 @@ public class AuctionTaskController {
 
 
 
-    /**
-     *
-     * @param bidTaskId
-     * @return List<Order>
-     * @description ：根据任务单号查询任务单详情
-     * @author: CHENG QI
-     */
-    // http://localhost:8080/STS/auctionTask/getTaskDetail?bidTaskId='bt005'
-    @RequestMapping(value = "/getTaskDetail")
-    public Object getTaskDetailsByBidTaskId(String bidTaskId){
-        List<Order> list = auctionTaskService.getTaskDetailsByBidTaskId(bidTaskId);
-        if (list.size() == 0){
-            return "订单详情不存在，请检查订单是否出错";
-        }
-        return list;
-    }
 
-    // http://localhost:8080/STS/auctionTask/findSuccessCurrentTaskByUserId?userId='1001'
-    @RequestMapping(value = "/findSuccessCurrentTaskByUserId")
-    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId){
-        return auctionTaskService.findAllSuccessCurrentTaskByUserId(userId);
-    }
     /**
      * @method
      * @description :biddeTask 所有已发布任务(与条件筛选)
@@ -151,11 +130,113 @@ public class AuctionTaskController {
      */
     @RequestMapping(value = "/assignCarrier")
     public Boolean assignCarrier(@RequestParam String bidTaskId,
-                                 @RequestParam String userId){
+                                 @RequestParam String userId,
+                                 @RequestParam String transactionPrice){
 
-        return this.auctionTaskService.assignCarrier(userId,bidTaskId);
+        return this.auctionTaskService.assignCarrier(userId,bidTaskId,transactionPrice);
 
     }
 
+
+    /**
+     *
+     * @param bidTaskId
+     * @return List<Order>
+     * @description ：竞价页面-根据任务单号查询任务单详情
+     * @author: CHENG QI
+     */
+    @RequestMapping(value = "/getTaskDetails")
+    public Object getTaskDetailsByBidTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
+        List<Order> list = auctionTaskService.getTaskDetailsByBidTaskId(bidTaskId);
+//        if (list.size() == 0){
+//            return "订单详情不存在，请检查订单是否出错";
+//        }
+        return list;
+    }
+
+    @RequestMapping(value = "/getResultDetails")
+    public Object getResultDetailsByBidTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
+        List<Order> list = auctionTaskService.getResultDetailsByBidTaskId(bidTaskId);
+//        if (list.size() == 0){
+//            return "订单详情不存在，请检查订单是否出错";
+//        }
+        return list;
+    }
+
+
+
+    /**
+     *
+     * @param userId
+     * @return List<AuctionTask>
+     * @description ：根据运输商id查询竞拍成功的任务单
+     * @author: CHENG QI
+     */
+    // http://localhost:8080/STS/auctionTask/findSuccessCurrentTaskByUserId?userId=1001
+    @RequestMapping(value = "/findSuccessCurrentTaskByUserId")
+    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(@RequestParam(value = "userId", required = false) String userId){
+        return auctionTaskService.findAllSuccessCurrentTaskByUserId(userId);
+    }
+
+    /**
+     * 分页实现任务单模糊查询
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("/findSuccessByPage")
+    public PageBean findSuccessByPage(AuctionTask auctionTask,
+                                      @RequestParam(value = "pageCode", required = false,defaultValue = "1") int pageCode,
+                                      @RequestParam(value = "pageSize", required = false,defaultValue = "10") int pageSize) {
+        return auctionTaskService.findSuccessByPage(auctionTask, pageCode, pageSize);
+    }
+
+    /**
+     * @param userId
+     * @return List<AuctionTask>
+     * @description : 根据运输商id查询所属任务单
+     * @author: CHENG QI
+     */
+    // http://localhost:8080/STS/auctionTask/findAllCurrentTaskByUserId?userId=1001
+    @RequestMapping(value = "findAllCurrentTaskByUserId")
+    public List<AuctionTask> findAllCurrentTaskByUserId(@RequestParam(value = "userId", required = false) String userId){
+        return auctionTaskService.findAllCurrentTaskByUserId(userId);
+    }
+
+    /**
+     * @description 分页实现历史任务单模糊查询
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @return
+     * @author : CHENG QI
+     */
+    // http://localhost:8080/STS/auctionTask/findHistoryByPage?userId=1001
+    @RequestMapping("/findHistoryByPage")
+    public PageBean findHistoryByPage(AuctionTask auctionTask,
+                                      @RequestParam(value = "pageCode", required = false,defaultValue = "1") int pageCode,
+                                      @RequestParam(value = "pageSize", required = false,defaultValue = "10") int pageSize) {
+
+        return auctionTaskService.findHistoryByPage(auctionTask, pageCode, pageSize);
+    }
+
+    /**
+     * 竞价结果页：修改任务单状态
+     * @param bidTaskId
+     * @param bidStatus
+     * @return
+     */
+    @RequestMapping("/updateTaskStatus")
+    @Transactional
+    public String updateTaskStatusByTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId,
+                                           @RequestParam(value = "bidStatus", required = false) String bidStatus){
+        int i = auctionTaskService.updateTaskStatusByTaskId(bidTaskId,bidStatus);
+        if (i>0) {
+            return "success";
+        }else {
+            return "false";
+        }
+    }
 
 }

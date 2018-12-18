@@ -30,8 +30,8 @@
     </sql>
     <!--查询运输信息-->
     <select id="findManyCarrierInfo" resultMap="carrierInfoMap">
-        SELECT <include refid="carrierColumn"/>
-        GREATEST(WeightPrice*#{totalWeight},VolumePrice*#{totalVolume})AS WeightPrice FROM carrier_info WHERE `STATUS`='0'
+        SELECT uit.User_Name AS Address , GREATEST(WeightPrice*#{totalWeight},VolumePrice*#{totalVolume}) AS WeightPrice,cit.User_Id FROM carrier_info cit
+        LEFT JOIN   user_info uit ON cit.User_Id=uit.User_Id  WHERE cit.`STATUS`='0'
         <choose>
             <when test="bidStatus==0">
                 AND TransportType=#{bidStatus}

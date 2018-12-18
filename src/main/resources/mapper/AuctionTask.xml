@@ -69,10 +69,7 @@
         <if test="totalQuantity !=null and totalQuantity !=''">
             AND Total_Quantity=#{totalQuantity}
         </if>
-        <!--任务单号查询 -->
-        <if test="bidTaskNum!=null and bidTaskNum!=''">
-            AND Bid_Task_Num=#{bidTaskNum}
-        </if>
+
 
         <!-- 时效 -->
         <choose>
@@ -135,6 +132,10 @@
         <if test="taskType !=null and taskType !=''">
             AND Task_Type=#{taskType}
         </if>
+        <!--任务单号查询 -->
+        <if test="bidTaskNum!=null and bidTaskNum!=''">
+            AND Bid_Task_Num=#{bidTaskNum}
+        </if>
     </sql>
 
     <!-- 查询所有可竞价的任务单 -->
@@ -165,14 +166,6 @@
     </select>
 
 
-    <!-- 根据运输商id查询竞拍成功的订单 -->
-    <select id="findAllSuccessCurrentTaskByUserId" parameterType="String" resultMap="auctionTaskResultMap">
-        SELECT *  FROM	auction_task
-        WHERE
-	      Bid_Status = '2'
-        AND
-          User_Id = #{userId}
-    </select>
 
     <!--&lt;!&ndash; 竞拍成功 &ndash;&gt;-->
     <!--<update id="biddedSuccess" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">-->
@@ -221,7 +214,7 @@
     </select>
     <!--指派-->
     <update id="assignCarrier" parameterType="String">
-        UPDATE auction_task SET User_Id=#{arg0},Bid_Status='2' WHERE Bid_Task_Id=#{arg1} AND Bid_Status='0'
+        UPDATE auction_task SET User_Id=#{arg0},Bid_Status='2',Transaction_Price=#{arg2} WHERE Bid_Task_Id=#{arg1} AND Bid_Status='0'
     </update>
 
     <!--竞价管理竞价详情-->

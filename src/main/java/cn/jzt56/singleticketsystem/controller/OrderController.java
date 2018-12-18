@@ -5,10 +5,7 @@ import cn.jzt56.singleticketsystem.tools.PageBean;
 import cn.jzt56.singleticketsystem.tools.Result;
 import cn.jzt56.singleticketsystem.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,7 +31,7 @@ public class OrderController {
      * @return
      */
     @RequestMapping("/findByConPage")
-    public PageBean findByConPage(@RequestBody Order order,
+    public PageBean findByConPage(Order order,
                                   @RequestParam(value = "pageCode", required = false) int pageCode,
                                   @RequestParam(value = "pageSize", required = false) int pageSize) {
         return orderService.findByPage(order, pageCode, pageSize);
@@ -46,7 +43,7 @@ public class OrderController {
      * @param order
      * @return
      */
-    @RequestMapping("/create")
+    @RequestMapping(value = "/create",method = RequestMethod.POST)
     public Result create(@RequestBody Order order) {
         try {
             orderService.create(order);

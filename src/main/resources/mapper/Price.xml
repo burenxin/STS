@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.PriceMapper">
+    <!-- 价格字典 -->
+    <resultMap id="priceDictionaryResultMap" type="cn.jzt56.singleticketsystem.entity.PriceDictionary">
+        <id column="Price_Id" property="priceId" jdbcType="CHAR"/>
+        <result column="Client_Id" property="clientId" jdbcType="CHAR"/>
+        <result column="Per_Item_Price" property="perItemPrice" javaType="DECIMAL"/>
+        <result column="Per_Weight_Price" property="perWeightPrice" jdbcType="DECIMAL"/>
+        <result column="Per_Volume_Price" property="perVolumePrice" jdbcType="DECIMAL"/>
+        <result column="Outer_City" property="outerCity" jdbcType="VARCHAR"/>
+        <result column="Inner_City" property="innerCity" jdbcType="VARCHAR"/>
+        <result column="Outer_province" property="outerProvince" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="prejudgeUserId" parameterType="String" resultType="int">
+        select count(*) from price_dictionary where Client_Id = #{userId}
+    </select>
+
+    <select id="getPriceDictionaryByClientId" parameterType="String" resultMap="priceDictionaryResultMap">
+        select * from price_dictionary where Client_Id = #{userId}
+    </select>
+
+
+
+</mapper>

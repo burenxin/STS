@@ -26,9 +26,9 @@
         <result column="Created_Time" property="createdTime" javaType="String"/>
         <result column="Updated_Time" property="updatedTime" javaType="String"/>
         <result column="Remark" property="remark" jdbcType="VARCHAR"/>
-        <result column="Transport_Type" property="transportType" jdbcType="VARCHAR"/>
+        <result column="Goods_Name" property="goodsName" jdbcType="VARCHAR"/>
         <result column="Signature_Type" property="signatureType" jdbcType="VARCHAR"/>
-        <result column="order_Num" property="orderNum" jdbcType="VARCHAR"/>
+        <result column="Transport_Type" property="transportType" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 查询所有 -->
@@ -38,7 +38,20 @@
 
     <!-- 条件查询 -->
     <select id="findByPage" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
-        SELECT * FROM `order` WHERE Status!='-1'
+        select Order_Id,User_Id,PhoneNum_Consignor,Consignor,PhoneNum_Consignee,Consignee,
+        StartArea,StartArea_mx,EndArea,EndArea_mx,Transport_Type,Goods_Count,
+        Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,
+        CASE Status
+        when 0 then '刚生成'
+        when 1 then '已合单'
+        when 2 then '配送中'
+        when 3 then '已签收'
+        when -1 then '作废'
+        else '其他' END
+        Status,
+        DATE_FORMAT(Created_Time,'%Y-%m-%d') Created_Time,
+        Updated_Time,Remark,Goods_Type,Signature_Type,Order_Num,task_Id
+        FROM `order` WHERE Status!='-1'
         <if test="consignee != null and consignee!=''">
             AND Consignee LIKE CONCAT('%', #{consignee}, '%')
         </if>
@@ -51,18 +64,22 @@
         <if test="userId != null and userId!=''">
             AND User_Id = #{userId}
         </if>
+        <if test="createdTime != null and createdTime!=''">
+            AND DATE_FORMAT(Created_Time,'%Y-%m-%d') like CONCAT('%',#{createdTime},'%')
+        </if>
         ORDER BY Updated_Time
     </select>
 
     <!-- 根据id查询 -->
     <select id="findById" parameterType="String" resultMap="baseMap">
-        SELECT * FROM `order` WHERE Order_Num = #{orderNum}
+        SELECT * FROM `order` WHERE Order_Id = #{orderId}
     </select>
-    <select id="findByUserId" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
+    <select id="findByUserId" parameterType="String" resultMap="baseMap">
         SELECT * FROM `order` WHERE User_Id = #{userId} and Status!='-1'
     </select>
 
-    <!-- 添加数据 -->
+
+    <!-- 添加数据 在线生成订单-->
     <insert id="create" parameterType="cn.jzt56.singleticketsystem.entity.Order">
         INSERT INTO `order`(Order_Id,User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Remark,Transport_Type,Signature_Type,Order_Num,Updated_Time)
         VALUES(#{orderId},#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{remark},#{transportType},#{signatureType},#{orderNum},#{updatedTime})
@@ -74,7 +91,7 @@
         <set>
             <if test="phoneNumConsignor != null and phoneNumConsignor!=''">  PhoneNum_Consignor =#{phoneNumConsignor},</if>
             <if test="consignor != null and consignor!=''">          Consignor = #{consignor},</if>
-            <if test="phoneNumConsignee != null and phoneNumConsignee!=''"> PhoneNum_Consignee = #{phoneNumConsignee},</if>
+            <if test="phoneNum_Consignee != null and consignor!=''"> PhoneNum_Consignee = #{phoneNumConsignee},</if>
             <if test="consignee != null and consignee!=''">          Consignee = #{consignee},</if>
             <if test="startArea != null and startArea!=''">StartArea = #{startArea}, </if>
             <if test="startAreaMx != null and startAreaMx!=''"> StartArea_mx = #{startAreaMx},  </if>
@@ -85,14 +102,12 @@
             <if test="weight != null and weight!=''">Weight = #{weight}, </if>
             <if test="volume != null and volume!=''">Volume = #{volume}, </if>
             <if test="transportPrices != null and transportPrices!=''">Transport_Prices = #{transportPrices}, </if>
-            <if test="goodsType != null and goodsType!=''">Goods_Type = #{goodsType}, </if>
+            <if test="goodsName != null and goodsName!=''">Goods_Name = #{goodsName}, </if>
             <if test="signatureType != null and signatureType!=''">Signature_Type = #{signatureType}, </if>
             <if test="status != null and status!=''">Status = #{status}, </if>
-            <if test="updatedTime != null and updatedTime!=''">Updated_Time = #{updatedTime}, </if>
             <if test="remark != null and remark!=''">Remark = #{remark}, </if>
             <if test="deliveryTime != null and deliveryTime!=''">Delivery_Time = #{deliveryTime}, </if>
             <if test="receivingTime!= null and receivingTime!=''">Receiving_Time = #{receivingTime}, </if>
-            <if test="transportType != null and transportType!=''">Transport_Type = #{transportType}, </if>
         </set>
         WHERE Order_Id = #{orderId}
     </update>
@@ -101,35 +116,18 @@
     <update id="delete" parameterType="String">
         update `order` set Status='-1' WHERE Order_Id = #{id}
     </update>
-    <delete id="deleteOrder" parameterType="cn.jzt56.singleticketsystem.entity.Order">
-        delete FROM `order` WHERE Order_Id=#{orderId}
-    </delete>
-    <!-- 根据任务单id获取任务单详情(订单列表) -->
-    <select id="getTaskDetailsByBidTaskId" parameterType="String" resultMap="baseMap">
-        SELECT *  FROM `order` o  WHERE o.Order_Id IN (
-         SELECT DISTINCT
-            (
-                substring_index(
-                substring_index(
-                p.Ord_Id,
-                ',',
-                b.help_topic_id + 1
-                ),
-                ',',
-                - 1
-                )
-             )
-         AS Oid
-        FROM
-          auction_task p
-        JOIN mysql.help_topic b ON b.help_topic_id &lt; (
-        LENGTH(p.Ord_Id) - LENGTH(
-        REPLACE (p.Ord_Id, ',', '')
-        ) + 1
-        )
-        where p.Bid_Task_Id = #{bid_Task_Id}
-        )
+
+    <!-- 竞价页根据任务单id查询详情 -->
+    <select id="getTaskDetailsByBidTaskId"  parameterType="String" resultMap="baseMap">
+        SELECT
+        CONCAT(StartArea,StartArea_mx) StartArea,CONCAT(EndArea,EndArea_mx) EndArea,Goods_Count,Volume,Weight,Transport_Type,Goods_Type,TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Remark
+        FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
     </select>
 
-
+    <!-- 竞价结果页根据任务单id查询详情 -->
+    <select id="getResultDetailsByBidTaskId" parameterType="String" resultMap="baseMap">
+        SELECT
+          Order_Id,Goods_Type,Consignor,CONCAT(StartArea,StartArea_mx) StartArea,PhoneNum_Consignor,Transport_Type,TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Goods_Count,Weight,Volume,Consignee,PhoneNum_Consignee,CONCAT(EndArea,EndArea_mx) EndArea,Remark
+         FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
+    </select>
 </mapper>

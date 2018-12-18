@@ -1,6 +1,8 @@
 package cn.jzt56.singleticketsystem.service.impl;
 
 import cn.jzt56.singleticketsystem.entity.Order;
+import cn.jzt56.singleticketsystem.tools.AddDate;
+import cn.jzt56.singleticketsystem.tools.CreateNumber;
 import cn.jzt56.singleticketsystem.tools.CreateUUID;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import cn.jzt56.singleticketsystem.mapper.OrderMapper;
@@ -10,6 +12,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -36,13 +39,42 @@ public class OrderServiceImpl implements OrderService {
     }
     @Override
     public void create(Order order) {
-        order.setOrderId(CreateUUID.getUUID32());
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        SimpleDateFormat sdg = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-        order.setCreatedTime(sdg.format(date));
-        order.setUpdatedTime(sdg.format(date));
-        order.setOrderNum("DD"+sdf.format(date));
+        try {
+            order.setOrderId(CreateUUID.getUUID32());
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            DateFormat sdg = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            order.setCreatedTime(sdg.format(date));
+            order.setUpdatedTime(sdg.format(date));
+            order.setStatus("0");//状态刚生成
+            order.setOrderNum(CreateNumber.GetNumber("DD"));//修改委托单号
+            int st=Integer.parseInt(order.getReceivingTime());//获取预计提货时间的前台值
+            String strDate=order.getDeliveryTime();
+            date=sdg.parse(strDate);//将提货时间转为字符串
+            AddDate ad=new AddDate();
+            try {
+                switch(st){
+                    case 1:
+                        date=ad.addDate(date,3);//将提货时间加三天
+                        break;
+                    case 2:
+                        date=ad.addDate(date,5);
+                        break;
+                    case 3:
+                        date=ad.addDate(date,7);
+                        break;
+                    default:break;
+                }
+
+                order.setReceivingTime(sdg.format(date));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         orderMapper.create(order);
     }
 

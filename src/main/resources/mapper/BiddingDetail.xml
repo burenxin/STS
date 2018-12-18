@@ -65,10 +65,10 @@
     <!--竞价管理竞价详情-->
     <select id="findBiddingDetail" parameterType="String" resultMap="biddingDetailMap">
         SELECT uit.User_Name AS User_Id,bdt.* from bidding_detail bdt,user_info uit
-        WHERE bdt.User_Id=uit.User_Id  AND  Bid_Task_Id=#{findBiddingDetail} AND Status='1'
+        WHERE bdt.User_Id=uit.User_Id  AND  Bid_Task_Id=#{bidTaskId} AND bdt.Status='1'
     </select>
     <!--判断是否存在竞价12.17 20:30-->
     <select id="findBiddingDetailNum" parameterType="String" resultType="int">
-        SELECT count(*) from bidding_detail WHERE Bid_Task_Id=#{findBiddingDetail} AND Status='1'
+        SELECT count(*) from bidding_detail WHERE Bid_Task_Id=#{bidTaskId} AND Status='1'
     </select>
 </mapper>

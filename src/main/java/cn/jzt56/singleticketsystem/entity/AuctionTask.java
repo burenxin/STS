@@ -33,4 +33,5 @@ public class AuctionTask implements Serializable {
     private String bidTaskNum;//任务单号
     private List<Order> orderList;//多个订单对象
 
+
 }

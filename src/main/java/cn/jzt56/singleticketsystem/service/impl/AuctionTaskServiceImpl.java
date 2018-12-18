@@ -15,8 +15,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,7 +27,6 @@ import java.util.List;
  */
 @Service
 @Slf4j
-@Component
 public class AuctionTaskServiceImpl implements AuctionTaskService {
 
     @Autowired
@@ -41,6 +40,99 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
 
     @Autowired
     private BiddingDetailMapper biddingDetailMapper;
+
+
+
+
+
+    /**
+     * @param bidTaskId
+     * @return
+     * @description ：根据任务单号查询任务单详情
+     * 此实现类调用的是OrderMapper中的Mapper接口。
+     * @author: CHENG QI
+     */
+    @Override
+    public List<Order> getTaskDetailsByBidTaskId(String bidTaskId) {
+        return orderMapper.getTaskDetailsByBidTaskId(bidTaskId);
+    }
+
+    @Override
+    public List<Order> getResultDetailsByBidTaskId(String bidTaskId) {
+        return orderMapper.getResultDetailsByBidTaskId(bidTaskId);
+    }
+
+    /**
+     * @param userId
+     * @return List<AuctionTask>
+     * @description : 根据运输商id查询竞拍成功的任务单
+     * @author : CHENG QI
+     * ,String bidStatus
+     */
+    @Override
+    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId) {
+        return this.auctionTaskMapper.findAllSuccessCurrentTaskByUserId(userId);
+    }
+
+    /**
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @return
+     * @description :分页实现任务单模糊查询
+     * @author CHENG QI
+     */
+    @Override
+    public PageBean findSuccessByPage(AuctionTask auctionTask, int pageCode, int pageSize) {
+        //使用Mybatis分页插件
+        PageHelper.startPage(pageCode, pageSize);
+        //调用分页查询方法，其实就是查询所有数据，mybatis自动帮我们进行分页计算
+        Page<AuctionTask> page = auctionTaskMapper.findSuccessByPage(auctionTask);
+
+        return new PageBean(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * @param userId
+     * @return
+     * @description : 根据运输商id查询所属任务单
+     * @author : CHENG QI
+     */
+    @Override
+    public List<AuctionTask> findAllCurrentTaskByUserId(String userId) {
+        return this.auctionTaskMapper.findAllCurrentTaskByUserId(userId);
+    }
+
+    /**
+     * @param auctionTask
+     * @param pageCode
+     * @param pageSize
+     * @return
+     * @description 分页实现历史任务单模糊查询
+     * @author : CHENG QI
+     */
+    @Override
+    public PageBean findHistoryByPage(AuctionTask auctionTask, int pageCode, int pageSize) {
+        PageHelper.startPage(pageCode, pageSize);
+        Page<AuctionTask> page =
+                auctionTaskMapper.findHistoryByPage(auctionTask);
+
+        return new PageBean(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * @param bidTaskId
+     * @param bidStatus
+     * @description 修改任务单状态，同时修改任务单包含的订单的订单状态
+     * @author ：CHENG QI
+     */
+    @Override
+    @Transactional
+    public int updateTaskStatusByTaskId(String bidTaskId,String bidStatus) {
+        int i = auctionTaskMapper.updateTaskStatusByTaskId(bidTaskId,bidStatus);
+        return i;
+    }
+
 
 
     /**
@@ -69,34 +161,13 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     public PageBean findBidded(AuctionTaskView auctionTaskView,int pageCode, int pageSize) {
 
         PageHelper.startPage(pageCode,pageSize);
-        auctionTaskView.setUserId("ui001");
+        //auctionTaskView.setUserId("ui001");
         Page<AuctionTaskView> page= this.auctionTaskMapper.findBidded(auctionTaskView);
 
         return new PageBean(page.getTotal(),page.getResult());
     }
 
-    /**
-     * @param bidTaskId
-     * @return
-     * @description ：根据任务单号查询任务单详情
-     * 此实现类调用的是OrderMapper中的Mapper接口。
-     * @author: CHENG QI
-     */
-    @Override
-    public List<Order> getTaskDetailsByBidTaskId(String bidTaskId) {
-        return orderMapper.getTaskDetailsByBidTaskId(bidTaskId);
-    }
 
-    /**
-     * @param userId
-     * @return List<AuctionTask>
-     * @description : 根据运输商id查询竞拍成功的任务单
-     * @author : CHENG QI
-     */
-    @Override
-    public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId) {
-        return this.auctionTaskMapper.findAllSuccessCurrentTaskByUserId(userId);
-    }
     /**
      * @method
      * @description :报价任务截单
@@ -108,7 +179,7 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
         List<AuctionTask> list=this.auctionTaskMapper.findAllBiddingTask();//查询所有未完成竞价任务
         BiddingDetail biddingDetail;
         for (AuctionTask auctionTask:list
-        ) {
+                ) {
             CarrierInfo carrierInfo = this.carrierInfoMapper.findMinCarrierInfo(auctionTask);
             if (this.biddingDetailMapper.findBiddingDetailNum(auctionTask.getBidTaskId()) > 0 ? true : false) {
                 biddingDetail = this.biddingDetailMapper.findMinDetailByTaskId(auctionTask.getBidTaskId());
@@ -127,7 +198,7 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
             }
             log.info(biddingDetail.toString());
             //截单
-            //this.auctionTaskMapper.biddingEnd(biddingDetail);
+            this.auctionTaskMapper.biddingEnd(biddingDetail);
         }
 
 
@@ -173,10 +244,8 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
      * @author:lzy
      */
     @Override
-    public Boolean assignCarrier(String userId,String bidTaskId){
-        return  this.auctionTaskMapper.assignCarrier(userId,bidTaskId)==1?true:false;
+    public Boolean assignCarrier(String userId,String bidTaskId,String transactionPrice){
+        return  this.auctionTaskMapper.assignCarrier(userId,bidTaskId,transactionPrice)==1?true:false;
     }
-
-
 
 }

@@ -31,7 +31,7 @@ public interface IUserInfoMapper {
      * 根据用户id删除用户信息
      * @param UserId
      */
-    void removeUserinfoByUserId(String UserId);
+    int removeUserinfoByUserId(String UserId);
 
     /**
      * 根据用户id查找用户信息
