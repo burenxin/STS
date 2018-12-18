@@ -4,6 +4,7 @@ import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public interface AuctionTaskMapper {
     /**
      * @param userId
      * @return List<AuctionTask>
-     * @description : 根据运输商id查询竞拍成功的任务单
+     * @description : 根据运输商id查询竞拍成功的任务单(当前任务单)
      * @author : CHENG QI
      */
     List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId);
@@ -73,7 +74,8 @@ public interface AuctionTaskMapper {
     /**
      * @description 修改任务单状态，同时修改任务单包含的订单的订单状态
      * @param bidTaskId
+     * @param bidStatus
      * @author ：CHENG QI
      */
-     int updateTaskStatusByTaskId(String bidTaskId);
+     int updateTaskStatusByTaskId(@Param(value = "bidTaskId") String bidTaskId,@Param(value = "bidStatus") String bidStatus);
 }

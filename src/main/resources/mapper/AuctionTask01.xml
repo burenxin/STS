@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.jzt56.singleticketsystem.mapper.AuctionTaskMapper">
+    <!--竞价任务数据库表与实体类字段对接-->
+    <resultMap id="AuctionTaskResultMap" type="cn.jzt56.singleticketsystem.entity.AuctionTask">
+        <id column="Bid_Task_Id" property="bidTaskId" jdbcType="VARCHAR"/>
+        <result column="Ord_Id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="User_Id" property="userId" javaType="STRING"/>
+        <result column="Total_Quantity" property="totalQuantity" jdbcType="VARCHAR"/>
+        <result column="Total_Volume" property="totalVolume" jdbcType="VARCHAR"/>
+        <result column="Total_Weight" property="totalWeight" jdbcType="VARCHAR"/>
+        <result column="Proposed_Price" property="proposedPrice" jdbcType="DECIMAL"/>
+        <result column="Pick_Area" property="pickArea" jdbcType="VARCHAR"/>
+        <result column="Deliver_Area" property="deliverArea" jdbcType="VARCHAR"/>
+        <result column="Service_Time" property="serviceTime" jdbcType="VARCHAR"/>
+        <result column="Release_Time" property="releaseTime" jdbcType="VARCHAR"/>
+        <result column="SealedDisk_Time" property="sealedDiskTime" jdbcType="VARCHAR"/>
+        <result column="Bid_Status" property="bidStatus" jdbcType="VARCHAR"/>
+        <result column="Transaction_Price" property="transactionPrice" jdbcType="DECIMAL"/>
+        <result column="Task_Type" property="taskType" jdbcType="VARCHAR"/>
+        <result column="Bid_Task_Num" property="bidTaskNum" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- 根据运输商id查询竞拍成功的订单 -->
+    <select id="findAllSuccessCurrentTaskByUserId" parameterType="String" resultMap="AuctionTaskResultMap">
+        SELECT *  FROM	auction_task
+        WHERE
+            Bid_Status = '2'
+        AND
+           User_Id = #{userId}
+    </select>
+
+    <!-- 分页实现任务单模糊查询-竞拍成功的任务单 (当前任务单)-->
+    <select id="findSuccessByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
+        SELECT
+        Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,substring_index((unix_timestamp(Service_Time) - unix_timestamp(Release_Time))/3600,'.',1) Service_Time,SealedDisk_Time,Bid_Status,Transaction_Price,Task_Type,Bid_Task_Num
+        FROM auction_task WHERE User_Id = #{userId}
+        <!-- 任务单状态 -->
+        <choose>
+            <when test="bidStatus != null and bidStatus !='' " >
+                AND Bid_Status = #{bidStatus}
+            </when>
+            <otherwise>
+                AND Bid_Status in (2,5)
+            </otherwise>
+        </choose>
+        <!-- 任务单id -->
+        <if test="bidTaskId != null and bidTaskId != '' ">
+            AND Bid_Task_Id = #{bidTaskId}
+        </if>
+
+        <!-- 起始地 -->
+        <if test="pickArea != null and pickArea != '' ">
+            AND Pick_Area LIKE CONCAT('%', #{pickArea},'%')
+        </if>
+
+        <!-- 目的地 -->
+        <if test="deliverArea != null and deliverArea != '' ">
+            AND Deliver_Area LIKE CONCAT('%', #{deliverArea},'%')
+        </if>
+
+        <!-- 类型 -->
+        <if test="taskType != null and taskType != '' ">
+            AND Task_Type = #{taskType}
+        </if>
+
+        <!-- 时效 -->
+        <!-- <if test="serviceTime != null and serviceTime != '' ">
+             AND Service_Time = #{serviceTime}
+            AND unix_timestamp(ta.Service_Time) - unix_timestamp(#{Release_Time})
+        </if>  -->
+
+        <!-- 体积 -->
+        <choose>
+            <when test="totalVolume==1">
+                AND Total_Volume &lt;10
+            </when>
+            <when test="totalVolume==2">
+                AND 10 &lt;=Total_Volume AND Total_Volume &lt;=100
+            </when>
+            <when test="totalVolume==3">
+                AND 100 &lt;Total_Volume
+            </when>
+        </choose>
+
+        <!-- 重量 -->
+        <choose>
+            <when test="totalWeight==1">
+                AND Total_Weight &lt;10
+            </when>
+            <when test="totalWeight==2">
+                AND 10 &lt;=Total_Weight AND Total_Weight &lt;=100
+            </when>
+            <when test="totalWeight==3">
+                AND 100 &lt; Total_Weight
+            </when>
+        </choose>
+
+    </select>
+
+
+    <!-- 根据运输商id查询所属任务单 所有竞拍过的任务单-->
+    <select id="findAllCurrentTaskByUserId" parameterType="String" resultMap="AuctionTaskResultMap">
+        select ta.*
+        from auction_task ta
+        where
+        ta.Bid_Status in (0,2,4,5)
+        AND
+        ta.Bid_Task_Id in (
+            select Bid_Task_Id from bidding_detail
+               where User_Id = #{userId}
+        )
+    </select>
+
+    <!-- 分页实现历史任务单模糊查询 (历史任务单)-->
+    <select id="findHistoryByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
+        select ta.* from auction_task ta
+       <!-- where ta.Bid_Status in (0,2,4,5)  -->
+        WHERE ta.Bid_Task_Id in (
+        select Bid_Task_Id from bidding_detail
+        where User_Id = #{userId}
+        )
+        AND ( ta.Bid_Status = 4 OR ta.User_Id != #{userId} )
+
+        <!-- 任务单id -->
+        <if test="bidTaskId != null  and bidTaskId != '' ">
+            AND ta.Bid_Task_Id = #{bidTaskId}
+        </if>
+        <!-- 类型 -->
+        <if test="taskType != null and taskType != '' ">
+            AND ta.Task_Type = #{taskType}
+        </if>
+        <!-- 任务单状态 失败-1，运输完成4-->
+        <if test="bidStatus == 4">
+            AND ta.Bid_Status = '4'
+            AND ta.User_Id = #{userId}
+        </if>
+        <if test="bidStatus== -1">
+            AND ta.User_Id != #{userId}
+        </if>
+
+        <!-- 时间 -->
+        <if test="releaseTime != null and releaseTime != '' ">
+            AND unix_timestamp(ta.Release_Time) - unix_timestamp(#{releaseTime}) &gt; 0
+        </if>
+
+        <if test="sealedDiskTime != null and sealedDiskTime !='' ">
+            AND unix_timestamp(ta.Release_Time) - unix_timestamp(#{sealedDiskTime}) &lt; 0
+        </if>
+
+    </select>
+
+
+    <update id="updateTaskStatusByTaskId" parameterType="String">
+        <choose>
+            <when test="bidStatus==5">
+                update auction_task set Bid_Status = '5' where Bid_Status = '2' and Bid_Task_Id = #{bidTaskId} ;
+                update `order` set `Status`='2' where `Status` = '1' and  task_Id = #{bidTaskId}
+            </when>
+            <when test="bidStatus==4">
+                update auction_task set Bid_Status = '4' where Bid_Status = '5' and Bid_Task_Id = #{bidTaskId} ;
+                update `order` set `Status`='3' where `Status`='2' and  task_Id = #{bidTaskId}
+            </when>
+        </choose>
+    </update>
+
+</mapper>

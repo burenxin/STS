@@ -8,6 +8,7 @@ import cn.jzt56.singleticketsystem.service.BiddingDetailService;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -94,34 +95,24 @@ public class AuctionTaskController {
      *
      * @param bidTaskId
      * @return List<Order>
-     * @description ：根据任务单号查询任务单详情
+     * @description ：竞价页面-根据任务单号查询任务单详情
      * @author: CHENG QI
      */
-    // http://localhost:8080/STS/auctionTask/getTaskDetail?bidTaskId=bt005
-    @RequestMapping(value = "/getTaskDetail")
+    @RequestMapping(value = "/getTaskDetails")
     public Object getTaskDetailsByBidTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
         List<Order> list = auctionTaskService.getTaskDetailsByBidTaskId(bidTaskId);
-        if (list.size() == 0){
-            return "订单详情不存在，请检查订单是否出错";
-        }
-        return list;
-    }
-    //竞价页面-根据任务单号查询任务单详情
-    @RequestMapping(value = "/getTaskDetailjjy")
-    public Object getTaskDetailsByBidTaskIdjjy(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
-        List<Order> list = auctionTaskService.getTaskDetailsByBidTaskIdjjy(bidTaskId);
-        if (list.size() == 0){
-            return "订单详情不存在，请检查订单是否出错";
-        }
+//        if (list.size() == 0){
+//            return "订单详情不存在，请检查订单是否出错";
+//        }
         return list;
     }
 
-    @RequestMapping(value = "/getTaskDetailjjjg")
-    public Object getTaskDetailsByBidTaskIdjjjg(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
-        List<Order> list = auctionTaskService.getTaskDetailsByBidTaskIdjjjg(bidTaskId);
-        if (list.size() == 0){
-            return "订单详情不存在，请检查订单是否出错";
-        }
+    @RequestMapping(value = "/getResultDetails")
+    public Object getResultDetailsByBidTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
+        List<Order> list = auctionTaskService.getResultDetailsByBidTaskId(bidTaskId);
+//        if (list.size() == 0){
+//            return "订单详情不存在，请检查订单是否出错";
+//        }
         return list;
     }
 
@@ -150,7 +141,7 @@ public class AuctionTaskController {
     @RequestMapping("/findSuccessByPage")
     public PageBean findSuccessByPage(AuctionTask auctionTask,
                                   @RequestParam(value = "pageCode", required = false,defaultValue = "1") int pageCode,
-                                  @RequestParam(value = "pageSize", required = false,defaultValue = "1") int pageSize) {
+                                  @RequestParam(value = "pageSize", required = false,defaultValue = "10") int pageSize) {
         return auctionTaskService.findSuccessByPage(auctionTask, pageCode, pageSize);
     }
 
@@ -178,14 +169,22 @@ public class AuctionTaskController {
     @RequestMapping("/findHistoryByPage")
     public PageBean findHistoryByPage(AuctionTask auctionTask,
                                       @RequestParam(value = "pageCode", required = false,defaultValue = "1") int pageCode,
-                                      @RequestParam(value = "pageSize", required = false,defaultValue = "2") int pageSize) {
-        auctionTask.setTaskType("1");
+                                      @RequestParam(value = "pageSize", required = false,defaultValue = "10") int pageSize) {
+
         return auctionTaskService.findHistoryByPage(auctionTask, pageCode, pageSize);
     }
 
-    @RequestMapping("/updateTaskStatusByTaskId")
-    public String updateTaskStatusByTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId){
-        int i = auctionTaskService.updateTaskStatusByTaskId(bidTaskId);
+    /**
+     * 竞价结果页：修改任务单状态
+     * @param bidTaskId
+     * @param bidStatus
+     * @return
+     */
+    @RequestMapping("/updateTaskStatus")
+    @Transactional
+    public String updateTaskStatusByTaskId(@RequestParam(value = "bidTaskId", required = false) String bidTaskId,
+                                           @RequestParam(value = "bidStatus", required = false) String bidStatus){
+        int i = auctionTaskService.updateTaskStatusByTaskId(bidTaskId,bidStatus);
         if (i>0) {
             return "success";
         }else {

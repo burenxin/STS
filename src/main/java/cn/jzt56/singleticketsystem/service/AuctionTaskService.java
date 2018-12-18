@@ -36,9 +36,7 @@ public interface AuctionTaskService {
      */
     List<Order> getTaskDetailsByBidTaskId(String bidTaskId);
 
-    List<Order> getTaskDetailsByBidTaskIdjjy(String bidTaskId);
-
-    List<Order> getTaskDetailsByBidTaskIdjjjg(String bidTaskId);
+    List<Order> getResultDetailsByBidTaskId(String bidTaskId);
     /**
      * @param userId
      * @return List<AuctionTask>
@@ -80,7 +78,8 @@ public interface AuctionTaskService {
     /**
      * @description 修改任务单状态，同时修改任务单包含的订单的订单状态
      * @param bidTaskId
+     * @param bidStatus
      * @author ：CHENG QI
      */
-    int updateTaskStatusByTaskId(String bidTaskId);
+    int updateTaskStatusByTaskId(String bidTaskId,String bidStatus);
 }

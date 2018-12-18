@@ -145,15 +145,6 @@
     </select>
 
 
-    <!-- 根据运输商id查询竞拍成功的订单 -->
-    <select id="findAllSuccessCurrentTaskByUserId" parameterType="String" resultMap="auctionTaskResultMap">
-        SELECT *  FROM	auction_task
-        WHERE
-	      Bid_Status = '2'
-        AND
-          User_Id = #{userId}
-    </select>
-
     <!-- 竞拍成功001 -->
     <update id="biddedSuccess" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView">
         UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status='2',User_Id=#{UserId} WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in ('',null) AND Bid_Status='1'

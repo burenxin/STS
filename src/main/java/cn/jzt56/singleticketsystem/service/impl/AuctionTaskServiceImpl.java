@@ -10,6 +10,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -62,13 +63,8 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     }
 
     @Override
-    public List<Order> getTaskDetailsByBidTaskIdjjy(String bidTaskId) {
-        return orderMapper.getTaskDetailsByBidTaskIdjjy(bidTaskId);
-    }
-
-    @Override
-    public List<Order> getTaskDetailsByBidTaskIdjjjg(String bidTaskId) {
-        return orderMapper.getTaskDetailsByBidTaskIdjjjg(bidTaskId);
+    public List<Order> getResultDetailsByBidTaskId(String bidTaskId) {
+        return orderMapper.getResultDetailsByBidTaskId(bidTaskId);
     }
 
     /**
@@ -123,18 +119,23 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     @Override
     public PageBean findHistoryByPage(AuctionTask auctionTask, int pageCode, int pageSize) {
         PageHelper.startPage(pageCode, pageSize);
-        Page<AuctionTask> page = auctionTaskMapper.findHistoryByPage(auctionTask);
+        Page<AuctionTask> page =
+                auctionTaskMapper.findHistoryByPage(auctionTask);
+
+
         return new PageBean(page.getTotal(), page.getResult());
     }
 
     /**
      * @param bidTaskId
+     * @param bidStatus
      * @description 修改任务单状态，同时修改任务单包含的订单的订单状态
      * @author ：CHENG QI
      */
     @Override
-    public int updateTaskStatusByTaskId(String bidTaskId) {
-        int i = auctionTaskMapper.updateTaskStatusByTaskId(bidTaskId);
+    @Transactional
+    public int updateTaskStatusByTaskId(String bidTaskId,String bidStatus) {
+        int i = auctionTaskMapper.updateTaskStatusByTaskId(bidTaskId,bidStatus);
         return i;
     }
 
