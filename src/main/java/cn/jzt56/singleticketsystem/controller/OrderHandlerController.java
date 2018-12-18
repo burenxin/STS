@@ -69,7 +69,7 @@ public class OrderHandlerController {
      * @param taskIds 需要打包的订单Id
      * @return 订单列表
      */
-    @RequestMapping(value = "/taskIssue")
+    @RequestMapping(value = "/taskIssue",method= RequestMethod.POST)
     @ResponseBody
     public Result taskIssue(@RequestBody String[] taskIds){
         Result result = new Result();
@@ -89,10 +89,24 @@ public class OrderHandlerController {
      * @param jsonStr 查询条件以及分页
      * @return 任务单列表
      */
-    @RequestMapping(value = "/findTask")
+    @RequestMapping(value = "/findTask",method= RequestMethod.POST)
     @ResponseBody
     public PageBean findTask(@RequestBody String jsonStr) throws IOException {
 
         return orderHandlerService.findTaskByCondition(jsonStr);
     }
+
+    /**
+     * 拆单、拆包、删除拆包后空的包
+     * @param jsonStr
+     * @return
+     */
+    @RequestMapping(value = "/demolitionOrder",method= RequestMethod.POST)
+    @ResponseBody
+    public Result demolitionOrder(@RequestBody String jsonStr){
+
+        return  orderHandlerService.demolitionOrder(jsonStr);
+
+    }
+
 }

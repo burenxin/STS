@@ -3,6 +3,7 @@ package cn.jzt56.singleticketsystem.service;
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.tools.PageBean;
+import cn.jzt56.singleticketsystem.tools.Result;
 
 import java.util.List;
 
@@ -23,4 +24,8 @@ public interface OrderHandlerService {
 
     //关联查询任务单和订单
     public PageBean findTaskByCondition(String jsonStr);
+
+    //拆单、拆包、删除拆包后空的包
+    public Result demolitionOrder(String jsonStr);
+
 }

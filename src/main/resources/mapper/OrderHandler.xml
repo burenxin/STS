@@ -187,4 +187,25 @@
     <update id="taskIssue" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask">
         UPDATE auction_task SET Release_Time = #{releaseTime},SealedDisk_Time = #{sealedDiskTime},Bid_Status = #{bidStatus} WHERE Bid_Task_Id = #{bidTaskId};
     </update>
+
+    <!--拆单mwy-->
+   <update id="demolitionOrder" parameterType="String">
+       UPDATE `order` SET task_Id='',Status='0'  WHERE FIND_IN_SET(task_Id,#{bidTaskId})
+        <if test="removeOrderIds !='null' and removeOrderIds !='' and removeOrderIds != null">
+        AND  FIND_IN_SET(Order_Id,#{removeOrderIds}) &gt; 0
+       </if>
+   </update>
+    <!--拆包，将任务单里面没有订单的数据进行删除-->
+    <delete id="deleteTask" parameterType="String">
+       DELETE auction_task WHERE FIND_IN_SET(Bid_Task_Id,#{bidTaskId})
+   </delete>
+    <!--修改任务单保存的id-->
+    <update id="upadteOrderId"  parameterType="String">
+        UPDATE auction_task SET Ord_Id=#{orderId} WHERE  Bid_Task_Id=#{bidTaskId}
+    </update>
+   <!--  查询保留的orderID  MWY -->
+    <select id="listOrderId" parameterType="String" resultType="String">
+        SELECT o.Order_Id from `order` o WHERE task_Id=#{bidTaskId}
+    </select>
+
 </mapper>
