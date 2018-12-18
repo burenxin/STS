@@ -39,7 +39,7 @@
         <result property="signatureType" column="Signature_Type"></result>
     </resultMap>
 
-    <resultMap id="TaskResultsByCondition" type="cn.jzt56.singleticketsystem.entity.AuctionTask">
+    <resultMap id="TaskResultsByTaskIds" type="cn.jzt56.singleticketsystem.entity.AuctionTask">
         <id property="bidTaskId" column="Bid_Task_Id"></id>
         <result property="orderId" column="Ord_Id"></result>
         <result property="userId" column="auc_User_Id"></result>
@@ -113,6 +113,7 @@
         <if test="order.endArea != null and order.endArea != 'null' and order.endArea != ''">
             AND EndArea = #{order.endArea}
         </if>
+        ORDER BY Created_Time DESC
     </select>
 
     <!--按id查询准备合单的订单信息-->
@@ -150,12 +151,39 @@
         UPDATE `order` SET `Status` = #{status},task_Id = #{taskId} WHERE Order_Id = #{orderId}
     </update>
 
+    <!--分页条件查询任务单id-->
+    <select id="findTaskIdByCondition" resultType="String">
+        SELECT Bid_Task_Id FROM auction_task
+        WHERE Bid_Status = #{auctionTask.bidStatus}
+        <if test="auctionTask.pickArea != 'null' and auctionTask.pickArea !='' and auctionTask.pickArea != null">
+            AND Pick_Area = #{auctionTask.pickArea}
+        </if>
+        <if test="auctionTask.deliverArea != 'null' and auctionTask.deliverArea !='' and auctionTask.deliverArea != null">
+            AND Deliver_Area = #{auctionTask.deliverArea}
+        </if>
+        <if test="auctionTask.serviceTime != 'null' and auctionTask.serviceTime !='' and auctionTask.serviceTime != null">
+            AND Service_Time = #{auctionTask.serviceTime}
+        </if>
+        <if test="auctionTask.taskType != 'null' and auctionTask.taskType !='' and auctionTask.taskType != null">
+            AND Task_Type = #{auctionTask.taskType}
+        </if>
+        <if test="auctionTask.bidTaskNum != 'null' and auctionTask.bidTaskNum !='' and auctionTask.bidTaskNum != null">
+            AND Bid_Task_Num = #{auctionTask.bidTaskNum}
+        </if>
+        ORDER BY Service_Time DESC
+    </select>
 
     <!--条件加 auctionTask.-->
-    <!--查询符合条件的任务单-->
-    <select id="findTaskByCondition" resultMap="TaskResultsByCondition">
+    <!--按id查询任务单-->
+    <select id="findTaskByIds" resultMap="TaskResultsByTaskIds">
         SELECT * FROM task_ords
         WHERE
+        Bid_Task_Id
+        IN
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <!--
         Bid_Status = #{auctionTask.bidStatus}
         <if test="auctionTask.pickArea != 'null' and auctionTask.pickArea !='' and auctionTask.pickArea != null">
             AND Pick_Area = #{auctionTask.pickArea}
@@ -172,6 +200,7 @@
         <if test="auctionTask.bidTaskNum != 'null' and auctionTask.bidTaskNum !='' and auctionTask.bidTaskNum != null">
             AND Bid_Task_Num = #{auctionTask.bidTaskNum}
         </if>
+        -->
         <!--
         <if test="startTime != 'null' and startTime !='' and startTime != null">
             AND Service_Time >= #{startTime}

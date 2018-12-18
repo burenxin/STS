@@ -270,9 +270,9 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         //启用pageHelper
         PageHelper.startPage(pageCode,pageSize);
         //处理auctionTask为null的情况
-
-        Page<AuctionTask> auctionTaskList  = orderHandlerMapper.findTaskByCondition(auctionTask);
-        return new PageBean(auctionTaskList.getTotal(),auctionTaskList.getResult());
+        Page<String> TaskIdList  = orderHandlerMapper.findTaskIdByCondition(auctionTask);
+        Page<AuctionTask> AuctionTaskList = orderHandlerMapper.findTaskByIds(TaskIdList);
+        return new PageBean(TaskIdList.getTotal(),AuctionTaskList.getResult());
     }
     //拆单、拆包、删除拆包后空的包
     @Override
