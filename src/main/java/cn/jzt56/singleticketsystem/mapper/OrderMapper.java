@@ -33,7 +33,5 @@ public interface OrderMapper {
      */
     List<Order> getTaskDetailsByBidTaskId(String bidTaskId);
 
-    List<Order> getTaskDetailsByBidTaskIdjjy(String bidTaskId);
-
-    List<Order> getTaskDetailsByBidTaskIdjjjg(String bidTaskId);
+    List<Order> getResultDetailsByBidTaskId(String bidTaskId);
 }

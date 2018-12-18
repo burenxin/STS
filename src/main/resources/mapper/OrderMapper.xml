@@ -93,52 +93,17 @@
         update `order` set Status='-1' WHERE Order_Id = #{id}
     </update>
 
-    <!-- 根据任务单id获取订单id列表 -->
-    <sql id="SpliString">
-        SELECT DISTINCT
-            (
-                substring_index(
-                substring_index(
-                p.Ord_Id,
-                ',',
-                b.help_topic_id + 1
-                ),
-                ',',
-                - 1
-                )
-             )
-         AS Oid
-        FROM
-          auction_task p
-        JOIN mysql.help_topic b ON b.help_topic_id &lt; (
-        LENGTH(p.Ord_Id) - LENGTH(
-        REPLACE (p.Ord_Id, ',', '')
-        ) + 1
-        )
-        where p.Bid_Task_Id = #{bid_Task_Id}
-    </sql>
-
-    <!-- 根据任务单id获取任务单详情(订单列表) -->
-    <select id="getTaskDetailsByBidTaskId" parameterType="String" resultMap="baseMap">
-        SELECT *  FROM `order` o  WHERE o.Order_Id IN (
-          <include refid="SpliString"/>
-        )
-    </select>
-
     <!-- 竞价页根据任务单id查询详情 -->
-    <select id="getTaskDetailsByBidTaskIdjjy"  parameterType="String" resultMap="baseMap">
+    <select id="getTaskDetailsByBidTaskId"  parameterType="String" resultMap="baseMap">
         SELECT
-          CONCAT(StartArea,StartArea_mx) StartArea,CONCAT(EndArea,EndArea_mx) EndArea,Goods_Count,Volume,Weight,Transport_Type,Goods_Type,TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Remark
-          FROM `order` o  WHERE o.Order_Id IN (
-        <include refid="SpliString"/>
-        )
+        CONCAT(StartArea,StartArea_mx) StartArea,CONCAT(EndArea,EndArea_mx) EndArea,Goods_Count,Volume,Weight,Transport_Type,Goods_Type,TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Remark
+        FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
     </select>
 
-    <select id="getTaskDetailsByBidTaskIdjjjg" parameterType="String" resultMap="baseMap">
+    <!-- 竞价结果页根据任务单id查询详情 -->
+    <select id="getResultDetailsByBidTaskId" parameterType="String" resultMap="baseMap">
         SELECT
           Order_Id,Goods_Type,Consignor,CONCAT(StartArea,StartArea_mx) StartArea,PhoneNum_Consignor,Transport_Type,TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Goods_Count,Weight,Volume,Consignee,PhoneNum_Consignee,CONCAT(EndArea,EndArea_mx) EndArea,Remark
-         FROM `order` o  WHERE o.Order_Id IN (
-        <include refid="SpliString"/>
-        )
+         FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
     </select>
 </mapper>
