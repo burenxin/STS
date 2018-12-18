@@ -9,9 +9,11 @@ import cn.jzt56.singleticketsystem.mapper.BiddingDetailMapper;
 import cn.jzt56.singleticketsystem.mapper.CarrierInfoMapper;
 import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
+import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import java.util.List;
  * @ Description：竞价业务实现类
  */
 @Service
+@Slf4j
 public class AuctionTaskServiceImpl implements AuctionTaskService {
 
     @Autowired
@@ -88,6 +91,11 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
     public List<AuctionTask> findAllSuccessCurrentTaskByUserId(String userId) {
         return this.auctionTaskMapper.findAllSuccessCurrentTaskByUserId(userId);
     }
+
+
+
+
+
     /**
      * @method
      * @description :报价任务截单
@@ -210,7 +218,6 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
         PageHelper.startPage(pageCode, pageSize);
         Page<AuctionTask> page =
                 auctionTaskMapper.findHistoryByPage(auctionTask);
-
 
         return new PageBean(page.getTotal(), page.getResult());
     }
