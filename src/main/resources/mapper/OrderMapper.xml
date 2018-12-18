@@ -38,13 +38,36 @@
 
     <!-- 条件查询 -->
     <select id="findByPage" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
-        SELECT * FROM `order` WHERE Status!='-1'
-        <if test="consignee != null">
+        select Order_Id,User_Id,PhoneNum_Consignor,Consignor,PhoneNum_Consignee,Consignee,
+        StartArea,StartArea_mx,EndArea,EndArea_mx,Transport_Type,Goods_Count,
+        Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,
+        CASE Status
+        when 0 then '刚生成'
+        when 1 then '已合单'
+        when 2 then '配送中'
+        when 3 then '已签收'
+        when -1 then '作废'
+        else '其他' END
+        Status,
+        DATE_FORMAT(Created_Time,'%Y-%m-%d') Created_Time,
+        Updated_Time,Remark,Goods_Type,Signature_Type,Order_Num,task_Id
+        FROM `order` WHERE Status!='-1'
+        <if test="consignee != null and consignee!=''">
             AND Consignee LIKE CONCAT('%', #{consignee}, '%')
         </if>
-        <if test="endArea != null">
+        <if test="endArea != null and endArea!=''">
             AND endArea   LIKE CONCAT('%', #{endArea}, '%')
         </if>
+        <if test="orderNum != null and orderNum!=''">
+            AND Order_Num   LIKE CONCAT('%', #{orderNum}, '%')
+        </if>
+        <if test="userId != null and userId!=''">
+            AND User_Id = #{userId}
+        </if>
+        <if test="createdTime != null and createdTime!=''">
+            AND DATE_FORMAT(Created_Time,'%Y-%m-%d') like CONCAT('%',#{createdTime},'%')
+        </if>
+        ORDER BY Updated_Time
     </select>
 
     <!-- 根据id查询 -->
@@ -55,10 +78,11 @@
         SELECT * FROM `order` WHERE User_Id = #{userId} and Status!='-1'
     </select>
 
-    <!-- 添加数据 -->
+
+    <!-- 添加数据 在线生成订单-->
     <insert id="create" parameterType="cn.jzt56.singleticketsystem.entity.Order">
-        INSERT INTO `order`(User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Updated_Time,Remark,Goods_Name,Signature_Type)
-        VALUES(#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{updatedTime},#{remark},#{goodsName},#{signatureType})
+        INSERT INTO `order`(Order_Id,User_Id,PhoneNum_Consignor,Consignor,phoneNum_Consignee,Consignee,StartArea,StartArea_mx,EndArea,EndArea_mx,Goods_Type,Goods_Count,Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,Status,Created_Time,Remark,Transport_Type,Signature_Type,Order_Num,Updated_Time)
+        VALUES(#{orderId},#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{remark},#{transportType},#{signatureType},#{orderNum},#{updatedTime})
     </insert>
 
     <!-- 更新数据 -->
