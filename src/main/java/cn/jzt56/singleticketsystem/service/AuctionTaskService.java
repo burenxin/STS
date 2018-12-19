@@ -49,7 +49,7 @@ public interface AuctionTaskService {
      * @description :指派承运商
      * @author:lzy
      */
-    Result assignCarrier(String userId, String bidTaskId, String transactionPrice);
+    Boolean assignCarrier(String userId, String bidTaskId, String transactionPrice);
 
 
 

@@ -246,14 +246,10 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
      * @author:lzy
      */
     @Override
-    public Result assignCarrier(String userId, String bidTaskId, String transactionPrice){
-        Result result=new Result(false,"指派失败");
-        Boolean flage=  this.auctionTaskMapper.assignCarrier(userId,bidTaskId,transactionPrice)==1?true:false;
-        if(flage){
-            result.setMessage("指派成功");
-            result.setSuccess(flage);
-        }
-        return result;
+    public Boolean assignCarrier(String userId, String bidTaskId, String transactionPrice){
+
+
+        return this.auctionTaskMapper.assignCarrier(userId,bidTaskId,transactionPrice)==1?true:false;
     }
 
 }
