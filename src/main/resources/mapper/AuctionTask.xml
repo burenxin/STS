@@ -149,7 +149,7 @@
     <!-- 查询正在竞价的任务单 -->
     <select id="findBidded" parameterType="cn.jzt56.singleticketsystem.tools.AuctionTaskView" resultMap="auctionTaskViewMapper">
         SELECT <include refid="selColumn"/>,bd.Quoted_Price FROM auction_task att RIGHT  JOIN bidding_detail bd
-        ON att.Bid_Task_Id=bd.Bid_Task_Id WHERE  bd.User_Id =#{userId} AND att.User_Id in ('',null)  AND bd.Status='1'
+        ON att.Bid_Task_Id=bd.Bid_Task_Id WHERE  bd.User_Id =#{userId} AND att.User_Id is null or att.User_Id='' AND bd.Status='1'
         <!--竞价 -->
         <choose>
             <when test="quotedPrice==0 and quotedPrice !=''">
@@ -191,7 +191,7 @@
     <!--任务截单之截单-->
     <update id="biddingEnd">
         UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status=#{status},User_Id=#{userId}
-        WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in ('',null) AND Bid_Status='1'
+        WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in is null or att.User_Id='' AND Bid_Status='1'
         AND  Release_Time &lt;= NOW()-INTERVAL 2 HOUR
     </update>
 
