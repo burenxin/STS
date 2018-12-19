@@ -24,7 +24,7 @@ public class Timer {
      * @author:lzy
      */
     // @Scheduled(cron = "0 * */2 * * ?")
-    @Scheduled (fixedRate = 7200000)
+    @Scheduled (fixedRate = 72000)
     public void auctionTaskClose(){
 
         this.auctionTaskService.auctionTaskClose();

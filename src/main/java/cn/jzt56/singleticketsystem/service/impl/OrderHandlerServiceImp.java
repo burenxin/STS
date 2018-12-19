@@ -166,6 +166,7 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
 
         orderIdsInTask = orderIdsInTask.substring(0,orderIdsInTask.lastIndexOf(","));//去掉订单字段最后一个逗号
         serviceTime = serviceTime.split(" ")[0];//只保留年月日
+        serviceTime += " 18:00:00";
         AuctionTask auctionTask = new AuctionTask();
         auctionTask.setOrderList(orderList);
         auctionTask.setOrderId(orderIdsInTask);
