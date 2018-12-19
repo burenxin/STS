@@ -34,21 +34,11 @@ public class BiddingDetailServiceImpl implements BiddingDetailService {
      * @description:承运商竞价与改价
      * @author:lzy
      */
-   public Result addBidding(BiddingDetail biddingDetail){
+   public Boolean addBidding(BiddingDetail biddingDetail){
         Boolean flage= this.biddingDetailMapper.addBiddingDetail(biddingDetail)>=1?true:false;//报价
-
-        Result result =new Result();
-       result.setMessage("报价成功");
-        if (!flage){
+        if (!flage)
             flage=this.biddingDetailMapper.updateQuotedPrice(biddingDetail)>=1?true:false;//报价修改
-            result.setMessage("修改成功");
-        }
-        if(!flage){
-            result.setMessage("操作失败");//当为false时两个操作都失败
-
-        }
-       result.setSuccess(flage);
-        return result;
+        return flage;
     }
     /**
      * @method

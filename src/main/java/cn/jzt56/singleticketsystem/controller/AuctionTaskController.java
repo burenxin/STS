@@ -64,7 +64,7 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/auctionPrice")
-    public Result auctionPrice(BiddingDetail biddingDetail){
+    public Boolean auctionPrice(BiddingDetail biddingDetail){
         biddingDetail.setDetailId(getUUID32());
         //log.info(biddingDetail.getBidTaskId()+biddingDetail.getQuotedPrice());
         return this.biddingDetailService.addBidding(biddingDetail);

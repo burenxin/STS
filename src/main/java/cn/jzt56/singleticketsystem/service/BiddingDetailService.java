@@ -18,7 +18,7 @@ public interface BiddingDetailService {
      * @description :报价与修改价格
      * @author:lzy
      */
-    Result addBidding(BiddingDetail biddingDetail);
+    Boolean addBidding(BiddingDetail biddingDetail);
 
     /**
      * @method
