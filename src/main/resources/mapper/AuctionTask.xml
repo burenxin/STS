@@ -187,6 +187,7 @@
     <!--查询所有可截单任务-->
     <select id="findAllBiddingTask" resultMap="auctionTaskResultMap">
         SELECT * FROM auction_task att WHERE att.Bid_Status='1'
+        AND  Release_Time &lt;= NOW()-INTERVAL 2 MINUTE
 
 
 
