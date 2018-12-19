@@ -77,12 +77,13 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/cancelBidding")
-    public void  cancelBidding( BiddingDetail biddingDetail){
+    public Result  cancelBidding( BiddingDetail biddingDetail){
         //BiddingDetail biddingDetail=new BiddingDetail();
         //biddingDetail.setUserId("ui005");
        // biddingDetail.setBidTaskId(bidTaskId);
         log.info(biddingDetail.getBidTaskId());
-        Boolean flage= this.biddingDetailService.cancelBidding(biddingDetail);
+        return this.biddingDetailService.cancelBidding(biddingDetail);
+
     }
     /**
      * @method
