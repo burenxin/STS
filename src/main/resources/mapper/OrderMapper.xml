@@ -38,8 +38,19 @@
 
     <!-- 条件查询 -->
     <select id="findByPage" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
-        select Order_Id,User_Id,PhoneNum_Consignor,Consignor,PhoneNum_Consignee,Consignee,
-        StartArea,StartArea_mx,EndArea,EndArea_mx,Transport_Type,Goods_Count,
+        select Order_Id,User_Id,
+        PhoneNum_Consignor,
+        Consignor,PhoneNum_Consignee,
+        Consignee,
+        StartArea,
+        StartArea_mx,
+        EndArea,EndArea_mx,
+        CASE Transport_Type
+        when 0 then '冷藏品'
+        when 1 then '普通'
+        else '其他' END
+        Transport_Type,
+        Goods_Count,
         Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,
         CASE Status
         when 0 then '刚生成'
@@ -50,7 +61,10 @@
         else '其他' END
         Status,
         DATE_FORMAT(Created_Time,'%Y-%m-%d') Created_Time,
-        Updated_Time,Remark,Goods_Type,Signature_Type,Order_Num,task_Id
+        Updated_Time,Remark,
+        Goods_Type,
+        Signature_Type,
+        Order_Num,task_Id
         FROM `order` WHERE Status!='-1'
         <if test="consignee != null and consignee!=''">
             AND Consignee LIKE CONCAT('%', #{consignee}, '%')
