@@ -11,6 +11,7 @@ import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
+import cn.jzt56.singleticketsystem.tools.Result;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -245,8 +246,14 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
      * @author:lzy
      */
     @Override
-    public Boolean assignCarrier(String userId,String bidTaskId,String transactionPrice){
-        return  this.auctionTaskMapper.assignCarrier(userId,bidTaskId,transactionPrice)==1?true:false;
+    public Result assignCarrier(String userId, String bidTaskId, String transactionPrice){
+        Result result=new Result(false,"指派失败");
+        Boolean flage=  this.auctionTaskMapper.assignCarrier(userId,bidTaskId,transactionPrice)==1?true:false;
+        if(flage){
+            result.setMessage("指派成功");
+            result.setSuccess(flage);
+        }
+        return result;
     }
 
 }

@@ -4,6 +4,7 @@ import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.entity.Order;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
+import cn.jzt56.singleticketsystem.tools.Result;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public interface AuctionTaskService {
      * @description :指派承运商
      * @author:lzy
      */
-    Boolean assignCarrier(String userId,String bidTaskId,String transactionPrice);
+    Result assignCarrier(String userId, String bidTaskId, String transactionPrice);
 
 
 
