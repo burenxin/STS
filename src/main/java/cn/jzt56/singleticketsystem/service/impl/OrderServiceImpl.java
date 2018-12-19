@@ -9,8 +9,10 @@ import cn.jzt56.singleticketsystem.mapper.OrderMapper;
 import cn.jzt56.singleticketsystem.service.OrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.rmi.runtime.Log;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
@@ -39,6 +42,7 @@ public class OrderServiceImpl implements OrderService {
     }
     @Override
     public void create(Order order) {
+        //添加switch判断，文梁伟
         try {
             order.setOrderId(CreateUUID.getUUID32());
             Date date = new Date();
@@ -80,20 +84,52 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void update(Order order) {
+        try{
         Date date = new Date();
         SimpleDateFormat sdg = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         order.setUpdatedTime(sdg.format(date));
-        orderMapper.update(order);
+            log.info(order.getGoodsCount());
+            log.info(order.getDeliveryTime());
+            String strDate=order.getDeliveryTime();
+            int st=Integer.parseInt(order.getReceivingTime());//获取预计提货时间的前台值
+            date=sdg.parse(strDate);//将提货时间转为字符串
+            AddDate ad=new AddDate();
+        try {
+            switch(st){
+                case 1:
+                    date=ad.addDate(date,3);//将提货时间加三天
+                    break;
+                case 2:
+                    date=ad.addDate(date,5);
+                    break;
+                case 3:
+                    date=ad.addDate(date,7);
+                    break;
+                default:break;
+            }
+
+            order.setReceivingTime(sdg.format(date));
+            orderMapper.update(order);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
     @Override
     public void delete(String... ids) {
+
         for (String id : ids) {
+          //log.info(id);
             orderMapper.delete(id);
         }
     }
 
     public void deleteOrder(Order order) {
+        //log.info(order.getOrderId());
         orderMapper.deleteOrder(order);
     }
     /**
