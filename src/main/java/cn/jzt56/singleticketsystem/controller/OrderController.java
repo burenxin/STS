@@ -109,16 +109,20 @@ public class OrderController {
     public Result deleteOrder(@RequestBody Order order) {
         try {
             //log.info(order.getOrderId());
-            log.info(order.getStatus());
-            if(order.getStatus().equals("0")){
-                orderService.deleteOrder(order);
-                return new Result(true, "订单删除成功");
-            }else if(order.getStatus().equals("3")){
-                return new Result(false, "该订单已签收,不能操作删除");
-            } else if(order.getStatus().equals("2")){
-                return new Result(false, "该订单正在安排配送，不能操作删除");
+            //log.info(order.getStatus());
+            if(!order.getOrderId().equals("")) {
+                if (order.getStatus().equals("刚生成")) {
+                    orderService.deleteOrder(order);
+                    return new Result(true, "订单删除成功");
+                } else if (order.getStatus().equals("已签收")) {
+                    return new Result(false, "该订单已签收,不能操作删除");
+                } else if (order.getStatus().equals("配送中")) {
+                    return new Result(false, "该订单正在安排配送，不能操作删除");
+                } else {
+                    return new Result(false, "该订单正在合单，不能操作删除");
+                }
             }else{
-                return new Result(false, "该订单正在合单，不能操作删除");
+                return new Result(false, "订单号不能为空");
             }
 
         } catch (Exception e) {
