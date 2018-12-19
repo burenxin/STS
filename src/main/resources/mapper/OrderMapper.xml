@@ -67,7 +67,7 @@
         <if test="createdTime != null and createdTime!=''">
             AND DATE_FORMAT(Created_Time,'%Y-%m-%d') like CONCAT('%',#{createdTime},'%')
         </if>
-        ORDER BY Updated_Time
+        ORDER BY Updated_Time desc
     </select>
 
     <!-- 根据id查询 -->

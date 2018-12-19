@@ -63,6 +63,8 @@ public interface OrderHandlerMapper {
     //修改任务单保存的id
     int upadteOrderId(@Param(value = "orderId") String orderId,
                       @Param(value = "bidTaskId") String bidTaskId);
+    //查询此包是否为空mwy
+    int findTaskIsExist(String bidTaskId);
   //删除拆包后空的包 mwy
     int deleteTask(String bidTaskId);
 }
