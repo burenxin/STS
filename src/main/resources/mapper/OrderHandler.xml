@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.jzt56.singleticketsystem.mapper.OrderHandlerMapper">
 
-    <resultMap id="OrderResultsByCondition" type="cn.jzt56.singleticketsystem.entity.Order">
+    <resultMap id="OrderResults" type="cn.jzt56.singleticketsystem.entity.Order">
         <id property="orderId" column="Order_Id"></id>
         <result property="consignor" column="Consignor"></result>
         <result property="consignee" column="Consignee"></result>
@@ -93,9 +93,8 @@
     </select>
     -->
 
-    <!--条件加 order.-->
     <!--按时间段或运输类型查询未打包订单-->
-    <select id="findOrderByCondition" resultMap="OrderResultsByCondition" parameterType="String">
+    <select id="findOrderByCondition" resultMap="OrderResults" parameterType="String">
         SELECT * FROM `order`
         WHERE `Status` = #{order.status}
         <if test="startTime != null and startTime != 'null' and startTime != ''">
@@ -121,6 +120,46 @@
         SELECT * FROM `order` WHERE Order_Id = #{orderId};
     </select>
 
+    <!--分组条件查询订单-->
+    <select id="findOrderByGroup" resultMap="OrderResults" parameterType="cn.jzt56.singleticketsystem.entity.Order">
+        SELECT * FROM(
+          SELECT Order_Id,Transport_Type,
+          DATE_FORMAT(Receiving_Time,'%Y-%m-%d') AS Receiving_Time,
+          substring_index(StartArea,'-',2) AS StartArea,
+          substring_index(EndArea,'-',2) AS EndArea
+          FROM `order`
+          WHERE `Status` = #{order.status}
+          <if test="startTime != null and startTime != 'null' and startTime != ''">
+              AND Created_Time >= #{startTime}
+          </if>
+          <if test="endTime != null and endTime != 'null' and endTime != ''">
+              AND #{endTime} >= Created_Time
+          </if>
+          <if test="order.transportType != null and order.transportType != 'null' and order.transportType != ''">
+              AND Transport_Type = #{order.transportType}
+          </if>
+          <if test="order.startArea != null and order.startArea != 'null' and order.startArea != ''">
+              AND StartArea = #{order.startArea}
+          </if>
+          <if test="order.endArea != null and order.endArea != 'null' and order.endArea != ''">
+              AND EndArea = #{order.endArea}
+          </if>
+        ORDER BY Created_Time DESC
+        LIMIT 0,#{limit}
+        )AS t
+        GROUP BY Transport_Type,DATE_FORMAT(Receiving_Time,'%Y-%m-%d'),
+        substring_index(StartArea,'-',2),substring_index(EndArea,'-',2);
+    </select>
+
+    <!--查询某一分组订单-->
+    <select id="findTheOrders" resultMap="OrderResults" parameterType="cn.jzt56.singleticketsystem.entity.Order">
+        SELECT * FROM `order`
+        (SELECT * FROM `order` ORDER BY Created_Time DESC LIMIT 0,5) AS T
+        WHERE DATE_FORMAT(Receiving_Time,'%Y-%m-%d') = #{order.receivingTime}
+        AND Transport_Type = #{order.transportType}
+        AND substring_index(StartArea,'-',2) = #{order.startArea}
+        AND substring_index(EndArea,'-',2) = #{order.endArea}
+    </select>
 
     <!--订单打包生成任务单-->
     <insert  id="buildTask" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" >

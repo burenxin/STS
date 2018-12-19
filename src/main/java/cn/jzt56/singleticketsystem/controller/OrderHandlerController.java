@@ -1,18 +1,15 @@
 package cn.jzt56.singleticketsystem.controller;
 
 
-import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import cn.jzt56.singleticketsystem.service.OrderHandlerService;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import cn.jzt56.singleticketsystem.tools.Result;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 
@@ -64,9 +61,30 @@ public class OrderHandlerController {
         }
         return result;
     }
+
+    /**
+     * 自动打包
+     * @param jsonStr  json字符串参数
+     * @return 打包结果
+     */
+    @RequestMapping(value = "/autoBuildTask",method= RequestMethod.POST)
+    @ResponseBody
+    public Result autoBuildTask(@RequestBody String jsonStr) {
+        Integer isSuccess = orderHandlerService.autoBuildTask(jsonStr);
+        Result result = new Result();
+        if(isSuccess == 1){
+            result.setSuccess(true);
+            result.setMessage("打包成功");
+        }else{
+            result.setSuccess(false);
+            result.setMessage("打包失败，未知异常");
+        }
+        return result;
+    }
+
     /**
      * 任务单发布
-     * @param taskIds 需要打包的订单Id
+     * @param taskIds 需要发布的订单Id
      * @return 订单列表
      */
     @RequestMapping(value = "/taskIssue",method= RequestMethod.POST)

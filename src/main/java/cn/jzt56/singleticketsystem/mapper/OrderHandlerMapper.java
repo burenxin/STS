@@ -51,9 +51,15 @@ public interface OrderHandlerMapper {
     //关联查询任务单和订单
     public Page<AuctionTask> findTaskByIds(ArrayList<String> list);
 
+    //分组查询订单
+    public List<Order> findOrderByGroup(@Param(value = "order") Order order,
+                                        @Param(value = "limit") int limit,
+                                        @Param("startTime") String startTime,
+                                        @Param("endTime") String endTime);
 
-
-
+    //查询某一分组订单
+    public List<Order> findTheOrders(@Param(value = "order") Order order,
+                                     @Param(value = "limit") int limit);
     //拆单、拆包 mwy
     int demolitionOrder(@Param(value = "bidTaskId")String bidTaskId,
                         @Param(value = "removeOrderIds")String removeOrderIds);

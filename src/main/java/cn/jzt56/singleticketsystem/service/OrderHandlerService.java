@@ -22,6 +22,9 @@ public interface OrderHandlerService {
     //发布任务单
     public Integer taskIssue(String[] taskIds);
 
+    //订单自动打包
+    public Integer autoBuildTask(String jsonStr);
+
     //关联查询任务单和订单
     public PageBean findTaskByCondition(String jsonStr);
 
