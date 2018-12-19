@@ -8,6 +8,7 @@ import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.service.BiddingDetailService;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
+import cn.jzt56.singleticketsystem.tools.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,12 +64,11 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/auctionPrice")
-    public void  auctionPrice(BiddingDetail biddingDetail){
+    public Result auctionPrice(BiddingDetail biddingDetail){
         biddingDetail.setDetailId(getUUID32());
-        log.info(biddingDetail.getBidTaskId()+biddingDetail.getQuotedPrice());
-        Boolean flage= this.biddingDetailService.addBidding(biddingDetail);
-        if(flage)
-            log.info(flage+"1");
+        //log.info(biddingDetail.getBidTaskId()+biddingDetail.getQuotedPrice());
+        return this.biddingDetailService.addBidding(biddingDetail);
+
 
     }
     /**

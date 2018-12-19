@@ -2,6 +2,7 @@ package cn.jzt56.singleticketsystem.service;
 
 import cn.jzt56.singleticketsystem.entity.BiddingDetail;
 import cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView;
+import cn.jzt56.singleticketsystem.tools.Result;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface BiddingDetailService {
      * @description :报价与修改价格
      * @author:lzy
      */
-    Boolean addBidding(BiddingDetail biddingDetail);
+    Result addBidding(BiddingDetail biddingDetail);
 
     /**
      * @method

@@ -5,6 +5,7 @@ import cn.jzt56.singleticketsystem.entity.entityView.BiddingDetailView;
 import cn.jzt56.singleticketsystem.mapper.AuctionTaskMapper;
 import cn.jzt56.singleticketsystem.mapper.BiddingDetailMapper;
 import cn.jzt56.singleticketsystem.service.BiddingDetailService;
+import cn.jzt56.singleticketsystem.tools.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +31,24 @@ public class BiddingDetailServiceImpl implements BiddingDetailService {
     private AuctionTaskMapper auctionTaskMapper;
     /**
      * @method
-     * @description:承运商竞价
+     * @description:承运商竞价与改价
      * @author:lzy
      */
-   public Boolean addBidding(BiddingDetail biddingDetail){
-        Boolean flage= this.biddingDetailMapper.addBiddingDetail(biddingDetail)>=1?true:false;
-        if (!flage)
-            this.biddingDetailMapper.updateQuotedPrice(biddingDetail);
-        return flage;
+   public Result addBidding(BiddingDetail biddingDetail){
+        Boolean flage= this.biddingDetailMapper.addBiddingDetail(biddingDetail)>=1?true:false;//报价
+
+        Result result =new Result();
+       result.setMessage("报价成功");
+        if (!flage){
+            flage=this.biddingDetailMapper.updateQuotedPrice(biddingDetail)>=1?true:false;//报价修改
+            result.setMessage("修改成功");
+        }
+        if(!flage){
+            result.setMessage("操作失败");//当为false时两个操作都失败
+
+        }
+       result.setSuccess(flage);
+        return result;
     }
     /**
      * @method
