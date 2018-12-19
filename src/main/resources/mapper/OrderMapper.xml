@@ -38,8 +38,19 @@
 
     <!-- 条件查询 -->
     <select id="findByPage" parameterType="cn.jzt56.singleticketsystem.entity.Order" resultMap="baseMap">
-        select Order_Id,User_Id,PhoneNum_Consignor,Consignor,PhoneNum_Consignee,Consignee,
-        StartArea,StartArea_mx,EndArea,EndArea_mx,Transport_Type,Goods_Count,
+        select Order_Id,User_Id,
+        PhoneNum_Consignor,
+        Consignor,PhoneNum_Consignee,
+        Consignee,
+        StartArea,
+        StartArea_mx,
+        EndArea,EndArea_mx,
+        CASE Transport_Type
+        when 0 then '冷藏品'
+        when 1 then '普通'
+        else '其他' END
+        Transport_Type,
+        Goods_Count,
         Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,
         CASE Status
         when 0 then '刚生成'
@@ -50,7 +61,10 @@
         else '其他' END
         Status,
         DATE_FORMAT(Created_Time,'%Y-%m-%d') Created_Time,
-        Updated_Time,Remark,Goods_Type,Signature_Type,Order_Num,task_Id
+        Updated_Time,Remark,
+        Goods_Type,
+        Signature_Type,
+        Order_Num,task_Id
         FROM `order` WHERE Status!='-1'
         <if test="consignee != null and consignee!=''">
             AND Consignee LIKE CONCAT('%', #{consignee}, '%')
@@ -85,13 +99,13 @@
         VALUES(#{orderId},#{userId}, #{phoneNumConsignor}, #{consignor}, #{phoneNumConsignee},#{consignee},#{startArea},#{startAreaMx},#{endArea},#{endAreaMx},#{goodsType},#{goodsCount},#{volume},#{weight},#{deliveryTime},#{receivingTime},#{transportPrices},#{status},#{createdTime},#{remark},#{transportType},#{signatureType},#{orderNum},#{updatedTime})
     </insert>
 
-    <!-- 更新数据 -->
+    <!-- 更新数据 添加状态约束和更新时间-文梁伟-->
     <update id="update" parameterType="cn.jzt56.singleticketsystem.entity.Order">
         UPDATE `order`
         <set>
             <if test="phoneNumConsignor != null and phoneNumConsignor!=''">  PhoneNum_Consignor =#{phoneNumConsignor},</if>
             <if test="consignor != null and consignor!=''">          Consignor = #{consignor},</if>
-            <if test="phoneNum_Consignee != null and consignor!=''"> PhoneNum_Consignee = #{phoneNumConsignee},</if>
+            <if test="phoneNumConsignee != null and consignor!=''"> PhoneNum_Consignee = #{phoneNumConsignee},</if>
             <if test="consignee != null and consignee!=''">          Consignee = #{consignee},</if>
             <if test="startArea != null and startArea!=''">StartArea = #{startArea}, </if>
             <if test="startAreaMx != null and startAreaMx!=''"> StartArea_mx = #{startAreaMx},  </if>
@@ -102,21 +116,25 @@
             <if test="weight != null and weight!=''">Weight = #{weight}, </if>
             <if test="volume != null and volume!=''">Volume = #{volume}, </if>
             <if test="transportPrices != null and transportPrices!=''">Transport_Prices = #{transportPrices}, </if>
-            <if test="goodsName != null and goodsName!=''">Goods_Name = #{goodsName}, </if>
+
             <if test="signatureType != null and signatureType!=''">Signature_Type = #{signatureType}, </if>
             <if test="status != null and status!=''">Status = #{status}, </if>
             <if test="remark != null and remark!=''">Remark = #{remark}, </if>
             <if test="deliveryTime != null and deliveryTime!=''">Delivery_Time = #{deliveryTime}, </if>
             <if test="receivingTime!= null and receivingTime!=''">Receiving_Time = #{receivingTime}, </if>
+            <if test="updatedTime!= null and updatedTime!=''">Updated_Time = #{updatedTime}</if>
         </set>
-        WHERE Order_Id = #{orderId}
+        WHERE Order_Id = #{orderId} and Status='0'
     </update>
 
     <!-- 删除 -->
     <update id="delete" parameterType="String">
         update `order` set Status='-1' WHERE Order_Id = #{id}
     </update>
-
+    <!-- 添加单个删除  文梁伟-->
+    <update id="deleteOrder" parameterType="cn.jzt56.singleticketsystem.entity.Order">
+        update `order` set Status='-1' WHERE Order_Id = #{orderId} and Status='0'
+    </update>
     <!-- 竞价页根据任务单id查询详情 -->
     <select id="getTaskDetailsByBidTaskId"  parameterType="String" resultMap="baseMap">
         SELECT

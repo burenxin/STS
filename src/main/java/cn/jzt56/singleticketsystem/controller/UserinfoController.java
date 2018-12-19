@@ -76,9 +76,17 @@ public class UserinfoController {
             log.info("密码错误");
             return Userinfo;
         }
-        request.getSession().setAttribute("UserInfo",userinfo);
-        if(userinfo.getType() == "0"){
+       log.info(userinfo.getType());
+        if(userinfo.getType().equals("0")){
+            log.info("当前委托方登录");
+        }else if(userinfo.getType().equals("2")){
+            log.info("当前外部承运商登录");
+        }else if(userinfo.getType().equals("3")){
+            log.info("当前调度员登录");
+        }else {
+            log.info("当前内部承运商登录");
         }
+        request.getSession().setAttribute("UserInfo",userinfo);
         return userinfo;
     }
 
