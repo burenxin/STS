@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -192,8 +193,8 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
             biddingDetail.setStatus("2");
             if ((biddingDetail.getQuotedPrice() == null)||(carrierInfo.getWeightPrice().compareTo(biddingDetail.getQuotedPrice()) == -1 && (biddingDetail.getQuotedPrice() != null)) ) {//流拍时将价格与Id替换为系统配送的
                 biddingDetail.setBidTaskId(auctionTask.getBidTaskId());
-                biddingDetail.setQuotedPrice(carrierInfo.getWeightPrice());//
-                biddingDetail.setUserId(carrierInfo.getUserId());
+                biddingDetail.setQuotedPrice(BigDecimal.ZERO);//
+                biddingDetail.setUserId("");
                 biddingDetail.setStatus("0");
             }
             log.info(biddingDetail.toString());
