@@ -186,13 +186,22 @@
     <!--</update>-->
     <!--查询所有可截单任务-->
     <select id="findAllBiddingTask" resultMap="auctionTaskResultMap">
-        SELECT * FROM auction_task att WHERE att.Bid_Status='1' AND Release_Time &lt;= NOW()-INTERVAL 2 HOUR
+        SELECT * FROM auction_task att WHERE att.Bid_Status='1'
+
+
+--         AND Release_Time &lt;= NOW()-INTERVAL 2 HOUR
+
+
+
+
     </select>
     <!--任务截单之截单-->
     <update id="biddingEnd">
         UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status=#{status},User_Id=#{userId}
         WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id in is null or att.User_Id='' AND Bid_Status='1'
-        AND  Release_Time &lt;= NOW()-INTERVAL 2 HOUR
+--         修改时间
+        AND  Release_Time &lt;= NOW()-INTERVAL 2 MINUTE
+--
     </update>
 
     <!--竞拍管理,查询所有竞拍任务-->
