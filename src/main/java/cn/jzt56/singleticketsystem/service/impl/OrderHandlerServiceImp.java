@@ -216,7 +216,7 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
                 int num = 0;
                 while (isSuccess ==1 && num < orderIdsForHandle.length){
                     //将订单表的状态设为已合单状态并填入任务单Id
-                    isSuccess = orderHandlerMapper.modifyOrder(status,auctionTask.getBidTaskId(),orderIdsForHandle[i]);
+                    isSuccess = orderHandlerMapper.modifyOrder(statusBuild,auctionTask.getBidTaskId(),orderIdsForHandle[num]);
                     num++;
                 }
             }
