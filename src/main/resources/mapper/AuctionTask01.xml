@@ -36,8 +36,8 @@
     <!-- 分页实现任务单模糊查询-竞拍成功的任务单 (当前任务单)-->
     <select id="findSuccessByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
         SELECT
-        Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,substring_index((unix_timestamp(Service_Time) - unix_timestamp(Release_Time))/3600,'.',1) Service_Time,SealedDisk_Time,Bid_Status,Transaction_Price,Task_Type,Bid_Task_Num
-        FROM auction_task WHERE User_Id = #{userId}
+        Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,substring_index((unix_timestamp(Service_Time) - unix_timestamp(sysdate()))/3600,'.',1) Service_Time,SealedDisk_Time,Bid_Status,Transaction_Price,Task_Type,Bid_Task_Num
+
         <!-- 任务单状态 -->
         <choose>
             <when test="bidStatus != null and bidStatus !='' " >
