@@ -392,7 +392,7 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         PageHelper.startPage(pageCode,pageSize);
         //处理auctionTask为null的情况
         Page<String> TaskIdList  = orderHandlerMapper.findTaskIdByCondition(auctionTask);
-        if(TaskIdList!=null) {
+        if(TaskIdList.size()>0) {
             Page<AuctionTask> AuctionTaskList = orderHandlerMapper.findTaskByIds(TaskIdList);
             return new PageBean(TaskIdList.getTotal(),AuctionTaskList.getResult());
         }
