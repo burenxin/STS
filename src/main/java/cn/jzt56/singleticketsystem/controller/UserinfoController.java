@@ -66,10 +66,10 @@ public class UserinfoController {
 
     //    http://10.2.65.67:8080/STS/userinfo/login
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public UserInfo login(@RequestBody UserInfo Userinfo, HttpServletRequest request){
+    public UserInfo login(@RequestBody UserInfo Userinfo, HttpServletRequest request) throws Exception {
         log.info(Userinfo.toString());
         UserInfo userinfo = userinfoService.getUserinfoByUserName(Userinfo.getUserName());
-        if(Userinfo == null){
+        if(userinfo == null){
             log.info("用户不存在");
             return Userinfo;
         }else if(!userinfo.getUserPassword().equals(Userinfo.getUserPassword())){
