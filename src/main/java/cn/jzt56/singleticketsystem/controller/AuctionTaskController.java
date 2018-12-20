@@ -77,7 +77,7 @@ public class AuctionTaskController {
      * @author:lzy
      */
     @RequestMapping(value = "/cancelBidding")
-    public Result  cancelBidding( BiddingDetail biddingDetail){
+    public Boolean  cancelBidding( BiddingDetail biddingDetail){
         //BiddingDetail biddingDetail=new BiddingDetail();
         //biddingDetail.setUserId("ui005");
        // biddingDetail.setBidTaskId(bidTaskId);

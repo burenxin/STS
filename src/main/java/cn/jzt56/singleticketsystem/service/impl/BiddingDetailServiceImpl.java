@@ -46,14 +46,9 @@ public class BiddingDetailServiceImpl implements BiddingDetailService {
      * @author:lzy
      */
     @Override
-    public Result cancelBidding(BiddingDetail biddingDetail) {
-        Result result=new Result(false,"取消失败");
-        Boolean flage= this.biddingDetailMapper.cancelBidding(biddingDetail)>=1?true:false;//取消报价
-        if(flage){
-            result.setMessage("取消成功");
-            result.setSuccess(flage);
-        }
-        return result;
+    public Boolean cancelBidding(BiddingDetail biddingDetail) {
+        return  this.biddingDetailMapper.cancelBidding(biddingDetail)>=1?true:false;//取消报价
+
     }
 
     /**

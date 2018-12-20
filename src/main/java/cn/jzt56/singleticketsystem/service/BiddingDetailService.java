@@ -25,7 +25,7 @@ public interface BiddingDetailService {
      * @description :取消报价
      * @author:lzy
      */
-    Result cancelBidding(BiddingDetail biddingDetail);
+    Boolean cancelBidding(BiddingDetail biddingDetail);
 
     /**
      * @method

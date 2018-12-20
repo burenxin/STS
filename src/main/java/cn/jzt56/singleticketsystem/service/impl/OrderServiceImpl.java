@@ -96,13 +96,13 @@ public class OrderServiceImpl implements OrderService {
             AddDate ad=new AddDate();
         try {
             switch(st){
-                case 1:
+                case 0:
                     date=ad.addDate(date,3);//将提货时间加三天
                     break;
-                case 2:
+                case 1:
                     date=ad.addDate(date,5);
                     break;
-                case 3:
+                case 2:
                     date=ad.addDate(date,7);
                     break;
                 default:break;
