@@ -135,17 +135,46 @@
     <update id="deleteOrder" parameterType="cn.jzt56.singleticketsystem.entity.Order">
         update `order` set Status='-1' WHERE Order_Id = #{orderId} and Status='0'
     </update>
+
     <!-- 竞价页根据任务单id查询详情 -->
     <select id="getTaskDetailsByBidTaskId"  parameterType="String" resultMap="baseMap">
         SELECT
-        CONCAT(StartArea,StartArea_mx) StartArea,CONCAT(EndArea,EndArea_mx) EndArea,Goods_Count,Volume,Weight,Transport_Type,Goods_Type,TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Remark
-        FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
+	CONCAT(StartArea,StartArea_mx) StartArea,CONCAT(EndArea,EndArea_mx) EndArea,Goods_Count,Volume,Weight,
+  CASE Transport_Type
+		when 0 then '冷藏品'
+		when 1 then '普通'
+		else '其他' END
+	Transport_Type,
+  CASE Goods_Type
+		when 0 then '中药'
+		when 1 then '西药'
+		when 2 then '器械'
+		when 3 then '生活用品'
+		else '其他' END
+	Goods_Type,
+	TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Remark
+FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
     </select>
 
     <!-- 竞价结果页根据任务单id查询详情 -->
     <select id="getResultDetailsByBidTaskId" parameterType="String" resultMap="baseMap">
-        SELECT
-          Order_Id,Goods_Type,Consignor,CONCAT(StartArea,StartArea_mx) StartArea,PhoneNum_Consignor,Transport_Type,TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,Goods_Count,Weight,Volume,Consignee,PhoneNum_Consignee,CONCAT(EndArea,EndArea_mx) EndArea,Remark
-         FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
+       SELECT
+	Order_Id,
+	CASE Goods_Type
+		when 0 then '中药'
+		when 1 then '西药'
+		when 2 then '器械'
+		when 3 then '生活用品'
+		else '其他' END
+	Goods_Type,
+	Consignor,CONCAT(StartArea,StartArea_mx) StartArea,PhoneNum_Consignor,
+	CASE Transport_Type
+		when 0 then '冷藏品'
+		when 1 then '普通'
+		else '其他' END
+	Transport_Type,
+	TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,
+	Goods_Count,Weight,Volume,Consignee,PhoneNum_Consignee,CONCAT(EndArea,EndArea_mx) EndArea,Remark
+FROM `order` o WHERE  o.task_Id = #{bid_Task_Id}
     </select>
 </mapper>
