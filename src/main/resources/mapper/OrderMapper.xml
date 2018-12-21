@@ -29,6 +29,7 @@
         <result column="Goods_Name" property="goodsName" jdbcType="VARCHAR"/>
         <result column="Signature_Type" property="signatureType" jdbcType="VARCHAR"/>
         <result column="Transport_Type" property="transportType" jdbcType="VARCHAR"/>
+        <result column="Order_Num" property="orderNum" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 查询所有 -->
@@ -174,7 +175,7 @@ FROM `order` o  WHERE  o.task_Id = #{bid_Task_Id}
 		else '其他' END
 	Transport_Type,
 	TIMESTAMPDIFF(HOUR,Delivery_Time,Receiving_Time) AS Receiving_Time,
-	Goods_Count,Weight,Volume,Consignee,PhoneNum_Consignee,CONCAT(EndArea,EndArea_mx) EndArea,Remark
+	Goods_Count,Weight,Volume,Consignee,PhoneNum_Consignee,CONCAT(EndArea,EndArea_mx) EndArea,Remark,Order_Num
 FROM `order` o WHERE  o.task_Id = #{bid_Task_Id}
     </select>
 </mapper>
