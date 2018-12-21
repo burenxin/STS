@@ -1,7 +1,7 @@
 spring:
 #数据库配置
   datasource:
-    url: jdbc:mysql://10.2.65.78:3306/sts?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF8
+    url: jdbc:mysql://10.2.65.118:3306/sts?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF8
     username: sts
     password: sts
     driver-class-name: com.mysql.jdbc.Driver
