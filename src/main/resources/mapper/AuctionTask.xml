@@ -198,7 +198,7 @@
     <!--任务截单之截单-->
     <update id="biddingEnd">
         UPDATE auction_task SET Transaction_Price=#{quotedPrice},Bid_Status=#{status},User_Id=#{userId}
-        WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id  is null or User_Id='' AND Bid_Status='1'
+        WHERE Bid_Task_Id=#{bidTaskId} AND Proposed_Price &gt; #{quotedPrice} AND User_Id  is null  AND Bid_Status='1'
 
         AND  Release_Time &lt;= NOW()-INTERVAL 2 MINUTE
 
