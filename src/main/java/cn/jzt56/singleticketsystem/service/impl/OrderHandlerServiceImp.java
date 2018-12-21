@@ -411,26 +411,23 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
             String bidTaskId=mapper.writeValueAsString(rootNode.path("bidTaskId")).replace("\"","");
             String removeOrderIds=mapper.writeValueAsString(rootNode.path("removeOrderIds")).replace("\"","");
             //String operationStatus=mapper.writeValueAsString(rootNode.path("operationStatus")).replace("\"","");
-
-            //修改订单的状态、去掉绑定的任务单号
-            orderHandlerMapper.demolitionOrder(bidTaskId,removeOrderIds) ;
+            if (bidTaskId==null || bidTaskId.equals("")){
+                result.setSuccess(false);
+                result.setMessage("请选择任务单");
+            }else {
+                //修改订单的状态、去掉绑定的任务单号
+                orderHandlerMapper.demolitionOrder(bidTaskId, removeOrderIds);
                 //查询此包是否为空
-                int count =orderHandlerMapper.findTaskIsExist(bidTaskId);
-                   if (count>0){//拆单
-                       //获取保存的id字符串,修改任务表中的订单ID
-//                       List listOrders=new ArrayList();
-//                       listOrders=orderHandlerMapper.listOrderId(bidTaskId);
-//                       String orderId=String.join(",",listOrders);
-//                       orderHandlerMapper.upadteOrderId(orderId,bidTaskId);
-
-                       result.setSuccess(true);
-                       result.setMessage("拆单成功");
-                   }else{   //拆包//删除空的包
-                       orderHandlerMapper.deleteTask(bidTaskId);
-                       result.setSuccess(true);
-                       result.setMessage("拆包成功");
-                   }
-
+                int count = orderHandlerMapper.findTaskIsExist(bidTaskId);
+                if (count > 0) {//拆单
+                    result.setSuccess(true);
+                    result.setMessage("拆单成功");
+                } else {   //拆包//删除空的包
+                    orderHandlerMapper.deleteTask(bidTaskId);
+                    result.setSuccess(true);
+                    result.setMessage("拆包成功");
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
             result.setSuccess(false);

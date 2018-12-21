@@ -18,6 +18,7 @@
         <result property="volume" column="Volume"></result>
         <result property="weight" column="Weight"></result>
         <result property="receivingTime" column="Receiving_Time"></result>
+        <result property="status" column="Status"></result>
         <result property="remark" column="Remark"></result>
         <result property="transportType" column="Transport_Type"></result>
         <result property="orderNum" column="Order_Num"></result>
@@ -126,7 +127,8 @@
           SELECT Order_Id,Transport_Type,
           DATE_FORMAT(Receiving_Time,'%Y-%m-%d') AS Receiving_Time,
           substring_index(StartArea,'-',2) AS StartArea,
-          substring_index(EndArea,'-',2) AS EndArea
+          substring_index(EndArea,'-',2) AS EndArea,
+          `Status`
           FROM `order`
           WHERE `Status` = #{order.status}
           <if test="startTime != null and startTime != 'null' and startTime != ''">
@@ -154,7 +156,7 @@
     <!--查询某一分组订单-->
     <select id="findTheOrders" resultMap="OrderResults" parameterType="cn.jzt56.singleticketsystem.entity.Order">
         SELECT * FROM
-        (SELECT * FROM `order` ORDER BY Created_Time DESC LIMIT 0,#{limit}) AS T
+        (SELECT * FROM `order` WHERE `Status` = #{order.status} ORDER BY Created_Time DESC LIMIT 0,#{limit}) AS T
         WHERE DATE_FORMAT(Receiving_Time,'%Y-%m-%d') = #{order.receivingTime}
         AND Transport_Type = #{order.transportType}
         AND substring_index(StartArea,'-',2) = #{order.startArea}
