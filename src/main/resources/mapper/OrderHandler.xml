@@ -88,7 +88,7 @@
             <result property="startAreaMx" column="StartArea_mx"></result>
             <result property="endArea" column="EndArea"></result>
             <result property="endAreaMx" column="EndArea_mx"></result>
-            <result property="transportType" column="Transport_Type"></result>
+            <result property="transportType" column="Transport_Type_De"></result>
             <result property="goodsCount" column="Goods_Count"></result>
             <result property="volume" column="Volume"></result>
             <result property="weight" column="Weight"></result>
@@ -247,7 +247,12 @@
         WHEN '0' THEN '冷藏品'
         WHEN '1' THEN '普通运输'
         END
-        ) Task_Type_De FROM task_ords
+        ) Task_Type_De,(
+        CASE Transport_Type
+        WHEN '0' THEN '冷藏品'
+        WHEN '1' THEN '普通运输'
+        END
+        ) Transport_Type_De FROM task_ords
         WHERE
         Bid_Task_Id
         IN
