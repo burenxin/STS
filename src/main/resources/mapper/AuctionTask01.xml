@@ -137,7 +137,7 @@
         CASE Bid_Status
         when 0 then '流标'
         when 1 then '竞拍中'
-        when 2 then '竞拍结束'
+        when 2 then '竞拍成功'
         when 3 then '未发布'
         when 4 then '配送完成'
         when 5 then '配送中'
