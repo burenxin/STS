@@ -235,7 +235,7 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
      */
     @Override
     public PageBean biddeTask(AuctionTask auctionTask,int pageCode,int pageSize) {
-
+        this.auctionTaskClose();//截单
         PageHelper.startPage(pageCode,pageSize);
         Page<AuctionTask> page= this.auctionTaskMapper.biddeTask(auctionTask);
         return  new PageBean(page.getTotal(),page.getResult());
