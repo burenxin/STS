@@ -84,9 +84,9 @@
             <result property="consignor" column="Consignor"></result>
             <result property="phoneNumConsignee" column="PhoneNum_Consignee"></result>
             <result property="consignee" column="Consignee"></result>
-            <result property="startArea" column="StartArea"></result>
+            <result property="startArea" column="Start_Area_MX"></result>
             <result property="startAreaMx" column="StartArea_mx"></result>
-            <result property="endArea" column="EndArea"></result>
+            <result property="endArea" column="End_Area_MX"></result>
             <result property="endAreaMx" column="EndArea_mx"></result>
             <result property="transportType" column="Transport_Type_De"></result>
             <result property="goodsCount" column="Goods_Count"></result>
@@ -133,10 +133,10 @@
             AND Transport_Type = #{order.transportType}
         </if>
         <if test="order.startArea != null and order.startArea != 'null' and order.startArea != ''">
-            AND StartArea = #{order.startArea}
+            AND StartArea LIKE CONCAT('%',#{order.startArea},'%')
         </if>
         <if test="order.endArea != null and order.endArea != 'null' and order.endArea != ''">
-            AND EndArea = #{order.endArea}
+            AND EndArea LIKE CONCAT('%',#{order.endArea},'%')
         </if>
         ORDER BY Created_Time DESC
     </select>
@@ -252,13 +252,17 @@
         WHEN '0' THEN '¿‰≤ÿ∆∑'
         WHEN '1' THEN '∆’Õ®‘À ‰'
         END
-        ) Transport_Type_De FROM task_ords
+        ) Transport_Type_De,
+        CONCAT_WS(' ',StartArea,StartArea_MX) Start_Area_MX,
+        CONCAT_WS(' ',EndArea,EndArea_MX) End_Area_MX
+        FROM task_ords
         WHERE
         Bid_Task_Id
         IN
         <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
             #{item}
         </foreach>
+        ORDER BY Service_Time DESC
         <!--
         Bid_Status = #{auctionTask.bidStatus}
         <if test="auctionTask.pickArea != 'null' and auctionTask.pickArea !='' and auctionTask.pickArea != null">
