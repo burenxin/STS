@@ -35,7 +35,23 @@
 
     <!-- 分页实现任务单模糊查询-竞拍成功的任务单 (当前任务单)-->
     <select id="findSuccessByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
-        SELECT Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,substring_index((unix_timestamp(Service_Time) - unix_timestamp(sysdate()))/3600,'.',1) Service_Time,SealedDisk_Time,Bid_Status,Transaction_Price,Task_Type,Bid_Task_Num
+        SELECT Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Release_Time,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,substring_index((unix_timestamp(Service_Time) - unix_timestamp(sysdate()))/3600,'.',1) Service_Time,SealedDisk_Time,
+        CASE Bid_Status
+        when 0 then '流标'
+        when 1 then '竞拍中'
+        when 2 then '竞拍结束'
+        when 3 then '未发布'
+        when 4 then '配送完成'
+        when 5 then '配送中'
+        else '其他' END
+        Bid_Status,
+        Transaction_Price,
+        CASE Task_Type
+        when 0 then '冷藏品'
+        when 1 then '普通'
+        else '其他' END
+        Task_Type,
+        Bid_Task_Num
         FROM auction_task WHERE User_Id = #{userId}
         <!-- 任务单状态 -->
         <choose>
@@ -116,7 +132,25 @@
 
     <!-- 分页实现历史任务单模糊查询 (历史任务单)-->
     <select id="findHistoryByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
-        select ta.* from auction_task ta
+        select ta.Bid_Task_Id,ta.Ord_Id,ta.User_Id,ta.Total_Quantity,ta.ToTal_Volume,ta.Total_Weight,ta.Proposed_Price,
+        ta.Pick_Area,ta.Deliver_Area,ta.Service_Time,ta.Release_Time,ta.SealedDisk_Time,
+        CASE Bid_Status
+        when 0 then '流标'
+        when 1 then '竞拍中'
+        when 2 then '竞拍结束'
+        when 3 then '未发布'
+        when 4 then '配送完成'
+        when 5 then '配送中'
+        else '其他' END
+        Bid_Status,
+        ta.Transaction_Price,
+        CASE Task_Type
+        when 0 then '冷藏品'
+        when 1 then '普通'
+        else '其他' END
+        Task_Type,
+        ta.Bid_Task_Num
+        from auction_task as ta
        <!-- where ta.Bid_Status in (0,2,4,5)  -->
         WHERE ta.Bid_Task_Id in (
         select Bid_Task_Id from bidding_detail
