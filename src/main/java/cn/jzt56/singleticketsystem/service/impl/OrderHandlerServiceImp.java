@@ -134,6 +134,9 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         }
 
         List<Order> orderDemoList = orderHandlerMapper.findOrderByGroup(jsonOrder,limit,startTime,endTime);
+        if(orderDemoList == null || orderDemoList.get(0)==null){
+            return 2;//空包提示
+        }
         Integer isSuccess = 1;
         for(int i = 0;i<orderDemoList.size();i++){
             List<Order> orderList = orderHandlerMapper.findTheOrders(orderDemoList.get(i),limit);
@@ -227,6 +230,9 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
     //订单手动打包生成任务单
     @Override
     public Integer buildTask(String[] orderIds) {
+        if(orderIds == null || orderIds.equals("")){
+            return 2;//空包提示
+        }
         //是否冷藏
         String taskType = null;//默认冷藏
         List<Order> orderList = new ArrayList<>();
@@ -321,6 +327,9 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
     @Override
     //发布任务单
     public Integer taskIssue(String[] taskIds) {
+        if(taskIds == null || taskIds.equals("")){
+            return 2;//选中任务单提示
+        }
         //此对象用来传参
         AuctionTask auctionTask = new AuctionTask();
 //        String auctionTaskId = "";

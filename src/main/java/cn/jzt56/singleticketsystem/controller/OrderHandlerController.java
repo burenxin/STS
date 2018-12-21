@@ -55,6 +55,10 @@ public class OrderHandlerController {
             result.setSuccess(false);
             result.setMessage("运输类型不一致");
         }
+        else if(isSuccess == 2){
+            result.setSuccess(false);
+            result.setMessage("未选中订单");
+        }
         else if(isSuccess == 0){
             result.setSuccess(false);
             result.setMessage("打包失败，未知异常");
@@ -75,7 +79,12 @@ public class OrderHandlerController {
         if(isSuccess == 1){
             result.setSuccess(true);
             result.setMessage("打包成功");
-        }else{
+        }
+        else if(isSuccess == 2){
+            result.setSuccess(false);
+            result.setMessage("未检索到符合条件的订单");
+        }
+        else{
             result.setSuccess(false);
             result.setMessage("打包失败，未知异常");
         }
@@ -91,11 +100,16 @@ public class OrderHandlerController {
     @ResponseBody
     public Result taskIssue(@RequestBody String[] taskIds){
         Result result = new Result();
-        Integer count =  orderHandlerService.taskIssue(taskIds);
-        if (count == 1){
+        Integer isSuccess =  orderHandlerService.taskIssue(taskIds);
+        if (isSuccess == 1){
             result.setSuccess(true);
             result.setMessage("发布成功");
-        }else{
+        }
+        else if(isSuccess == 2){
+            result.setSuccess(false);
+            result.setMessage("未选中任务单");
+        }
+        else{
             result.setSuccess(false);
             result.setMessage("发布失败");
         }
