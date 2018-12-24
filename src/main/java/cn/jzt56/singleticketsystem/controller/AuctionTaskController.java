@@ -54,6 +54,8 @@ public class AuctionTaskController {
         log.info("----------------------"+pageCode+""+pageSize+auctionTask.getUserId()+auctionTask.getBidTaskId());
         //auctionTask.setUserId("ui001");
 
+        auctionTask.setBidTaskNum(auctionTask.getBidTaskId());
+        auctionTask.setBidTaskId("");
         PageBean pageBean=this.auctionTaskService.findAllCurrentTask(auctionTask,pageCode,pageSize);
         log.info(pageBean.toString());
         return pageBean;
@@ -94,6 +96,8 @@ public class AuctionTaskController {
     public PageBean findBidded(AuctionTaskView auctionTaskView,
                                @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
                                @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize){
+        auctionTaskView.setBidTaskNum(auctionTaskView.getBidTaskId());
+        auctionTaskView.setBidTaskId("");//前台值转换
         return this.auctionTaskService.findBidded(auctionTaskView,pageCode,pageSize);
 
     }
@@ -111,6 +115,8 @@ public class AuctionTaskController {
                               @RequestParam(value = "pageCode",required = false,defaultValue = "1") int pageCode,
                               @RequestParam(value = "pageSize",required = false,defaultValue = "10") int pageSize) {
         log.info(auctionTask.getTotalVolume()+auctionTask.getSealedDiskTime());
+        auctionTask.setBidTaskNum(auctionTask.getBidTaskId());
+        auctionTask.setBidTaskId("");
         return  this.auctionTaskService.biddeTask(auctionTask,pageCode,pageSize);
     }
 
