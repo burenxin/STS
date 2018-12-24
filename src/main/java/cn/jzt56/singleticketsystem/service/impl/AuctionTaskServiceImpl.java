@@ -182,7 +182,14 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
         BiddingDetail biddingDetail;
         for (AuctionTask auctionTask:list
                 ) {
+            if(auctionTask.getTaskType().equals("1")) {//判断是否普通类型，'任务类型  0.冷藏品、1.普通'
+                auctionTask.setTaskType("0");//运输方式,0普通1冷藏
+            }else {
+                auctionTask.setTaskType("1");
+            }
             CarrierInfo carrierInfo = this.carrierInfoMapper.findMinCarrierInfo(auctionTask);
+
+            //log.info(carrierInfo.getWeightPrice().toString());
             if (this.biddingDetailMapper.findBiddingDetailNum(auctionTask.getBidTaskId()) > 0 ? true : false) {
                 biddingDetail = this.biddingDetailMapper.findMinDetailByTaskId(auctionTask.getBidTaskId());
 
