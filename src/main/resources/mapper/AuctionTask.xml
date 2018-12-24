@@ -51,12 +51,28 @@
     <!-- 返回字段 -->
     <sql id="selColumn">
         att.Bid_Task_Id,Ord_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,
-        TIMESTAMPDIFF(HOUR,NOW(),Service_Time)AS Service_Time,Release_Time, SealedDisk_Time,Bid_Status,Transaction_Price,Task_Type,Bid_Task_Num
+        TIMESTAMPDIFF(HOUR,NOW(),Service_Time)AS Service_Time,Release_Time,TIMESTAMPDIFF(second,NOW(),Release_Time+INTERVAL 110 second) AS SealedDisk_Time,
+        CASE Bid_Status
+        when 0 then '流拍'
+        when 1 then '竞拍中'
+        when 2 then '竞拍成功'
+        when 3 then '未发布'
+        when 4 then '配送完成'
+        when 5 then '配送中'
+        else '其他' END
+        Bid_Status,
+        Transaction_Price,
+        CASE Task_Type
+        when 0 then '冷藏品'
+        when 1 then '普通'
+        else '其他' END
+        Task_Type,
+        Bid_Task_Num
     </sql>
     <!-- 条件查询 -->
     <sql id="selectCondition">
         <!-- 竞拍未截止的 -->
-        AND Release_Time &gt; NOW()-INTERVAL 2 MINUTE AND Release_Time &lt; NOW()
+        AND Release_Time &gt; NOW()-INTERVAL 110 second AND Release_Time &lt; NOW()
         <!-- 取货地址 -->
         <if test="pickArea  != null and pickArea !=''">
             AND Pick_Area LIKE CONCAT('%', #{pickArea},'%')
@@ -125,7 +141,7 @@
     <sql id="selCondition">
         <!-- 可竞价的任务单id -->
         <if test="bidTaskId !=null and bidTaskId !=''">
-            AND Bid_Task_Id=#{bidTaskId}
+            AND att.Bid_Task_Id=#{bidTaskId}
         </if>
         <!-- 类型 -->
         <if test="taskType !=null and taskType !=''">
@@ -207,7 +223,24 @@
 
     <!--竞拍管理,查询所有竞拍任务-->
     <select id="biddeTask" resultMap="auctionTaskResultMap">
-        SELECT <include refid="selColumn"/>,ui.User_Name AS User_Id
+        SELECT att.Bid_Task_Id,Ord_Id,Total_Quantity,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,
+        CASE Bid_Status when 4 THEN '0' ELSE TIMESTAMPDIFF(HOUR,NOW(),Service_Time) END Service_Time,Release_Time, SealedDisk_Time,
+        CASE Bid_Status
+        when 0 then '流拍'
+        when 1 then '竞拍中'
+        when 2 then '竞拍成功'
+        when 3 then '未发布'
+        when 4 then '配送完成'
+        when 5 then '配送中'
+        else '其他' END
+        Bid_Status,
+        Transaction_Price,
+        CASE Task_Type
+        when 0 then '冷藏品'
+        when 1 then '普通'
+        else '其他' END
+        Task_Type,
+        Bid_Task_Num,ui.User_Name AS User_Id
         FROM auction_task att LEFT JOIN  user_info ui ON att.User_Id=ui.User_Id
         WHERE Bid_Status &lt;&gt;'3'
         <include refid="selCondition"/>
@@ -221,7 +254,7 @@
         <if test="sealedDiskTime!=null and sealedDiskTime!=''">
             AND Release_Time &lt;=#{sealedDiskTime}
         </if>
-        ORDER BY Release_Time DESC
+        ORDER BY Service_Time DESC
     </select>
     <!--指派-->
     <update id="assignCarrier" parameterType="String">
