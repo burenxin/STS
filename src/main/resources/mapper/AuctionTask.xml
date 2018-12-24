@@ -69,8 +69,6 @@
         <if test="totalQuantity !=null and totalQuantity !=''">
             AND Total_Quantity=#{totalQuantity}
         </if>
-
-
         <!-- 时效 -->
         <choose>
             <when test="serviceTime==0 and serviceTime !=''">
@@ -119,6 +117,7 @@
             <when test="proposedPrice==2">
                 AND 100 &lt;Proposed_Price
             </when>
+
         </choose>
         <include refid="selCondition"/>
     </sql>
@@ -144,6 +143,7 @@
         NOT IN(SELECT bd.Bid_Task_Id FROM bidding_detail bd WHERE bd.User_Id= #{userId} AND Status='1')
         AND Bid_Status='1'
         <include refid="selectCondition"/>
+        ORDER BY Release_Time DESC
     </select>
 
     <!-- 查询正在竞价的任务单 -->
@@ -163,6 +163,7 @@
             </when>
         </choose>
         <include refid="selectCondition"/>
+        ORDER BY Release_Time DESC
     </select>
 
 
@@ -220,6 +221,7 @@
         <if test="sealedDiskTime!=null and sealedDiskTime!=''">
             AND Release_Time &lt;=#{sealedDiskTime}
         </if>
+        ORDER BY Release_Time DESC
     </select>
     <!--指派-->
     <update id="assignCarrier" parameterType="String">
