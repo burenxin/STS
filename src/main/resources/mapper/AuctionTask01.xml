@@ -64,7 +64,7 @@
         </choose>
         <!-- 任务单id -->
         <if test="bidTaskId != null and bidTaskId != '' ">
-            AND Bid_Task_Id = #{bidTaskId}
+            AND Bid_Task_Num = #{bidTaskId}
         </if>
 
         <!-- 起始地 -->
@@ -160,7 +160,7 @@
 
         <!-- 任务单id -->
         <if test="bidTaskId != null  and bidTaskId != '' ">
-            AND ta.Bid_Task_Id = #{bidTaskId}
+            AND Bid_Task_Num = #{bidTaskId}
         </if>
         <!-- 类型 -->
         <if test="taskType != null and taskType != '' ">
