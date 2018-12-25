@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author: CHENG QI
  * @Date: 2018/12/21
  * Time: 11:53
+ * 官网：https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-cors
  */
 @Configuration
 public class CORSConfiguration {
@@ -26,7 +27,7 @@ public class CORSConfiguration {
                         .allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS")
                         .allowCredentials(false).maxAge(3600);
             }
-            };
-        }
+        };
     }
+}
 
