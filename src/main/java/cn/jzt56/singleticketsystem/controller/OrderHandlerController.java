@@ -59,6 +59,10 @@ public class OrderHandlerController {
             result.setSuccess(false);
             result.setMessage("未选中订单");
         }
+        else if(isSuccess == 3){
+            result.setSuccess(false);
+            result.setMessage("重复打包");
+        }
         else if(isSuccess == 0){
             result.setSuccess(false);
             result.setMessage("打包失败，未知异常");
@@ -83,6 +87,10 @@ public class OrderHandlerController {
         else if(isSuccess == 2){
             result.setSuccess(false);
             result.setMessage("未检索到符合条件的订单");
+        }
+        else if(isSuccess == 3){
+            result.setSuccess(false);
+            result.setMessage("重复打包");
         }
         else{
             result.setSuccess(false);

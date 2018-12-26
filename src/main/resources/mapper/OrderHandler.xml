@@ -223,7 +223,11 @@
 
     <!--订单修改task_Id和status字段-->
     <update id="modifyOrder" parameterType="String">
-        UPDATE `order` SET `Status` = #{status},task_Id = #{taskId} WHERE Order_Id = #{orderId}
+        UPDATE `order` SET `Status` = #{status},task_Id = #{taskId}
+        WHERE Order_Id IN
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </update>
 
     <!--分页条件查询任务单id-->

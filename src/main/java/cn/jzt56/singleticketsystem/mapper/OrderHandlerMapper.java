@@ -43,7 +43,7 @@ public interface OrderHandlerMapper {
     //订单修改task_Id字段
     public Integer modifyOrder(@Param(value = "status") String status,
                                @Param(value = "taskId") String taskId,
-                               @Param(value = "orderId") String orderId);
+                               @Param(value = "list") ArrayList<String> list);
 
     //发布任务单
     public Integer taskIssue(AuctionTask auctionTask);
