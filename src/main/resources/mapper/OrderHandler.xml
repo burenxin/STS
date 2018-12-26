@@ -312,7 +312,7 @@
 
     <!--²ðµ¥mwy-->
    <update id="demolitionOrder" parameterType="String">
-       UPDATE `order` SET task_Id='',Status='0'  WHERE FIND_IN_SET(task_Id,#{bidTaskId})
+       UPDATE `order` SET task_Id=NULL,Status='0'  WHERE FIND_IN_SET(task_Id,#{bidTaskId})
         <if test="removeOrderIds !='null' and removeOrderIds !='' and removeOrderIds != null">
         AND  FIND_IN_SET(Order_Id,#{removeOrderIds}) &gt; 0
        </if>
