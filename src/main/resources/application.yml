@@ -5,7 +5,6 @@ spring:
     username: sts
     password: sts
     driver-class-name: com.mysql.jdbc.Driver
-
     #配置初始化大小/最小/最大
     initial-size: 1
     min-idle: 1
@@ -14,6 +13,13 @@ spring:
     max-wait: 60000
     #间隔多久进行一次检测，检测需要关闭的空闲连接
     time-between-eviction-runs-millis: 60000
+  thymeleaf:
+    prefix: classpath:/templates/
+  mvc:
+    #静态文件访问配置
+    static-path-pattern: /static/**
+  resources:
+    static-locations: classpath:/static,classpath:/public,classpath:/resources,classpath:/META-INF/resources
 
 #mybaatis分页插件pagehelper设置
 pagehelper:
