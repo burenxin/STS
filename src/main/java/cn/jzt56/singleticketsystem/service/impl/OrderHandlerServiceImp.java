@@ -233,8 +233,8 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         if(orderIds == null || orderIds.length==0){
             return 2;//空包提示
         }
-        //是否冷藏
-        String taskType = null;//默认冷藏
+        ArrayList<String> orderIdList = new ArrayList<>();
+        String taskType = null;//冷藏类型
         List<Order> orderList = new ArrayList<>();
         String orderIdsInTask = "";//订单id
         int totalQuantity = 0;//总件数
@@ -288,6 +288,8 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
             }
             //将订单id拼接，以逗号隔开
             orderIdsInTask += order.getOrderId()+",";
+            //将订单ID加入orderIdList
+            orderIdList.add(order.getOrderId());
         }
 
         orderIdsInTask = orderIdsInTask.substring(0,orderIdsInTask.lastIndexOf(","));//去掉订单字段最后一个逗号
@@ -307,14 +309,17 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         auctionTask.setTaskType(taskType);
 //        auctionTask.setBidTaskId(bidTaskId);
         auctionTask.setBidTaskNum(bidTaskNum);
-        //插入任务单
+        //插入任务单并将任务单Id封装到auctiontask
         Integer isSuccess = orderHandlerMapper.buildTask(auctionTask);
 
         if(isSuccess == 1){
             String orderIdsForHandle[] = orderIdsInTask.split(",");
             String status = "1";//订单状态（已合单）
             int i = 0;
+            List<String> taskIdList = orderHandlerMapper.findTaskId(orderIdList);
             while (isSuccess ==1 && i < orderIdsForHandle.length){
+
+
                 //将订单表的状态设为已合单状态并填入任务单Id
                 isSuccess = orderHandlerMapper.modifyOrder(status,auctionTask.getBidTaskId(),orderIdsForHandle[i]);
                 i++;

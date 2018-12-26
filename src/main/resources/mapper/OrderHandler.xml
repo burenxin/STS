@@ -212,6 +212,15 @@
     </select>
     -->
 
+    <!--按id查询order表taskId字段是否为空-->
+    <select id="findTaskId" resultType="String">
+        SELECT task_Id FROM `order`
+        WHERE order_Id IN
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
     <!--订单修改task_Id和status字段-->
     <update id="modifyOrder" parameterType="String">
         UPDATE `order` SET `Status` = #{status},task_Id = #{taskId} WHERE Order_Id = #{orderId}

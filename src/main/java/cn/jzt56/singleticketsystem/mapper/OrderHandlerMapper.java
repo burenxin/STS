@@ -37,6 +37,9 @@ public interface OrderHandlerMapper {
 //    //按任务单id查询任务单中的ord_Id
 //    public String findOrdId(String taskId);
 
+    //按orderId查询taskId是否为空
+    public List<String> findTaskId(ArrayList<String> list);
+
     //订单修改task_Id字段
     public Integer modifyOrder(@Param(value = "status") String status,
                                @Param(value = "taskId") String taskId,
