@@ -12,6 +12,8 @@ import cn.jzt56.singleticketsystem.service.AuctionTaskService;
 import cn.jzt56.singleticketsystem.tools.AuctionTaskView;
 import cn.jzt56.singleticketsystem.tools.PageBean;
 import cn.jzt56.singleticketsystem.tools.Result;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -253,9 +256,22 @@ public class AuctionTaskServiceImpl implements AuctionTaskService {
      * @author:lzy
      */
     @Override
-    public Boolean assignCarrier(String userId, String bidTaskId, String transactionPrice){
-
-
+    public Boolean assignCarrier(String jsonStr){
+    String userId=null;
+    String bidTaskId=null;
+    String transactionPrice=null;
+    try{
+        ObjectMapper mapper = new ObjectMapper();
+        //序列化字符串
+        JsonNode rootNode  = mapper.readTree(jsonStr);
+        //去掉jackson转换字符串时加的双引号
+        userId = mapper.writeValueAsString(rootNode.path("userId")).replace("\"","");
+        bidTaskId = mapper.writeValueAsString(rootNode.path("bidTaskId")).replace("\"","");
+        transactionPrice = mapper.writeValueAsString(rootNode.path("transactionPrice")).replace("\"","");
+        log.info(userId+"///"+bidTaskId+"///"+transactionPrice);
+    }catch (IOException exception ){
+        exception.printStackTrace();
+    }
         return this.auctionTaskMapper.assignCarrier(userId,bidTaskId,transactionPrice)==1?true:false;
     }
 
