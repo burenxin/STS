@@ -457,6 +457,11 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
                 //查询此包是否为空
                 int count = orderHandlerMapper.findTaskIsExist(bidTaskId);
                 if (count > 0) {//拆单
+                    //获取保留下来的id字符串,修改任务表中的订单ID
+                       List listOrders=new ArrayList();
+                       listOrders=orderHandlerMapper.listOrderId(bidTaskId);
+                       String orderId=String.join(",",listOrders);
+                       orderHandlerMapper.upadteOrderId(orderId,bidTaskId);
                     result.setSuccess(true);
                     result.setMessage("拆单成功");
                 } else {   //拆包//删除空的包
