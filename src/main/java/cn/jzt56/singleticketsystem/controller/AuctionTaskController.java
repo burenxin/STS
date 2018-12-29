@@ -12,9 +12,7 @@ import cn.jzt56.singleticketsystem.tools.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -65,9 +63,9 @@ public class AuctionTaskController {
      * @description:竞价
      * @author:lzy
      */
-    @RequestMapping(value = "/auctionPrice")
-    public Boolean auctionPrice(BiddingDetail biddingDetail){
-        biddingDetail.setDetailId(getUUID32());
+    @RequestMapping(value = "/auctionPrice",method= RequestMethod.POST)
+    public Boolean auctionPrice(@RequestBody BiddingDetail biddingDetail){
+
         //log.info(biddingDetail.getBidTaskId()+biddingDetail.getQuotedPrice());
         return this.biddingDetailService.addBidding(biddingDetail);
 
