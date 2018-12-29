@@ -37,6 +37,8 @@
         <result property="goodsType" column="Goods_Type"></result>
         <result property="startArea" column="StartArea"></result>
         <result property="endArea" column="EndArea"></result>
+        <result property="startAreaMx" column="StartArea_mx"></result>
+        <result property="endAreaMx" column="EndArea_mx"></result>
         <result property="volume" column="Volume"></result>
         <result property="weight" column="Weight"></result>
         <result property="receivingTime" column="Receiving_Time"></result>

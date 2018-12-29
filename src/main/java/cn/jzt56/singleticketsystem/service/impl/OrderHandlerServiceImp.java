@@ -196,6 +196,15 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
 
                 orderIdList.add(order.getOrderId());
             }
+
+            //检测重复打包
+            List<String> taskIdList = orderHandlerMapper.findTaskId(orderIdList);
+            for(String taskId:taskIdList){
+                if(taskId != null){
+                    return 3;//重复打包
+                }
+            }
+
             orderIdsInTask = orderIdsInTask.substring(0,orderIdsInTask.lastIndexOf(","));//去掉订单字段最后一个逗号
             serviceTime = serviceTime.split(" ")[0];//只保留年月日
             serviceTime += " 18:00:00";
@@ -213,29 +222,16 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
             auctionTask.setTaskType(taskType);
 //        auctionTask.setBidTaskId(bidTaskId);
             auctionTask.setBidTaskNum(bidTaskNum);
-
+            //插入任务单
+            isSuccess = orderHandlerMapper.buildTask(auctionTask);
             if(isSuccess == 1){
-                //插入任务单
-                isSuccess = orderHandlerMapper.buildTask(auctionTask);
 //                String orderIdsForHandle[] = orderIdsInTask.split(",");
                 String statusBuild = "1";//订单状态（已合单）
-                List<String> taskIdList = orderHandlerMapper.findTaskId(orderIdList);
-
-                for(String taskId:taskIdList){
-                    if(taskId != null){
-                        return 3;//重复打包
-                    }
+                //将订单表的状态设为已合单状态并填入任务单Id
+                isSuccess = orderHandlerMapper.modifyOrder(statusBuild,auctionTask.getBidTaskId(),orderIdList);
+                if(isSuccess != orderIdList.size()){
+                    return 0;//打包成功
                 }
-                isSuccess = orderHandlerMapper.modifyOrder(status,auctionTask.getBidTaskId(),orderIdList);
-                if(isSuccess == orderIdList.size()){
-                    return 1;//打包成功
-                }
-//                int num = 0;
-//                while (isSuccess ==1 && num < orderIdsForHandle.length){
-//                    //将订单表的状态设为已合单状态并填入任务单Id
-//                    isSuccess = orderHandlerMapper.modifyOrder(statusBuild,auctionTask.getBidTaskId(),orderIdsForHandle[num]);
-//                    num++;
-//                }
             }
         }
         return isSuccess;
@@ -305,6 +301,13 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
             //将订单ID加入orderIdList
             orderIdList.add(order.getOrderId());
         }
+        //判断重复打包
+        List<String> taskIdList = orderHandlerMapper.findTaskId(orderIdList);
+        for(String taskId:taskIdList){
+            if(taskId != null){
+                return 3;//重复打包
+            }
+        }
 
         orderIdsInTask = orderIdsInTask.substring(0,orderIdsInTask.lastIndexOf(","));//去掉订单字段最后一个逗号
         serviceTime = serviceTime.split(" ")[0];//只保留年月日
@@ -329,13 +332,7 @@ public class OrderHandlerServiceImp implements OrderHandlerService {
         if(isSuccess == 1){
 //            String orderIdsForHandle[] = orderIdsInTask.split(",");
             String status = "1";//订单状态（已合单）
-            List<String> taskIdList = orderHandlerMapper.findTaskId(orderIdList);
 
-            for(String taskId:taskIdList){
-                if(taskId != null){
-                    return 3;//重复打包
-                }
-            }
             isSuccess = orderHandlerMapper.modifyOrder(status,auctionTask.getBidTaskId(),orderIdList);
             if(isSuccess == orderIdList.size()){
                 return 1;//打包成功
