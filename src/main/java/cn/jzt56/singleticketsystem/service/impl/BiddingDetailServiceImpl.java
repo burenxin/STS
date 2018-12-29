@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static cn.jzt56.singleticketsystem.tools.CreateUUID.getUUID32;
+
 /**
  * @ Author     ：lzy
  * @ Date       ：Created in 16:13 2018/12/5
@@ -35,6 +37,7 @@ public class BiddingDetailServiceImpl implements BiddingDetailService {
      * @author:lzy
      */
    public Boolean addBidding(BiddingDetail biddingDetail){
+       biddingDetail.setDetailId(getUUID32());
         Boolean flage= this.biddingDetailMapper.addBiddingDetail(biddingDetail)>=1?true:false;//报价
         if (!flage)
             flage=this.biddingDetailMapper.updateQuotedPrice(biddingDetail)>=1?true:false;//报价修改
