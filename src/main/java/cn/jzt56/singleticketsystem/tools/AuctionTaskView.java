@@ -2,6 +2,7 @@ package cn.jzt56.singleticketsystem.tools;
 
 import cn.jzt56.singleticketsystem.entity.AuctionTask;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
  * @ Description：已竞价
  */
 @Data
+//@EqualsAndHashCode(callSuper = true)
 public class AuctionTaskView  extends AuctionTask{
 
 

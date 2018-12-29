@@ -327,13 +327,13 @@
     <delete id="deleteTask" parameterType="String">
        DELETE from auction_task WHERE FIND_IN_SET(Bid_Task_Id,#{bidTaskId})
    </delete>
-    <!--&lt;!&ndash;修改任务单保存的id&ndash;&gt;-->
-    <!--<update id="upadteOrderId"  parameterType="String">-->
-        <!--UPDATE auction_task SET Ord_Id=#{orderId} WHERE  Bid_Task_Id=#{bidTaskId}-->
-    <!--</update>-->
-   <!--&lt;!&ndash;  查询保留的orderID  MWY &ndash;&gt;-->
-    <!--<select id="listOrderId" parameterType="String" resultType="String">-->
-        <!--SELECT o.Order_Id from `order` o WHERE task_Id=#{bidTaskId}-->
-    <!--</select>-->
+    <!--修改任务单保存的id-->
+    <update id="upadteOrderId"  parameterType="String">
+        UPDATE auction_task SET Ord_Id=#{orderId} WHERE  Bid_Task_Id=#{bidTaskId}
+    </update>
+   <!--  查询保留的orderID  MWY -->
+    <select id="listOrderId" parameterType="String" resultType="String">
+        SELECT o.Order_Id from `order` o WHERE task_Id=#{bidTaskId}
+    </select>
 
 </mapper>
