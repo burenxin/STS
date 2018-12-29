@@ -76,8 +76,8 @@ public class AuctionTaskController {
      * @description:取消报价
      * @author:lzy
      */
-    @RequestMapping(value = "/cancelBidding")
-    public Boolean  cancelBidding( BiddingDetail biddingDetail){
+    @RequestMapping(value = "/cancelBidding",method = RequestMethod.POST)
+    public Boolean  cancelBidding(@RequestBody BiddingDetail biddingDetail){
         //BiddingDetail biddingDetail=new BiddingDetail();
         //biddingDetail.setUserId("ui005");
        // biddingDetail.setBidTaskId(bidTaskId);
@@ -133,12 +133,11 @@ public class AuctionTaskController {
      * @description 指派承运商
      * @author:lzy
      */
-    @RequestMapping(value = "/assignCarrier")
-    public Boolean assignCarrier(@RequestParam String bidTaskId,
-                                 @RequestParam String userId,
-                                 @RequestParam String transactionPrice){
+    @RequestMapping(value = "/assignCarrier",method = RequestMethod.POST)
+    public Boolean assignCarrier(@RequestBody String jsonStr){
+        //log.info(bidTaskId+"///"+userId+"///"+transactionPrice);
 
-        return this.auctionTaskService.assignCarrier(userId,bidTaskId,transactionPrice);
+        return this.auctionTaskService.assignCarrier(jsonStr);
 
     }
 
