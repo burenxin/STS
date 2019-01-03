@@ -50,8 +50,14 @@ public class OrderController {
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public Result create(@RequestBody Order order) {
         try {
-            orderService.create(order);
-            return new Result(true, "创建成功");
+            if(order.getStartArea().indexOf("-") ==-1 || order.getEndArea().indexOf("-") ==-1){
+
+                return new Result(false, "地址不能为空");
+            }else {
+                orderService.create(order);
+                return new Result(true, "创建成功");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(false, "发生未知错误");
