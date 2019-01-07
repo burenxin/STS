@@ -55,7 +55,7 @@
         Volume,Weight,Delivery_Time,Receiving_Time,Transport_Prices,
         CASE Status
         when 0 then '刚生成'
-        when 1 then '已打包'
+        when 1 then '已合单'
         when 2 then '配送中'
         when 3 then '已签收'
         when -1 then '作废'
