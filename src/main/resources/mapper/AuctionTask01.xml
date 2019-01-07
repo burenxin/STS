@@ -35,7 +35,8 @@
 
     <!-- 分页实现任务单模糊查询-竞拍成功的任务单 (当前任务单)-->
     <select id="findSuccessByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
-        SELECT Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Release_Time,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,substring_index((unix_timestamp(Service_Time) - unix_timestamp(sysdate()))/3600,'.',1) Service_Time,SealedDisk_Time,
+        SELECT Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,DATE_FORMAT(Release_Time,'%Y-%m-%d %k:%i:%s') Release_Time,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,DATE_FORMAT(Service_Time,'%Y-%m-%d %k:%i:%s') Service_Time, <!-- substring_index((unix_timestamp(Service_Time) - unix_timestamp(sysdate()))/3600,'.',1)  -->
+        DATE_FORMAT(SealedDisk_Time,'%Y-%m-%d %k:%i:%s') SealedDisk_Time,
         CASE Bid_Status
         when 0 then '流标'
         when 1 then '竞拍中'
@@ -133,7 +134,7 @@
     <!-- 分页实现历史任务单模糊查询 (历史任务单)-->
     <select id="findHistoryByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
         select ta.Bid_Task_Id,ta.Ord_Id,ta.User_Id,ta.Total_Quantity,ta.ToTal_Volume,ta.Total_Weight,ta.Proposed_Price,
-        ta.Pick_Area,ta.Deliver_Area,ta.Service_Time,ta.Release_Time,ta.SealedDisk_Time,
+        ta.Pick_Area,ta.Deliver_Area,DATE_FORMAT(ta.Service_Time,'%Y-%m-%d %k:%i:%s') Service_Time,DATE_FORMAT(ta.Release_Time,'%Y-%m-%d %k:%i:%s') Release_Time,DATE_FORMAT(ta.SealedDisk_Time,'%Y-%m-%d %k:%i:%s') SealedDisk_Time,
         CASE Bid_Status
         when 0 then '流标'
         when 1 then '竞拍中'
