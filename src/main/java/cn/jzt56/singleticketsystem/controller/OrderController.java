@@ -50,11 +50,22 @@ public class OrderController {
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public Result create(@RequestBody Order order) {
         try {
-            if(order.getStartArea().indexOf("-") ==-1 || order.getEndArea().indexOf("-") ==-1){
+            if(order.getStartArea().indexOf("-") ==-1 || order.getEndArea().indexOf("-") ==-1
+                    || (order.getConsignee() .equals("") )
+                    || (order.getConsignor() .equals(""))
+                    || (order.getPhoneNumConsignee() .equals("") )
+                    || (order.getPhoneNumConsignor() .equals(""))
+                    || (order.getEndAreaMx() .equals(""))
+                    || (order.getStartAreaMx().equals(""))
+                    || (order.getWeight().equals(""))
+                    || (order.getVolume().equals(""))
+                    || (order.getTransportPrices().equals(""))
+                    || (order.getDeliveryTime().equals(""))
+                ){
 
-                return new Result(false, "地址不能为空");
+                return new Result(false, "参数有误");
             }else {
-                orderService.create(order);
+                //orderService.create(order);
                 return new Result(true, "创建成功");
             }
 
