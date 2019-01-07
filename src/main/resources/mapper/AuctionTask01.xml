@@ -35,7 +35,8 @@
 
     <!-- 分页实现任务单模糊查询-竞拍成功的任务单 (当前任务单)-->
     <select id="findSuccessByPage" parameterType="cn.jzt56.singleticketsystem.entity.AuctionTask" resultMap="AuctionTaskResultMap">
-        SELECT Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Release_Time,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,substring_index((unix_timestamp(Service_Time) - unix_timestamp(sysdate()))/3600,'.',1) Service_Time,SealedDisk_Time,
+        SELECT Bid_Task_Id,Ord_Id,User_Id,Total_Quantity,Release_Time,Total_Volume,Total_Weight,Proposed_Price,Pick_Area,Deliver_Area,Service_Time,  <!-- substring_index((unix_timestamp(Service_Time) - unix_timestamp(sysdate()))/3600,'.',1)  -->
+        SealedDisk_Time,
         CASE Bid_Status
         when 0 then '流标'
         when 1 then '竞拍中'
